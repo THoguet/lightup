@@ -12,6 +12,7 @@
 /**
  * @brief Standard unsigned integer type.
  **/
+
 typedef unsigned int uint;
 
 /**
