@@ -12,5 +12,5 @@ set(CMAKE_C_FLAGS "-std=c99 -g -Wall")
 add_executable(game_text game_text.c)
 
 #les dépendances sont calculées automatiquement
-target_link_libraries(game_text libgame)
-add_library (libgame game.o game_aux.c)
+target_link_libraries(game_text libgame.a)
+add_library (libgame.a game.o game_aux.c)
