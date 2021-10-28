@@ -17,4 +17,4 @@ add_executable(game_test_thoguet game_test_thoguet.c)
 #les dépendances sont calculées automatiquement
 target_link_libraries(game_text game)
 add_library (game game.o game_aux.c)
-add_test(game_test_dummy ./game_test_thoguet dummy)
+add_test(test_thoguet_dummy ./game_test_thoguet dummy)
