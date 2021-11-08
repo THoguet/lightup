@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "game.h"
 
-int charPrintCell(square sqState){
+char charPrintCell(square sqState){
 	if (sqState == S_BLANK){
 		return ' ';
 	}
