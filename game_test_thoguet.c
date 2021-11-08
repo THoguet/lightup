@@ -24,7 +24,7 @@ int main(int argc, char * argv[]){
 		usage(argc, argv);
 	}
 	fprintf(stderr, "=> Start test \"%s\"\n", argv[1]);
-	bool ok = true;
+	bool ok = false;
 	if (strcmp("dummy", argv[1]) == 0)
 		ok = test_dummy();
 	else {
