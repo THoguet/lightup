@@ -1,5 +1,5 @@
 #version minimale de cmake nécessaire
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6...3.13)
 
 enable_testing()
 
