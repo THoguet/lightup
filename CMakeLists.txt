@@ -13,6 +13,7 @@ set(CMAKE_C_FLAGS "-std=c99 -g -Wall")
 #ses sources
 add_executable(game_text game_text.c)
 add_executable(game_test_thoguet game_test_thoguet.c)
+add_executable(game_test_thperrier game_test_thperrier.c)
 
 #les dépendances sont calculées automatiquement
 target_link_libraries(game_text game)
@@ -24,3 +25,5 @@ add_test(test_thoguet_game_print ./game_test_thoguet game_print)
 add_test(test_thoguet_get_square ./game_test_thoguet game_get_square)
 add_test(test_thoguet_default ./game_test_thoguet game_default)
 add_test(test_thoguet_game_default_solution ./game_test_thoguet game_default_solution)
+
+add_test(test_thperrier_dummy ./game_test_thperrier dummy)
