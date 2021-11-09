@@ -4,12 +4,9 @@
 #include <string.h>
 
 bool test_dummy(){
-    return EXIT_SUCCESS;
+    return true;
 }
 
-void test_game_text(){
-    return EXIT_SUCCESS;
-}
 
 void usage(int argc, char *argv[]){
     fprintf(stderr, "Usage: %s <testname>\n", argv[0]);
@@ -25,15 +22,15 @@ int main (int argc, char *argv[]){
         success = test_dummy();
     }
     else{
-        fprintf ("\"%s\" is not a valid test name.\n", argv[1]);
+        fprintf (stderr, "test \"%s\" is not a valid test name.\n", argv[1]);
         return EXIT_FAILURE;
     }
     if (success){
-        fprintf (stderr, "test \"%s\" finished successfully", argv[1]);
+        fprintf (stderr, "test \"%s\" finished successfully\n", argv[1]);
         return EXIT_SUCCESS;
     }
     else {
-        fprintf (stderr, "test \"%s\" error ", argv[1]);
+        fprintf (stderr, "test \"%s\" error\n", argv[1]);
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
