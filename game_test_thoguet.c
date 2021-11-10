@@ -12,6 +12,24 @@ bool test_dummy(void){
 	return EXIT_SUCCESS;
 }
 
+/* ******* game_is_over ******* */
+bool test_game_is_over(void){
+	square tab[49] = 
+	{
+		S_LIGHTBULB,S_BLANK    ,S_BLACK1   ,S_LIGHTBULB,S_BLANK    ,S_BLANK    ,S_BLANK    ,
+		S_BLANK    ,S_LIGHTBULB,S_BLACK2   ,S_BLANK    ,S_BLANK    ,S_BLANK    ,S_LIGHTBULB,
+		S_BLANK    ,S_BLANK    ,S_LIGHTBULB,S_BLANK    ,S_BLANK    ,S_BLACKU   ,S_BLACK2   ,
+		S_BLANK    ,S_BLANK    ,S_BLANK    ,S_BLANK    ,S_BLANK    ,S_BLANK    ,S_LIGHTBULB,
+		S_BLACK1   ,S_BLACKU   ,S_BLANK    ,S_BLANK    ,S_LIGHTBULB,S_BLANK    ,S_BLANK    ,
+		S_LIGHTBULB,S_BLANK    ,S_BLANK    ,S_BLANK    ,S_BLACK2   ,S_LIGHTBULB,S_BLANK    ,
+		S_BLANK    ,S_LIGHTBULB,S_BLANK    ,S_BLANK    ,S_BLACKU   ,S_BLANK    ,S_BLANK
+	};
+	game g = game_new(tab);
+	game_update_flags(g);
+	assert(game_is_over(g));
+	return EXIT_SUCCESS;
+}
+
 /* ******* game_restart ******* */
 
 bool test_game_restart(void){
@@ -156,6 +174,8 @@ int main(int argc, char * argv[]){
 		ok = test_game_restart();
 	else if (strcmp("game_get_square", argv[1]) == 0)
 		ok = test_game_get_square();
+	else if (strcmp("game_is_over", argv[1]) == 0)
+		ok = test_game_is_over();
 	else {
     	fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
     	exit(EXIT_FAILURE);

@@ -28,6 +28,7 @@ add_test(test_thoguet_get_square ./game_test_thoguet game_get_square)
 add_test(test_thoguet_default ./game_test_thoguet game_default)
 add_test(test_thoguet_game_default_solution ./game_test_thoguet game_default_solution)
 add_test(test_game_restart ./game_test_thoguet game_restart)
+add_test(test_game_is_over ./game_test_thoguet game_is_over)
 
 add_test(test_thperrier_dummy ./game_test_thperrier dummy)
 add_test(test_thperrier_game_new_empty ./game_test_thperrier game_new_empty)
