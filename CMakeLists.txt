@@ -19,6 +19,7 @@ add_executable(game_test_thperrier game_test_thperrier.c)
 #les dépendances sont calculées automatiquement
 target_link_libraries(game_text game)
 target_link_libraries(game_test_thoguet game)
+target_link_libraries(game_test_thperrier game)
 add_library (game game.o game_aux.c)
 add_test(test_thoguet_dummy ./game_test_thoguet dummy)
 add_test(test_thoguet_new ./game_test_thoguet game_new)
@@ -30,3 +31,4 @@ add_test(test_game_restart ./game_test_thoguet game_restart)
 
 add_test(test_thperrier_dummy ./game_test_thperrier dummy)
 add_test(test_thperrier_game_new_empty ./game_test_thperrier game_new_empty)
+add_test(test_thperrier_game_copy ./game_test_thperrier game_copy)

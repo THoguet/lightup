@@ -4,7 +4,7 @@
 
 ### game game_new_empty(void) -> thperrier -> fait
 
-### game game_copy(cgame g) -> thperrier -> à faire
+### game game_copy(cgame g) -> thperrier -> fait
 
 ### bool game_equal(cgame g1, cgame g2) -> thperrier -> à faire
 
