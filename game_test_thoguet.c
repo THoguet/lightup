@@ -16,7 +16,7 @@ bool test_dummy(void){
 
 bool test_game_restart(void){
 	game g = game_default_solution();
-	game g1 = game_default_solution();
+	game g1 = game_default();
 	game_restart(g);
 	assert(game_equal(g,g1));
 	game_delete(g);
@@ -141,7 +141,7 @@ int main(int argc, char * argv[]){
 		usage(argc, argv);
 	}
 	fprintf(stderr, "=> Start test \"%s\"\n", argv[1]);
-	bool ok = false;
+	bool ok = true;
 	if (strcmp("dummy", argv[1]) == 0)
 		ok = test_dummy();
 	else if (strcmp("game_print", argv[1]) == 0)
