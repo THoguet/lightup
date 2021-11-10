@@ -12,15 +12,28 @@ bool test_dummy(void){
 	return EXIT_SUCCESS;
 }
 
+/* ******* game_restart ******* */
+
+bool test_game_restart(void){
+	game g = game_default_solution();
+	game g1 = game_default_solution();
+	game_restart(g);
+	assert(game_equal(g,g1));
+	return true;
+	game_delete(g);
+	game_delete(g1);
+}
+
 /* ********* game_new ********* */
 
 bool test_game_new(void){
 	square tab[DEFAULT_SIZE*DEFAULT_SIZE];
 	game g;
-	for (int i = 0; i <= 128; i ++){
+	int tab2[] = {0,1,2,8,9,10,11,12,13,16,32};
+	for (int i = 0; i < 11; i ++){
 		g = NULL;
 		for (int j = 0; j < DEFAULT_SIZE*DEFAULT_SIZE; j++){
-			tab[j] = i;
+			tab[j] = tab2[i];
 		}
 		printf("%d\n",i);
 		g = game_new(tab);
@@ -36,9 +49,10 @@ bool test_game_new(void){
 bool test_game_print(void){
 	game_print(NULL);
 	square tab[DEFAULT_SIZE*DEFAULT_SIZE];
-	for (int i = 0; i <= 128; i ++){
+	int tab2[] = {0,1,2,8,9,10,11,12,13,16,32};
+	for (int i = 0; i < 11; i ++){
 		for (int j = 0; j < DEFAULT_SIZE*DEFAULT_SIZE; j++){
-			tab[j] = i;
+			tab[j] = tab2[i];
 		}
 		printf("%d\n",i);
 		game_print(game_new(tab));
@@ -51,15 +65,17 @@ bool test_game_print(void){
 bool test_game_get_square(void){
 	game g = game_new_empty();
 	square tab[DEFAULT_SIZE*DEFAULT_SIZE];
-	for (int i = 0; i <= 128; i ++){
+	int tab2[] = {0,1,2,8,9,10,11,12,13,16,32};
+	for (int i = 0; i < 11; i ++){
 		for (int j = 0; j < DEFAULT_SIZE*DEFAULT_SIZE; j++){
-			tab[j] = i;
+			tab[j] = tab2[i];
 			g = game_new(tab);
 			printf("[%d, %d] %d %d\n",j/(DEFAULT_SIZE),j-(j/(DEFAULT_SIZE))-(j/(DEFAULT_SIZE)*(DEFAULT_SIZE-1)),game_get_square(g,j/(DEFAULT_SIZE),j-(j/(DEFAULT_SIZE))-(j/(DEFAULT_SIZE)*(DEFAULT_SIZE-1))),tab[j]);
 			assert(game_get_square(g,j/(DEFAULT_SIZE),j-(j/(DEFAULT_SIZE))-(j/(DEFAULT_SIZE)*(DEFAULT_SIZE-1))) == tab[j]);
 		}
 	}
 	return EXIT_SUCCESS;
+	game_delete(g);
 }
 
 /* ******* game_default ******* */
@@ -77,6 +93,7 @@ bool test_game_default(void){
 	assert(game_get_square(g,5,4) == S_BLACK2);
 	assert(game_get_square(g,6,4) == S_BLACKU);
 	return EXIT_SUCCESS;
+	game_delete(g);
 }
 
 /* *** game_default_solution *** */
@@ -106,6 +123,7 @@ bool test_game_default_solution(void){
 	assert(game_get_square(g,5,5) == (S_LIGHTBULB|F_LIGHTED));
 	assert(game_get_square(g,6,1) == (S_LIGHTBULB|F_LIGHTED));
 	return EXIT_SUCCESS;
+	game_delete(g);
 }
 
 /* ********** USAGE ********** */
@@ -134,6 +152,8 @@ int main(int argc, char * argv[]){
 		ok = test_game_default_solution();
 	else if (strcmp("game_new", argv[1]) == 0)
 		ok = test_game_new();
+	else if (strcmp("game_restart", argv[1]) == 0)
+		ok = test_game_restart();
 	else if (strcmp("game_get_square", argv[1]) == 0)
 		ok = test_game_get_square();
 	else {
