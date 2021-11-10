@@ -2,7 +2,7 @@
 
 ### game game_new(square *squares) -> thoguet -> fait
 
-### game game_new_empty(void) -> thperrier -> à faire
+### game game_new_empty(void) -> thperrier -> fait
 
 ### game game_copy(cgame g) -> thperrier -> à faire
 
