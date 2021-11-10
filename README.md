@@ -40,7 +40,7 @@
 
 ### bool game_is_over(cgame g) -> thoguet -> pas fait
 
-### void game_restart(game g) -> thoguet -> pas fait
+### void game_restart(game g) -> thoguet -> fait
 
 ### void game_print(cgame g) -> thoguet -> fini
 
