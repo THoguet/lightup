@@ -36,11 +36,11 @@
 
 ### void game_play_move(game g, uint i, uint j, square s) ->
 
-### void game_update_flags(game g) ->
+### void game_update_flags(game g) -> thoguet -> pas fait
 
-### bool game_is_over(cgame g) ->
+### bool game_is_over(cgame g) -> thoguet -> pas fait
 
-### void game_restart(game g) ->
+### void game_restart(game g) -> thoguet -> pas fait
 
 ### void game_print(cgame g) -> thoguet -> fini
 
