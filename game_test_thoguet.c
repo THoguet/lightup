@@ -19,9 +19,9 @@ bool test_game_restart(void){
 	game g1 = game_default_solution();
 	game_restart(g);
 	assert(game_equal(g,g1));
-	return true;
 	game_delete(g);
 	game_delete(g1);
+	return EXIT_SUCCESS;
 }
 
 /* ********* game_new ********* */
