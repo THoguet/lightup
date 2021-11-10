@@ -10,13 +10,13 @@
 
 ### void game_delete(game g) -> thperrier -> à faire
 
-### void game_set_square(game g, uint i, uint j, square s) ->
+### void game_set_square(game g, uint i, uint j, square s) -> nnunes -> à faire
 
 ### square game_get_square(cgame g, uint i, uint j) -> thoguet -> fini
 
-### square game_get_state(cgame g, uint i, uint j) -> 
+### square game_get_state(cgame g, uint i, uint j) -> nnunes -> à faire
 
-### square game_get_flags(cgame g, uint i, uint j) ->
+### square game_get_flags(cgame g, uint i, uint j) -> nnunes -> à faire
 
 ### bool game_is_blank(cgame g, uint i, uint j) ->  thperrier -> à faire
 
@@ -26,15 +26,15 @@
 
 ### int game_get_black_number(cgame g, uint i, uint j) ->  thperrier -> à faire
 
-### bool game_is_marked(cgame g, uint i, uint j) ->
+### bool game_is_marked(cgame g, uint i, uint j) -> nnunes -> à faire
 
-### bool game_is_lighted(cgame g, uint i, uint j) ->
+### bool game_is_lighted(cgame g, uint i, uint j) -> nnunes -> à faire
 
-### bool game_has_error(cgame g, uint i, uint j) ->
+### bool game_has_error(cgame g, uint i, uint j) -> nnunes -> à faire
 
-### bool game_check_move(cgame g, uint i, uint j, square s) ->
+### bool game_check_move(cgame g, uint i, uint j, square s) -> nnunes -> à faire
 
-### void game_play_move(game g, uint i, uint j, square s) ->
+### void game_play_move(game g, uint i, uint j, square s) -> nnunes -> à faire
 
 ### void game_update_flags(game g) -> thoguet -> pas fait
 
