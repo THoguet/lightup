@@ -69,6 +69,8 @@ int main(void) {
 				game_update_flags(g);
 				game_print(g);
 			}else if (c == 'q'){
+				printf("Solution: \n");
+				game_print(game_default_solution());
 				printf("shame\n");
 				return EXIT_SUCCESS;
 			}else if (c == 'l' || c == 'm' || c == 'b'){
