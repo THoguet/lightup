@@ -27,6 +27,7 @@ bool test_game_is_over(void){
 	game g = game_new(tab);
 	game_update_flags(g);
 	assert(game_is_over(g));
+	game_delete(g);
 	return EXIT_SUCCESS;
 }
 
@@ -56,6 +57,7 @@ bool test_game_new(void){
 		printf("%d\n",i);
 		g = game_new(tab);
 		assert(g);
+		game_delete(g);
 	}
 	return EXIT_SUCCESS;
 }
@@ -68,12 +70,15 @@ bool test_game_print(void){
 	game_print(NULL);
 	square tab[DEFAULT_SIZE*DEFAULT_SIZE];
 	int tab2[] = {0,1,2,8,9,10,11,12,13,16,32};
+	game g;
 	for (int i = 0; i < 11; i ++){
 		for (int j = 0; j < DEFAULT_SIZE*DEFAULT_SIZE; j++){
 			tab[j] = tab2[i];
 		}
 		printf("%d\n",i);
-		game_print(game_new(tab));
+		g = game_new(tab);
+		game_print(g);
+		game_delete(g);
 	}
 	return EXIT_SUCCESS;
 }
@@ -81,7 +86,7 @@ bool test_game_print(void){
 /* ******* game_get_square ******* */
 
 bool test_game_get_square(void){
-	game g = game_new_empty();
+	game g;
 	square tab[DEFAULT_SIZE*DEFAULT_SIZE];
 	int tab2[] = {0,1,2,8,9,10,11,12,13,16,32};
 	for (int i = 0; i < 11; i ++){
@@ -90,10 +95,10 @@ bool test_game_get_square(void){
 			g = game_new(tab);
 			printf("[%d, %d] %d %d\n",j/(DEFAULT_SIZE),j-(j/(DEFAULT_SIZE))-(j/(DEFAULT_SIZE)*(DEFAULT_SIZE-1)),game_get_square(g,j/(DEFAULT_SIZE),j-(j/(DEFAULT_SIZE))-(j/(DEFAULT_SIZE)*(DEFAULT_SIZE-1))),tab[j]);
 			assert(game_get_square(g,j/(DEFAULT_SIZE),j-(j/(DEFAULT_SIZE))-(j/(DEFAULT_SIZE)*(DEFAULT_SIZE-1))) == tab[j]);
+			game_delete(g);
 		}
 	}
 	return EXIT_SUCCESS;
-	game_delete(g);
 }
 
 /* ******* game_default ******* */
@@ -110,8 +115,8 @@ bool test_game_default(void){
 	assert(game_get_square(g,4,1) == S_BLACKU);
 	assert(game_get_square(g,5,4) == S_BLACK2);
 	assert(game_get_square(g,6,4) == S_BLACKU);
-	return EXIT_SUCCESS;
 	game_delete(g);
+	return EXIT_SUCCESS;
 }
 
 /* *** game_default_solution *** */
@@ -140,8 +145,8 @@ bool test_game_default_solution(void){
 	assert(game_get_square(g,5,0) == (S_LIGHTBULB|F_LIGHTED));
 	assert(game_get_square(g,5,5) == (S_LIGHTBULB|F_LIGHTED));
 	assert(game_get_square(g,6,1) == (S_LIGHTBULB|F_LIGHTED));
-	return EXIT_SUCCESS;
 	game_delete(g);
+	return EXIT_SUCCESS;
 }
 
 /* ********** USAGE ********** */
