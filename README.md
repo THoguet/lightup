@@ -2,74 +2,30 @@
 
 Projet Techno
 ## Tests
- - [X] game game_new(square *squares)
- 	- @thoguet
 
- - [X] game game_new_empty(void) 
-	- @thperrier 
-
- - [X] game game_copy(cgame g) 
-	- @thperrier 
-
- - [ ] bool game_equal(cgame g1, cgame g2) 
-	- @thperrier
-
- - [ ] void game_delete(game g) 
-	- @thperrier
-
- - [ ] void game_set_square(game g, uint i, uint j, square s) 
-	- @nnunes
-
- - [X] square game_get_square(cgame g, uint i, uint j) 
-	- @thoguet
-
- - [ ] square game_get_state(cgame g, uint i, uint j) 
-	- @nnunes
-
- - [ ] square game_get_flags(cgame g, uint i, uint j) 
-	- @nnunes
-
- - [ ] bool game_is_blank(cgame g, uint i, uint j) 
-	- @thperrier
-
- - [ ] bool game_is_lightbulb(cgame g, uint i, uint j) 
-	- @thperrier
-
- - [ ] bool game_is_black(cgame g, uint i, uint j) 
-	- @thperrier
-
- - [ ] int game_get_black_number(cgame g, uint i, uint j) 
-	- @thperrier
-
- - [ ] bool game_is_marked(cgame g, uint i, uint j) 
-	- @nnunes
-
- - [ ] bool game_is_lighted(cgame g, uint i, uint j) 
-	- @nnunes
-
- - [ ] bool game_has_error(cgame g, uint i, uint j) 
-	- @nnunes
-
- - [ ] bool game_check_move(cgame g, uint i, uint j, square s) 
-	- @nnunes
-
- - [ ] void game_play_move(game g, uint i, uint j, square s) 
-	- @nnunes
-
- - [ ] void game_update_flags(game g) 
-	- @thoguet -> pas fait
-
- - [ ] bool game_is_over(cgame g) 
-	- @thoguet 
-
- - [X] void game_restart(game g) 
-	- @thoguet 
-
- - [X] void game_print(cgame g) 
-	- @thoguet
-
- - [X] game game_default(void) 
-	- @thoguet
-
- - [X] game game_default_solution(void) 
-	- @thoguet
+| Test           | Assigned to    | Finished | 
+|----------------|---------------|:-----------:|
+| game_new   | @thoguet |<ul><li>[x] </li></ul> |
+| game_new_empty   | @thoguet |<ul><li>[x] </li></ul> |
+| game_copy   | @thperrier |<ul><li>[x] </li></ul> |
+| game_equal   | @thoguet |<ul><li>[ ] </li></ul> |
+| game_delete   | @thperrier |<ul><li>[ ] </li></ul> |
+| game_set_square   | @nnunes |<ul><li>[ ] </li></ul> |
+| game_get_square   | @thoguet |<ul><li>[x] </li></ul> |
+| game_get_state   | @nnunes |<ul><li>[ ] </li></ul> |
+| game_get_flags   | @nnunes |<ul><li>[ ] </li></ul> |
+| game_is_blank   | @thperrier |<ul><li>[ ] </li></ul> |
+| game_is_lightbulb   | @thperrier |<ul><li>[ ] </li></ul> |
+| game_is_black   | @thperrier |<ul><li>[ ] </li></ul> |
+| game_get_black_number   | @thperrier |<ul><li>[ ] </li></ul> |
+| game_is_marked   | @nnunes |<ul><li>[ ] </li></ul> |
+| game_is_lighted   | @nnunes |<ul><li>[ ] </li></ul> |
+| game_has_error   | @nnunes |<ul><li>[ ] </li></ul> |
+| game_check_move   | @nnunes |<ul><li>[ ] </li></ul> |
+| game_play_move   | @nnunes |<ul><li>[ ] </li></ul> |
+| game_update_flags   | @thoguet |<ul><li>[ ] </li></ul> |
+| game_is_over   | @thoguet |<ul><li>[ ] </li></ul> |
+| game_restart   | @thoguet |<ul><li>[X] </li></ul> |
+| game_print   | @thoguet |<ul><li>[X] </li></ul> |
+| game_default   | @thoguet |<ul><li>[X] </li></ul> |
+| game_default_solution   | @thoguet |<ul><li>[X] </li></ul> |
