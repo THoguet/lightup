@@ -1,49 +1,75 @@
 # lightup-a42e
 
-### game game_new(square *squares) -> thoguet -> fait
+Projet Techno
+## Tests
+ - [X] game game_new(square *squares)
+ 	- @thoguet
 
-### game game_new_empty(void) -> thperrier -> fait
+ - [X] game game_new_empty(void) 
+	- @thperrier 
 
-### game game_copy(cgame g) -> thperrier -> fait
+ - [X] game game_copy(cgame g) 
+	- @thperrier 
 
-### bool game_equal(cgame g1, cgame g2) -> thperrier -> à faire
+ - [] bool game_equal(cgame g1, cgame g2) 
+	- @thperrier
 
-### void game_delete(game g) -> thperrier -> à faire
+ - [] void game_delete(game g) 
+	- @thperrier
 
-### void game_set_square(game g, uint i, uint j, square s) -> nnunes -> à faire
+ - [] void game_set_square(game g, uint i, uint j, square s) 
+	- @nnunes
 
-### square game_get_square(cgame g, uint i, uint j) -> thoguet -> fini
+ - [X] square game_get_square(cgame g, uint i, uint j) 
+	- @thoguet
 
-### square game_get_state(cgame g, uint i, uint j) -> nnunes -> à faire
+ - [] square game_get_state(cgame g, uint i, uint j) 
+	- @nnunes
 
-### square game_get_flags(cgame g, uint i, uint j) -> nnunes -> à faire
+ - [] square game_get_flags(cgame g, uint i, uint j) 
+	- @nnunes
 
-### bool game_is_blank(cgame g, uint i, uint j) ->  thperrier -> à faire
+ - [] bool game_is_blank(cgame g, uint i, uint j) 
+	- @thperrier
 
-### bool game_is_lightbulb(cgame g, uint i, uint j) ->  thperrier -> à faire
+ - [] bool game_is_lightbulb(cgame g, uint i, uint j) 
+	- @thperrier
 
-### bool game_is_black(cgame g, uint i, uint j) -> thperrier -> à faire
+ - [] bool game_is_black(cgame g, uint i, uint j) 
+	- @thperrier
 
-### int game_get_black_number(cgame g, uint i, uint j) ->  thperrier -> à faire
+ - [] int game_get_black_number(cgame g, uint i, uint j) 
+	- @thperrier
 
-### bool game_is_marked(cgame g, uint i, uint j) -> nnunes -> à faire
+ - [] bool game_is_marked(cgame g, uint i, uint j) 
+	- @nnunes
 
-### bool game_is_lighted(cgame g, uint i, uint j) -> nnunes -> à faire
+ - [] bool game_is_lighted(cgame g, uint i, uint j) 
+	- @nnunes
 
-### bool game_has_error(cgame g, uint i, uint j) -> nnunes -> à faire
+ - [] bool game_has_error(cgame g, uint i, uint j) 
+	- @nnunes
 
-### bool game_check_move(cgame g, uint i, uint j, square s) -> nnunes -> à faire
+ - [] bool game_check_move(cgame g, uint i, uint j, square s) 
+	- @nnunes
 
-### void game_play_move(game g, uint i, uint j, square s) -> nnunes -> à faire
+ - [] void game_play_move(game g, uint i, uint j, square s) 
+	- @nnunes
 
-### void game_update_flags(game g) -> thoguet -> pas fait
+ - [] void game_update_flags(game g) 
+	- @thoguet -> pas fait
 
-### bool game_is_over(cgame g) -> thoguet -> fait
+ - [] bool game_is_over(cgame g) 
+	- @thoguet 
 
-### void game_restart(game g) -> thoguet -> fait
+ - [X] void game_restart(game g) 
+	- @thoguet 
 
-### void game_print(cgame g) -> thoguet -> fini
+ - [X] void game_print(cgame g) 
+	- @thoguet
 
-### game game_default(void) -> thoguet -> fini
+ - [X] game game_default(void) 
+	- @thoguet
 
-### game game_default_solution(void) -> thoguet -> fini
+ - [X] game game_default_solution(void) 
+	- @thoguet
