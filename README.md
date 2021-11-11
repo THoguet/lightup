@@ -38,7 +38,7 @@
 
 ### void game_update_flags(game g) -> thoguet -> pas fait
 
-### bool game_is_over(cgame g) -> thoguet -> pas fait
+### bool game_is_over(cgame g) -> thoguet -> fait
 
 ### void game_restart(game g) -> thoguet -> fait
 
