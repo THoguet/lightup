@@ -24,7 +24,7 @@ Projet Techno
 | [game_check_move](./game_test_nnunes.c#L?)   | @nnunes |<ul><li>[ ] </li></ul> |
 | [game_play_move](./game_test_nnunes.c#L?)   | @nnunes |<ul><li>[ ] </li></ul> |
 | [game_update_flags](./game_test_thoguet.c#L?)   | @thoguet |<ul><li>[ ] </li></ul> |
-| [game_is_over](./game_test_thoguet.c#L?)   | @thoguet |<ul><li>[ ] </li></ul> |
+| [game_is_over](./game_test_thoguet.c#L17)   | @thoguet |<ul><li>[X] </li></ul> |
 | [game_restart](./game_test_thoguet.c#L37)   | @thoguet |<ul><li>[X] </li></ul> |
 | [game_print](./game_test_thoguet.c#L70)   | @thoguet |<ul><li>[X] </li></ul> |
 | [game_default](./game_test_thoguet.c#L107)   | @thoguet |<ul><li>[X] </li></ul> |
