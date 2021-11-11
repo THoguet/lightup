@@ -5,13 +5,13 @@ Projet Techno
 
 | Test           | Assigned to    | Finished | 
 |----------------|---------------|:-----------:|
-| [game_new](./game_test_thoguet.c#L55)   | @thoguet |<ul><li>[x] </li></ul> |
+| [game_new](./game_test_thoguet.c#L49)   | @thoguet |<ul><li>[x] </li></ul> |
 | [game_new_empty](./game_test_thperrier.c#L16)   | @thperrier |<ul><li>[X] </li></ul> |
 | [game_copy](./game_test_thperrier.c#L32)   | @thperrier |<ul><li>[X] </li></ul> |
 | [game_equal](./game_test_thperrier.c#L?)   | @thperrier |<ul><li>[ ] </li></ul> |
 | [game_delete](./game_test_thperrier.c#L?)   | @thperrier |<ul><li>[ ] </li></ul> |
 | [game_set_square](./game_test_nnunes.c#L?)   | @nnunes |<ul><li>[ ] </li></ul> |
-| [game_get_square](./game_test_thoguet.c#L95)   | @thoguet |<ul><li>[x] </li></ul> |
+| [game_get_square](./game_test_thoguet.c#L89)   | @thoguet |<ul><li>[x] </li></ul> |
 | [game_get_state](./game_test_nnunes.c#L?)   | @nnunes |<ul><li>[ ] </li></ul> |
 | [game_get_flags](./game_test_nnunes.c#L?)   | @nnunes |<ul><li>[ ] </li></ul> |
 | [game_is_blank](./game_test_thperrier.c#L?)   | @thperrier |<ul><li>[ ] </li></ul> |
@@ -25,7 +25,7 @@ Projet Techno
 | [game_play_move](./game_test_nnunes.c#L?)   | @nnunes |<ul><li>[ ] </li></ul> |
 | [game_update_flags](./game_test_thoguet.c#L?)   | @thoguet |<ul><li>[ ] </li></ul> |
 | [game_is_over](./game_test_thoguet.c#L?)   | @thoguet |<ul><li>[ ] </li></ul> |
-| [game_restart](./game_test_thoguet.c#L43)   | @thoguet |<ul><li>[X] </li></ul> |
-| [game_print](./game_test_thoguet.c#L76)   | @thoguet |<ul><li>[X] </li></ul> |
-| [game_default](./game_test_thoguet.c#L113)   | @thoguet |<ul><li>[X] </li></ul> |
-| [game_default_solution](./game_test_thoguet.c#L131)   | @thoguet |<ul><li>[X] </li></ul> |
+| [game_restart](./game_test_thoguet.c#L37)   | @thoguet |<ul><li>[X] </li></ul> |
+| [game_print](./game_test_thoguet.c#L70)   | @thoguet |<ul><li>[X] </li></ul> |
+| [game_default](./game_test_thoguet.c#L107)   | @thoguet |<ul><li>[X] </li></ul> |
+| [game_default_solution](./game_test_thoguet.c#L125)   | @thoguet |<ul><li>[X] </li></ul> |

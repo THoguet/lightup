@@ -13,6 +13,7 @@ bool test_dummy(void){
 }
 
 /* ******* game_is_over ******* */
+
 bool test_game_is_over(void){
 	square tab[49] = 
 	{
