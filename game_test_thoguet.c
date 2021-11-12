@@ -162,6 +162,11 @@ bool test_game_update_flags(void){
 
 bool check_update(game g){
 	game tab_bulb[DEFAULT_SIZE*DEFAULT_SIZE];
+	uint size;
+	square choice[4];
+	uint lb;
+	uint notempty;
+	bool res;
 	for (uint i = 0; i < DEFAULT_SIZE; i++){
 		for (uint j = 0; j< DEFAULT_SIZE; j++){
 			square state = game_get_state(g,i,j);
@@ -172,6 +177,63 @@ bool check_update(game g){
 					square state2 = game_get_state(g,k,j);
 					if (/*test if current case is a wall*/state2 == S_BLACK0 || state2 == (S_BLACK0|F_ERROR) || state2 == S_BLACK1 || state2 == (S_BLACK1|F_ERROR) || state2 == S_BLACK2 || state2 == (S_BLACK2|F_ERROR) || state2 == S_BLACK3 || state2 == (S_BLACK3|F_ERROR) || state2 == S_BLACK4 || state2 == (S_BLACK4|F_ERROR) || state2 == S_BLACKU || state2 == (S_BLACKU|F_ERROR)){
 						wall = true;
+						if (state2 != S_BLACKU && state2 != (S_BLACKU|F_ERROR)){
+							//lookup for lightbulb and emptycells
+							size = 0;
+							lb = 0;
+							notempty = 0;
+							res = true;
+							if (k > 0){
+								choice[size] = game_get_state(g,k-1,j);
+								size++;
+							}
+							else{
+								notempty++;
+							}
+							if (k < DEFAULT_SIZE-1){
+								choice[size] = game_get_state(g,k+1,j);
+								size++;
+							}
+							else{
+								notempty++;
+							}
+							if (j > 0){
+								choice[size] = game_get_state(g,k,j-1);
+								size++;
+							}
+							else{
+								notempty++;
+							}
+							if (j < DEFAULT_SIZE-1){
+								choice[size] = game_get_state(g,k,j+1);
+								size++;
+							}
+							else{
+								notempty++;
+							}
+							for (int l = 0 ; l < size ; l++){
+								if (choice[l] == S_LIGHTBULB || choice[l] == (S_LIGHTBULB|F_ERROR) || choice[l] == (S_LIGHTBULB|F_LIGHTED) || choice[l] == (S_LIGHTBULB|F_ERROR|F_LIGHTED)){
+									lb++;
+								}
+								else if (choice[l] != S_BLANK){
+									notempty++;
+								}
+							}
+							if (lb+8 > state2){
+								res = false;
+							}
+							//look if there is enough empty cell around the wall
+							else if (notempty > abs(state2-S_BLACK4)){
+								res = false;
+							}
+
+							if (!(state2 == S_BLACK0 || state2 == S_BLACK1 || state2 == S_BLACK2 || state2 == S_BLACK3 || state2 == S_BLACK4)){
+								res = !res;
+							}
+							if (!res){
+								return res;
+							}
+						}
 					}
 					//if no wall(s) before test if the light of the lightbulb has been well updated
 					else if (!wall){
@@ -189,7 +251,6 @@ bool check_update(game g){
 						}
 					}
 					else{
-						
 						if (/*test if the current case is lighted*/state2 == F_LIGHTED || state2 == (F_LIGHTED|S_MARK) || (state2 == (S_LIGHTBULB|F_ERROR)) | state2 == (S_LIGHTBULB|F_LIGHTED) | state2 == (S_LIGHTBULB|F_ERROR|F_LIGHTED)){
 							return false;
 						}
