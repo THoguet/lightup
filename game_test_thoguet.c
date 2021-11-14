@@ -394,7 +394,7 @@ bool brutforce(game g,int a){
 
 bool test_game_update_flags(void){
 	game g = game_new_empty();
-	if (!brutforce(g,3)){
+	if (!brutforce(g,1)){
 		game_delete(g);
 		return EXIT_FAILURE;
 	}
