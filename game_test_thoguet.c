@@ -61,9 +61,8 @@ bool test_game_new(void){
 // est ce qu'il faut faire avec un tab invalide ?
 
 bool test_game_print(void){
-	game_print(NULL);
 	square tab[DEFAULT_SIZE*DEFAULT_SIZE];
-	square list[] = {S_BLANK,S_LIGHTBULB,S_MARK,S_BLACK,S_BLACK0,S_BLACK1,S_BLACK2,S_BLACK3,S_BLACK4,S_BLACKU,F_ERROR};
+	square list[] = {S_BLANK,S_LIGHTBULB,S_MARK,S_BLACK0,S_BLACK1,S_BLACK2,S_BLACK3,S_BLACK4,S_BLACKU};
 	game g;
 	for (uint i = 0; i < sizeof(list)/sizeof(list[0]) ; i ++){
 		for (uint j = 0; j < DEFAULT_SIZE*DEFAULT_SIZE; j++){
@@ -395,7 +394,7 @@ bool brutforce(game g,int a){
 
 bool test_game_update_flags(void){
 	game g = game_new_empty();
-	if (!brutforce(g,2)){
+	if (!brutforce(g,3)){
 		game_delete(g);
 		return EXIT_FAILURE;
 	}
