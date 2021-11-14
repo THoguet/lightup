@@ -1,6 +1,8 @@
 # lightup-a42e
 
 Projet Techno
+
+<span style="color:red"><b>LE PREMIER QUI COMMIT DU CODE QUI COMPILE PAS JE L'ATTRAPE</b></span>
 ## Tests
 
 | Test                                                | REF                                                                          | Assigned to | Notes                                                    |        Finished        |
