@@ -2,7 +2,7 @@
 
 Projet Techno
 
-**LE PREMIER QUI COMMIT DU CODE QUI COMPILE PAS JE L'ATTRAPE**
+:warning: ** LE PREMIER QUI COMMIT DU CODE QUI COMPILE PAS JE L'ATTRAPE ** :warning:
 ## Tests
 
 | Test                                                | REF                                                                          | Assigned to | Notes                                                    |        Finished        |
