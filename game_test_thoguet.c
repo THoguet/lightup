@@ -402,7 +402,7 @@ bool brutforce(game g,int a, bool * deldup){
 
 bool test_game_update_flags(void){
 	game g = game_new_empty();
-	if (!brutforce(g,2,NULL)){
+	if (!brutforce(g,1,NULL)){
 		game_delete(g);
 		return EXIT_FAILURE;
 	}
