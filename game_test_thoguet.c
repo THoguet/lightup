@@ -15,19 +15,12 @@ bool test_dummy(void){
 /* ******* game_is_over ******* */
 
 bool test_game_is_over(void){
-	square tab[49] = 
-	{
-		S_LIGHTBULB,S_BLANK    ,S_BLACK1   ,S_LIGHTBULB,S_BLANK    ,S_BLANK    ,S_BLANK    ,
-		S_BLANK    ,S_LIGHTBULB,S_BLACK2   ,S_BLANK    ,S_BLANK    ,S_BLANK    ,S_LIGHTBULB,
-		S_BLANK    ,S_BLANK    ,S_LIGHTBULB,S_BLANK    ,S_BLANK    ,S_BLACKU   ,S_BLACK2   ,
-		S_BLANK    ,S_BLANK    ,S_BLANK    ,S_BLANK    ,S_BLANK    ,S_BLANK    ,S_LIGHTBULB,
-		S_BLACK1   ,S_BLACKU   ,S_BLANK    ,S_BLANK    ,S_LIGHTBULB,S_BLANK    ,S_BLANK    ,
-		S_LIGHTBULB,S_BLANK    ,S_BLANK    ,S_BLANK    ,S_BLACK2   ,S_LIGHTBULB,S_BLANK    ,
-		S_BLANK    ,S_LIGHTBULB,S_BLANK    ,S_BLANK    ,S_BLACKU   ,S_BLANK    ,S_BLANK
-	};
-	game g = game_new(tab);
+	game g = game_default_solution();
 	game_update_flags(g);
 	assert(game_is_over(g));
+	g = game_default();
+	game_update_flags(g);
+	assert(!game_is_over(g));
 	game_delete(g);
 	return EXIT_SUCCESS;
 }
@@ -153,9 +146,11 @@ bool test_game_default_solution(void){
 
 int checklightbulb(game g, uint i, uint j, bool wall){
 	square flags = game_get_flags(g,i,j);
+	square state = game_get_state(g,i,j);
 	//test if the current case is a lightbulb and if it has been well updated if true we can break the loop because every others cases wont be lighted by the bulb we are testing
 	if (game_is_lightbulb(g,i,j)){
 		if (/*test if this lightbulb is well updated*/ flags == S_BLANK || flags == F_ERROR){
+			//printf("156\n");
 			return 0;
 		}
 		return -1;
@@ -165,12 +160,56 @@ int checklightbulb(game g, uint i, uint j, bool wall){
 		
 		//test if the current case is not lighted
 		if (flags != F_LIGHTED){
+			//printf("170\n");
 			return 0;							
 		}
 		
 	}
 	else{
 		if (/*test if the current case is lighted*/ flags == F_LIGHTED){
+			//printf("i:%d j:%d\n",i,j);
+			for (int i2 = i-1 ; i2 >= 0; i2--){
+				flags = game_get_flags(g,i2,j);
+				state = game_get_state(g,i2,j);
+				//printf("i2:%d i2state:%d i2flags:%d\n",i2,state,flags);
+				if (state == S_LIGHTBULB){
+					return -1;
+				}
+				if (flags != F_LIGHTED){
+					break;
+				}
+			}
+			for (int i2 = i+1 ; i2 < DEFAULT_SIZE; i2++){
+				flags = game_get_flags(g,i2,j);
+				state = game_get_state(g,i2,j);
+				if (state == S_LIGHTBULB){
+					return -1;
+				}
+				if (flags != F_LIGHTED){
+					break;
+				}
+			}
+			for (int j2 = j-1 ; j2 >= 0; j2--){
+				flags = game_get_flags(g,i,j2);
+				state = game_get_state(g,i,j2);
+				if (state == S_LIGHTBULB){
+					return -1;
+				}
+				if (flags != F_LIGHTED){
+					break;
+				}
+			}
+			for (int j2 = j+1 ; j2 < DEFAULT_SIZE; j2++){
+				flags = game_get_flags(g,i,j2);
+				state = game_get_state(g,i,j2);
+				if (state == S_LIGHTBULB){
+					return -1;
+				}
+				if (flags != F_LIGHTED){
+					break;
+				}
+			}
+			//printf("220\n");
 			return 0;
 		}
 	}
@@ -189,6 +228,7 @@ bool check_update(game g){
 			if (game_is_lightbulb(g,i,j)){
 				square flags = game_get_flags(g,i,j);
 				if (/*test if this lightbulb is well updated*/ flags == S_BLANK || flags == F_ERROR){
+					//printf("196\n");
 					return false;
 				}
 				//loop checking every case before i
@@ -253,7 +293,7 @@ bool check_update(game g){
 					}
 				}
 			}
-			if (/*test if current case is a wall*/game_is_black(g,i,j)){
+			else if (/*test if current case is a wall*/game_is_black(g,i,j)){
 				if (game_get_black_number(g,i,j) != -1){
 					//lookup for lightbulb and emptycells
 					size = 0;
@@ -289,7 +329,7 @@ bool check_update(game g){
 						notempty++;
 					}
 					for (int l = 0 ; l < size ; l++){
-						if (choice[l] == S_LIGHTBULB || choice[l] == (S_LIGHTBULB|F_LIGHTED|F_ERROR)){
+						if (choice[l] == (S_LIGHTBULB|F_LIGHTED) || choice[l] == (S_LIGHTBULB|F_LIGHTED|F_ERROR)){
 							lb++;
 						}
 						else if (choice[l] != S_BLANK){
@@ -307,6 +347,8 @@ bool check_update(game g){
 						res = !res;
 					}
 					if (!res){
+						//printf("386\n");
+						//printf("lb:%d notempty:%d i:%d j:%d state : %d, flags: %d\n",lb,notempty,i,j,game_get_state(g,i,j),game_get_flags(g,i,j));
 						return res;
 					}
 				}
@@ -319,31 +361,45 @@ bool check_update(game g){
 // a > 2 = temps d'exec > 3 min et expo
 bool brutforce(game g,int a){
 	square list[] = {S_LIGHTBULB,S_MARK,S_BLACK0,S_BLACK1,S_BLACK2,S_BLACK3,S_BLACK4,S_BLACKU,S_BLANK};
+	uint * deldup = (uint *) calloc(DEFAULT_SIZE*DEFAULT_SIZE,sizeof(uint));
 	for (uint i = 0; i < DEFAULT_SIZE; i++){
 		for (uint j = 0 ;j < DEFAULT_SIZE; j++){
-			if (game_get_state(g,i,j) == S_BLANK){
-				for (uint k = 0 ; k < sizeof(list)/sizeof(list[0]); k++){
-					game_set_square(g,i,j,list[k]);
-					game_update_flags(g);
-					if (!check_update(g)){
-						game_print(g);
-						return false;
-					}
-					if (a > 0){
-						return brutforce(g,a-1);
+			if (!deldup[i+j]){
+				if (game_get_state(g,i,j) == S_BLANK){
+					for (uint k = 0 ; k < sizeof(list)/sizeof(list[0]); k++){
+						game_set_square(g,i,j,list[k]);
+						deldup[i+j] = 1;
+						game_update_flags(g);
+						// game_print(g);
+						if (!check_update(g)){
+							game_print(g);
+							//printf("i:%d j:%d state : %d, flags: %d\n",i,j,game_get_state(g,i,j),game_get_flags(g,i,j));
+							free(deldup);
+							return false;
+						}
+						if (a > 0){
+							if (!brutforce(g,a-1)){
+								//printf("341\n");
+								free(deldup);
+								return false;
+							}
+						}
 					}
 				}
 			}
 		}
 	}
+	free(deldup);
 	return true;
 }
 
 bool test_game_update_flags(void){
 	game g = game_new_empty();
-	if (!brutforce(g,DEFAULT_SIZE*DEFAULT_SIZE)){
+	if (!brutforce(g,2)){
+		game_delete(g);
 		return EXIT_FAILURE;
-	};
+	}
+	game_delete(g);
 	return EXIT_SUCCESS;
 }
 
