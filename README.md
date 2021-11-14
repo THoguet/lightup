@@ -25,7 +25,7 @@ Projet Techno
 | [game_has_error](./game_test_nnunes.c#L?)           | [bool game_has_error(cgame g, uint i, uint j)](./game.h#L240-252)            | @nnunes     |                                         | <ul><li>[ ] </li></ul> |
 | [game_check_move](./game_test_nnunes.c#L?)          | [bool game_check_move(cgame g, uint i, uint j, square s)](./game.h#L242-269) | @nnunes     |                                         | <ul><li>[ ] </li></ul> |
 | [game_play_move](./game_test_nnunes.c#L?)           | [void game_play_move(game g, uint i, uint j, square s)](./game.h#L271-284)   | @nnunes     |                                         | <ul><li>[ ] </li></ul> |
-| [game_update_flags](./game_test_thoguet.c#L?)       | [void game_update_flags(game g)](./game.h#L145-406)                          | @thoguet    | done but not sure if it test every case | <ul><li>[X] </li></ul> |
+| [game_update_flags](./game_test_thoguet.c#L144-410) | [void game_update_flags(game g)](./game.h#L145-406)                          | @thoguet    | done but not sure if it test every case | <ul><li>[X] </li></ul> |
 | [game_is_over](./game_test_thoguet.c#L17)           | [bool game_is_over(cgame g)](./game.h#L295-304)                              | @thoguet    |                                         | <ul><li>[X] </li></ul> |
 | [game_restart](./game_test_thoguet.c#L37)           | [void game_restart(game g)](./game.h#L306-313)                               | @thoguet    |                                         | <ul><li>[X] </li></ul> |
 | [game_print](./game_test_thoguet.c#L70)             | [void game_print(cgame g)](./game_aux.h#L13-20)                              | @thoguet    |                                         | <ul><li>[X] </li></ul> |
