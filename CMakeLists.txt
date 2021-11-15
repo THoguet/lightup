@@ -32,5 +32,6 @@ add_test(test_thoguet_game_is_over ./game_test_thoguet game_is_over)
 add_test(test_thoguet_game_update_flags ./game_test_thoguet game_update_flags)
 
 add_test(test_thperrier_dummy ./game_test_thperrier dummy)
-add_test(test_thperrier_game_new_empty ./game_test_thperrier game_new_empty)
 add_test(test_thperrier_game_copy ./game_test_thperrier game_copy)
+add_test(test_thperrier_game_new_empty ./game_test_thperrier game_new_empty)
+add_test(test_thperrier_game_equal ./game_test_thperrier game_equal)
