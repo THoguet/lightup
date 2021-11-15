@@ -12,6 +12,17 @@ bool test_dummy(){
     return true;
 }
 
+/* ********** game_is_blank ********** */
+bool test_game_is_blank(){
+    game g = game_new_empty();
+    if (game_is_blank(g, 0, 0)){
+        game_delete(g);
+        return true;
+    }
+    game_delete(g);
+    return false;
+}
+
 /* ********** game_delete ********** */
 bool test_game_delete(){
     game g1 = game_new_empty();
@@ -95,6 +106,9 @@ int main (int argc, char *argv[]){
     }
     else if (strcmp("game_delete", argv[1]) == 0){
         success = test_game_delete();
+    }
+    else if (strcmp("game_is_blank", argv[1]) == 0){
+        success = test_game_is_blank();
     }
     else{
         fprintf (stderr, "test \"%s\" is not a valid test name.\n", argv[1]);
