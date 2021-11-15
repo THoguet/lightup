@@ -13,6 +13,18 @@ bool test_dummy(){
 }
 
 /* ********** game_is_blank ********** */
+bool test_game_is_lightbulb(){
+    game g = game_new_empty();
+    game_set_square(g, 0, 0, S_LIGHTBULB);
+    if ((game_get_square(g, 0, 0) == S_LIGHTBULB) && game_is_lightbulb(g, 0, 0)){
+        game_delete(g);
+        return true;
+    }
+    game_delete(g);
+    return false;
+}
+
+/* ********** game_is_blank ********** */
 bool test_game_is_blank(){
     game g = game_new_empty();
     if (game_is_blank(g, 0, 0)){
@@ -109,6 +121,9 @@ int main (int argc, char *argv[]){
     }
     else if (strcmp("game_is_blank", argv[1]) == 0){
         success = test_game_is_blank();
+    }
+    else if (strcmp("game_is_lightbulb", argv[1]) == 0){
+        success = test_game_is_lightbulb();
     }
     else{
         fprintf (stderr, "test \"%s\" is not a valid test name.\n", argv[1]);
