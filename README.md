@@ -11,7 +11,7 @@ Projet Techno
 | [game_new_empty](./game_test_thperrier.c#L16)       | [game game_new_empty(void)](./game.h#L83-88)                                 | @thperrier  |                                         | <ul><li>[X] </li></ul> |
 | [game_copy](./game_test_thperrier.c#L32)            | [game game_copy(cgame g)](./game.h#L90-96)                                   | @thperrier  |                                         | <ul><li>[X] </li></ul> |
 | [game_equal](./game_test_thperrier.c#L?)            | [bool game_equal(cgame g1, cgame g2)](./game.h#L98-106)                      | @thperrier  |                                         | <ul><li>[X] </li></ul> |
-| [game_delete](./game_test_thperrier.c#L?)           | [void game_delete(game g);](./game.h#L108-113)                               | @thperrier  |                                         | <ul><li>[ ] </li></ul> |
+| [game_delete](./game_test_thperrier.c#L?)           | [void game_delete(game g);](./game.h#L108-113)                               | @thperrier  |                                         | <ul><li>[x] </li></ul> |
 | [game_set_square](./game_test_nnunes.c#L?)          | [void game_set_square(game g, uint i, uint j, square s)](./game.h#L115-128)  | @nnunes     |                                         | <ul><li>[ ] </li></ul> |
 | [game_get_square](./game_test_thoguet.c#L89)        | [square game_get_square(cgame g, uint i, uint j)](./game.h#L130-140)         | @thoguet    |                                         | <ul><li>[x] </li></ul> |
 | [game_get_state](./game_test_nnunes.c#L?)           | [square game_get_state(cgame g, uint i, uint j)](./game.h#L142-153)          | @nnunes     |                                         | <ul><li>[ ] </li></ul> |
