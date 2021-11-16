@@ -145,11 +145,7 @@ bool test_game_is_blank(){
 /* ********** game_delete ********** */
 bool test_game_delete(){
     game g1 = game_new_empty();
-    game g2 = game_new_empty();
     game_delete(g1);
-    if (game_equal(g1, g2)){
-        return false;
-    }
     return true;
 }
 
@@ -161,13 +157,14 @@ bool test_game_equal(){
     for (int i = 0; i < DEFAULT_SIZE; i++){
         for (int j = 0; j < DEFAULT_SIZE; j++){
             if (game_get_square(g1, i, j) != game_get_square(g2, i, j)){
-                game_delete(g1);
-                game_delete(g2);
                 equal = false;
             }
         }
     }
-    return (equal == game_equal(g1, g2));
+    equal = (equal == game_equal(g1, g2));
+    game_delete(g1);
+    game_delete(g2);
+    return equal;
 }
 
 /* ********** game_new_empty ********** */
