@@ -303,12 +303,15 @@ int main(int argc, char * argv[]){
   }
   else if (strcmp("game_is_lighted", argv[1]) == 0){
     success = test_game_is_lighted();
-  }                            
+  } 
+  else if (strcmp("game_has_error", argv[1]) == 0){
+    success = test_game_has_error();
+  }                           
   else {
     fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
     exit(EXIT_FAILURE);
   }
-  if (!success){
+  if (success){
     fprintf(stderr, "Test \"%s\" finished: SUCCESS\n", argv[1]);
     return EXIT_SUCCESS;
   }
