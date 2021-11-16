@@ -17,7 +17,7 @@ void usage(int argc, char *argv[])
 }
 
 /* ************** game_get_square ************** */
-bool test_game_set_square(void){
+bool test_game_get_square(void){
   game g = game_new_empty();
   game_set_square(g, 0, 0, S_LIGHTBULB);
   if (game_get_square(g, 0, 0) != S_LIGHTBULB){
@@ -69,93 +69,93 @@ bool test_game_set_square(void){
     game_delete(g);
     return false;
   }
-  game_set_square(g, 0, 0, S_LIGHTBULB|F_ERROR);
-  if (game_get_square(g, 0, 0) != S_LIGHTBULB|F_ERROR){
+  game_set_square(g, 0, 0, (S_LIGHTBULB|F_ERROR));
+  if (game_get_square(g, 0, 0) != (S_LIGHTBULB|F_ERROR)){
     game_delete(g);
     return false;
   }
-  game_set_square(g, 0, 0, S_BLANK|F_ERROR);
-  if (game_get_square(g, 0, 0) != S_BLANK|F_ERROR){
+  game_set_square(g, 0, 0, (S_BLANK|F_ERROR));
+  if (game_get_square(g, 0, 0) != (S_BLANK|F_ERROR)){
     game_delete(g);
     return false;
   }
-  game_set_square(g, 0, 0, S_MARK|F_ERROR);
-  if (game_get_square(g, 0, 0) != S_MARK|F_ERROR){
+  game_set_square(g, 0, 0, (S_MARK|F_ERROR));
+  if (game_get_square(g, 0, 0) != (S_MARK|F_ERROR)){
     game_delete(g);
     return false;
   }  
-  game_set_square(g, 0, 0, S_BLACK|F_ERROR);
-  if (game_get_square(g, 0, 0) != S_BLACK|F_ERROR){
+  game_set_square(g, 0, 0, (S_BLACK|F_ERROR));
+  if (game_get_square(g, 0, 0) != (S_BLACK|F_ERROR)){
     game_delete(g);
     return false;
   } 
-  game_set_square(g, 0, 0, S_BLACK0|F_ERROR);
-  if (game_get_square(g, 0, 0) != S_BLACK0|F_ERROR){
+  game_set_square(g, 0, 0, (S_BLACK0|F_ERROR));
+  if (game_get_square(g, 0, 0) != (S_BLACK0|F_ERROR)){
     game_delete(g);
     return false;
   } 
-  game_set_square(g, 0, 0, S_BLACK1|F_ERROR);
-  if (game_get_square(g, 0, 0) != S_BLACK1|F_ERROR){
+  game_set_square(g, 0, 0, (S_BLACK1|F_ERROR));
+  if (game_get_square(g, 0, 0) != (S_BLACK1|F_ERROR)){
     game_delete(g);
     return false;
   }  
-  game_set_square(g, 0, 0, S_BLACK2|F_ERROR);
-  if (game_get_square(g, 0, 0) != S_BLACK2|F_ERROR){
+  game_set_square(g, 0, 0, (S_BLACK2|F_ERROR));
+  if (game_get_square(g, 0, 0) != (S_BLACK2|F_ERROR)){
     game_delete(g);
     return false;
   }
-  game_set_square(g, 0, 0, S_BLACK3|F_ERROR);
-  if (game_get_square(g, 0, 0) != S_BLACK3|F_ERROR){
+  game_set_square(g, 0, 0, (S_BLACK3|F_ERROR));
+  if (game_get_square(g, 0, 0) != (S_BLACK3|F_ERROR)){
     game_delete(g);
     return false;
   }
-  game_set_square(g, 0, 0, S_BLACK4|F_ERROR);
-  if (game_get_square(g, 0, 0) != S_BLACK4|F_ERROR){
+  game_set_square(g, 0, 0, (S_BLACK4|F_ERROR));
+  if (game_get_square(g, 0, 0) != (S_BLACK4|F_ERROR)){
     game_delete(g);
     return false;
   } 
-  game_set_square(g, 0, 0, S_BLACKU|F_ERROR);
-  if (game_get_square(g, 0, 0) != S_BLACKU|F_ERROR){
+  game_set_square(g, 0, 0, (S_BLACKU|F_ERROR));
+  if (game_get_square(g, 0, 0) != (S_BLACKU|F_ERROR)){
     game_delete(g);
     return false;
   }  
-  game_set_square(g, 0, 0, S_LIGHTBULB|F_LIGHTED);
-  if (game_get_square(g, 0, 0) != S_LIGHTBULB|F_LIGHTED){
+  game_set_square(g, 0, 0, (S_LIGHTBULB|F_LIGHTED));
+  if (game_get_square(g, 0, 0) != (S_LIGHTBULB|F_LIGHTED)){
     game_delete(g);
     return false;
   }
-  game_set_square(g, 0, 0, S_BLANK|F_LIGHTED);
-  if (game_get_square(g, 0, 0) != S_BLANK|F_LIGHTED){
+  game_set_square(g, 0, 0, (S_BLANK|F_LIGHTED));
+  if (game_get_square(g, 0, 0) != (S_BLANK|F_LIGHTED)){
     game_delete(g);
     return false;
   }
-  game_set_square(g, 0, 0, S_MARK|F_LIGHTED);
-  if (game_get_square(g, 0, 0) != S_MARK|F_LIGHTED){
+  game_set_square(g, 0, 0, (S_MARK|F_LIGHTED));
+  if (game_get_square(g, 0, 0) != (S_MARK|F_LIGHTED)){
     game_delete(g);
     return false;
   } 
-  game_set_square(g, 0, 0, S_BLACKU|F_LIGHTED);
-  if (game_get_square(g, 0, 0) != S_BLACKU|F_LIGHTED){
+  game_set_square(g, 0, 0, (S_BLACKU|F_LIGHTED));
+  if (game_get_square(g, 0, 0) != (S_BLACKU|F_LIGHTED)){
     game_delete(g);
     return false;
   }
-  game_set_square(g, 0, 0, S_LIGHTBULB|F_LIGHTED|F_ERROR);
-  if (game_get_square(g, 0, 0) != S_LIGHTBULB|F_LIGHTED|F_ERROR){
+  game_set_square(g, 0, 0, (S_LIGHTBULB|F_LIGHTED|F_ERROR));
+  if (game_get_square(g, 0, 0) != (S_LIGHTBULB|F_LIGHTED|F_ERROR)){
     game_delete(g);
     return false;
   }
-  game_set_square(g, 0, 0, S_BLANK|F_LIGHTED|F_ERROR);
-  if (game_get_square(g, 0, 0) != S_BLANK|F_LIGHTED|F_ERROR){
+  game_set_square(g, 0, 0, (S_BLANK|F_LIGHTED|F_ERROR));
+  if (game_get_square(g, 0, 0) != (S_BLANK|F_LIGHTED|F_ERROR)){
     game_delete(g);
     return false;
   }
-  game_set_square(g, 0, 0, S_MARK|F_LIGHTED|F_ERROR);
-  if (game_get_square(g, 0, 0) != S_MARK|F_LIGHTED|F_ERROR){
+  game_set_square(g, 0, 0, (S_MARK|F_LIGHTED|F_ERROR));
+  if (game_get_square(g, 0, 0) != (S_MARK|F_LIGHTED|F_ERROR)){
     game_delete(g);
     return false;
   }  
-  game_set_square(g, 0, 0, S_BLACKU|F_LIGHTED|F_ERROR);
-  if (game_get_square(g, 0, 0) != S_BLACKU|F_LIGHTED|F_ERROR){
+  game_set_square(g, 0, 0, (S_BLACKU|F_LIGHTED|F_ERROR));
+  if (game_get_square(g, 0, 0) != (S_BLACKU|F_LIGHTED|F_ERROR)){
     game_delete(g);
     return false;
   }  
@@ -255,7 +255,7 @@ bool test_game_is_marked(void){
 }
 
 /* ************** game_is_lighted ************** */
-bool test_game_is_marked(void){
+bool test_game_is_lighted(void){
   game g = game_new_empty();
   game_set_square(g, 0, 0, S_BLANK|F_LIGHTED);
   if ((game_get_square(g, 0, 0) == F_LIGHTED) && game_is_lighted(g, 0, 0)){
@@ -268,9 +268,10 @@ bool test_game_is_marked(void){
 
 /* ************** game_has_error ************** */
 bool test_game_has_error(void){
+  game g = game_new_empty();
   for(int i=0; i < DEFAULT_SIZE; i++){
     for(int j=0; j < DEFAULT_SIZE; j++){
-      if((game_get_flags(g, i, j) == F_ERROR)||(game_get_flags(g, i, j) == F_ERROR|F_LIGHTED) && (game_has_error(g, i, j) == false)){
+      if(((game_get_flags(g, i, j) == F_ERROR)||(game_get_flags(g, i, j) == (F_ERROR|F_LIGHTED))) && (game_has_error(g, i, j) == false)){
         game_delete(g);
         return false;
       }
@@ -294,7 +295,7 @@ int main(int argc, char * argv[]){
   else if (strcmp("game_get_state", argv[1]) == 0){
     success = test_game_get_state();
   }
-  else if (strcmp("game_get_falgs", argv[1]) == 0){
+  else if (strcmp("game_get_flags", argv[1]) == 0){
     success = test_game_get_flags();
   }
   else if (strcmp("game_is_marked", argv[1]) == 0){
