@@ -69,16 +69,96 @@ bool test_game_set_square(void){
     game_delete(g);
     return false;
   }
-  game_set_square(g, 0, 0, S_F_LIGHTED);
-  if (game_get_square(g, 0, 0) != F_LIGHTED){
-    game_delete(g);
-    return false;
-  } 
-  game_set_square(g, 0, 0, F_ERROR);
-  if (game_get_square(g, 0, 0) != F_ERROR){
+  game_set_square(g, 0, 0, S_LIGHTBULB|F_ERROR);
+  if (game_get_square(g, 0, 0) != S_LIGHTBULB|F_ERROR){
     game_delete(g);
     return false;
   }
+  game_set_square(g, 0, 0, S_BLANK|F_ERROR);
+  if (game_get_square(g, 0, 0) != S_BLANK|F_ERROR){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, S_MARK|F_ERROR);
+  if (game_get_square(g, 0, 0) != S_MARK|F_ERROR){
+    game_delete(g);
+    return false;
+  }  
+  game_set_square(g, 0, 0, S_BLACK|F_ERROR);
+  if (game_get_square(g, 0, 0) != S_BLACK|F_ERROR){
+    game_delete(g);
+    return false;
+  } 
+  game_set_square(g, 0, 0, S_BLACK0|F_ERROR);
+  if (game_get_square(g, 0, 0) != S_BLACK0|F_ERROR){
+    game_delete(g);
+    return false;
+  } 
+  game_set_square(g, 0, 0, S_BLACK1|F_ERROR);
+  if (game_get_square(g, 0, 0) != S_BLACK1|F_ERROR){
+    game_delete(g);
+    return false;
+  }  
+  game_set_square(g, 0, 0, S_BLACK2|F_ERROR);
+  if (game_get_square(g, 0, 0) != S_BLACK2|F_ERROR){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, S_BLACK3|F_ERROR);
+  if (game_get_square(g, 0, 0) != S_BLACK3|F_ERROR){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, S_BLACK4|F_ERROR);
+  if (game_get_square(g, 0, 0) != S_BLACK4|F_ERROR){
+    game_delete(g);
+    return false;
+  } 
+  game_set_square(g, 0, 0, S_BLACKU|F_ERROR);
+  if (game_get_square(g, 0, 0) != S_BLACKU|F_ERROR){
+    game_delete(g);
+    return false;
+  }  
+  game_set_square(g, 0, 0, S_LIGHTBULB|F_LIGHTED);
+  if (game_get_square(g, 0, 0) != S_LIGHTBULB|F_LIGHTED){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, S_BLANK|F_LIGHTED);
+  if (game_get_square(g, 0, 0) != S_BLANK|F_LIGHTED){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, S_MARK|F_LIGHTED);
+  if (game_get_square(g, 0, 0) != S_MARK|F_LIGHTED){
+    game_delete(g);
+    return false;
+  } 
+  game_set_square(g, 0, 0, S_BLACKU|F_LIGHTED);
+  if (game_get_square(g, 0, 0) != S_BLACKU|F_LIGHTED){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, S_LIGHTBULB|F_LIGHTED|F_ERROR);
+  if (game_get_square(g, 0, 0) != S_LIGHTBULB|F_LIGHTED|F_ERROR){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, S_BLANK|F_LIGHTED|F_ERROR);
+  if (game_get_square(g, 0, 0) != S_BLANK|F_LIGHTED|F_ERROR){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, S_MARK|F_LIGHTED|F_ERROR);
+  if (game_get_square(g, 0, 0) != S_MARK|F_LIGHTED|F_ERROR){
+    game_delete(g);
+    return false;
+  }  
+  game_set_square(g, 0, 0, S_BLACKU|F_LIGHTED|F_ERROR);
+  if (game_get_square(g, 0, 0) != S_BLACKU|F_LIGHTED|F_ERROR){
+    game_delete(g);
+    return false;
+  }  
   game_delete(g);
   return true;                           
 }
@@ -143,13 +223,18 @@ bool test_game_get_state(void){
 /* ************** game_get_flags ************** */
 bool test_game_get_flags(void){
   game g = game_new_empty();
-  game_set_square(g, 0, 0, S_F_LIGHTED);
+  game_set_square(g, 0, 0, S_BLANK|F_LIGHTED);
   if (game_get_flags(g, 0, 0) != F_LIGHTED){
     game_delete(g);
     return false;
   } 
-  game_set_square(g, 0, 0, F_ERROR);
+  game_set_square(g, 0, 0, S_BLANK|F_ERROR);
   if (game_get_flags(g, 0, 0) != F_ERROR){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, S_BLANK|F_ERROR|F_LIGHTED);
+  if (game_get_flags(g, 0, 0) != (F_ERROR|F_LIGHTED)){
     game_delete(g);
     return false;
   }
@@ -172,7 +257,7 @@ bool test_game_is_marked(void){
 /* ************** game_is_lighted ************** */
 bool test_game_is_marked(void){
   game g = game_new_empty();
-  game_set_square(g, 0, 0, F_LIGHTED);
+  game_set_square(g, 0, 0, S_BLANK|F_LIGHTED);
   if ((game_get_square(g, 0, 0) == F_LIGHTED) && game_is_lighted(g, 0, 0)){
     game_delete(g);
     return true;
@@ -181,14 +266,28 @@ bool test_game_is_marked(void){
   return false;
 }
 
+/* ************** game_has_error ************** */
+bool test_game_has_error(void){
+  for(int i=0; i < DEFAULT_SIZE; i++){
+    for(int j=0; j < DEFAULT_SIZE; j++){
+      if((game_get_flags(g, i, j) == F_ERROR)||(game_get_flags(g, i, j) == F_ERROR|F_LIGHTED) && (game_has_error(g, i, j) == false)){
+        game_delete(g);
+        return false;
+      }
+    }
+  }
+  game_delete(g);
+  return true;
+}
+
 int main(int argc, char * argv[]){
   if (argc != 2){
     usage(argc, argv);
   }
   fprintf(stderr, "=> Start test \"%s\"\n", argv[1]);
-  bool ok = false;
+  bool success = false;
   if (strcmp("dummy", argv[1]) == 0)
-    ok = test_dummy();
+    success = test_dummy();
   else if (strcmp("game_get_square", argv[1]) == 0){
     success = test_game_get_square();
   }
@@ -208,7 +307,7 @@ int main(int argc, char * argv[]){
     fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
     exit(EXIT_FAILURE);
   }
-  if (!ok){
+  if (!success){
     fprintf(stderr, "Test \"%s\" finished: SUCCESS\n", argv[1]);
     return EXIT_SUCCESS;
   }
