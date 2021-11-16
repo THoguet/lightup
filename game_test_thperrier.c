@@ -12,6 +12,38 @@ bool test_dummy(){
     return true;
 }
 
+/* ********** game_get_black_number ********** */
+bool test_game_get_black_number(){
+    game g = game_new_empty();
+    game_set_square(g, 0, 0, S_BLACK0);
+    if (game_get_black_number(g, 0, 0) != 0){
+        game_delete(g);
+        return false;
+    }
+    game_set_square(g, 0, 0, S_BLACK1);
+    if (game_get_black_number(g, 0, 0) != 1){
+        game_delete(g);
+        return false;
+    }
+    game_set_square(g, 0, 0, S_BLACK2);
+    if (game_get_black_number(g, 0, 0) != 2){
+        game_delete(g);
+        return false;
+    }
+    game_set_square(g, 0, 0, S_BLACK3);
+    if (game_get_black_number(g, 0, 0) != 3){
+        game_delete(g);
+        return false;
+    }
+    game_set_square(g, 0, 0, S_BLACK4);
+    if (game_get_black_number(g, 0, 0) != 4){
+        game_delete(g);
+        return false;
+    }
+    game_delete(g);
+    return true;
+}
+
 /* ********** game_is_black ********** */
 bool test_game_is_black(){
     game g = game_new_empty();
@@ -203,6 +235,9 @@ int main (int argc, char *argv[]){
     }
     else if (strcmp("game_is_black", argv[1]) == 0){
         success = test_game_is_black();
+    }
+    else if (strcmp("game_get_black_number", argv[1]) == 0){
+        success = test_game_get_black_number();
     }
     else{
         fprintf (stderr, "test \"%s\" is not a valid test name.\n", argv[1]);
