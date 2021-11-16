@@ -150,7 +150,6 @@ bool test_game_delete(){
     if (game_equal(g1, g2)){
         return false;
     }
-    g1 = NULL;
     return true;
 }
 
@@ -201,12 +200,12 @@ bool test_game_copy(){
     game_delete(g2);
     return true;
 }
-
+/* ********** usage ********** */
 void usage(int argc, char *argv[]){
     fprintf(stderr, "Usage: %s <testname>\n", argv[0]);
     exit(EXIT_FAILURE);
 }
-
+/* ********** main ********** */
 int main (int argc, char *argv[]){
     bool success = false;
     if (argc != 2){
