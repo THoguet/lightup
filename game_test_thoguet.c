@@ -18,6 +18,7 @@ bool test_game_is_over(void){
 	game g = game_default_solution();
 	game_update_flags(g);
 	assert(game_is_over(g));
+	game_delete(g);
 	g = game_default();
 	game_update_flags(g);
 	assert(!game_is_over(g));
@@ -138,6 +139,7 @@ bool test_game_default_solution(void){
 	game_update_flags(g1);
 	assert(game_equal(g,g1));
 	game_delete(g);
+	game_delete(g1);
 	return EXIT_SUCCESS;
 }
 
@@ -356,9 +358,7 @@ bool check_update(game g){
 // a > 2 = temps d'exec > 3 min et expo
 bool brutforce(game g,int a, bool * deldup){
 	// char c;
-	bool * delDupNext;
-	if (a > 0)
-		delDupNext = (bool *) calloc(DEFAULT_SIZE*DEFAULT_SIZE,sizeof(bool));
+	bool * delDupNext = (bool *) calloc(DEFAULT_SIZE*DEFAULT_SIZE,sizeof(bool));
 	square list[] = {S_LIGHTBULB,S_MARK,S_BLACK0,S_BLACK1,S_BLACK2,S_BLACK3,S_BLACK4,S_BLACKU,S_BLANK};
 	for (uint i = 0; i < DEFAULT_SIZE; i++){
 		for (uint j = 0 ;j < DEFAULT_SIZE; j++){
@@ -376,8 +376,7 @@ bool brutforce(game g,int a, bool * deldup){
 						if (a > 0){
 							if (!brutforce(g,a-1,delDupNext)){
 								//printf("341\n");
-								if (delDupNext != NULL)
-									free(delDupNext);
+								free(delDupNext);
 								return false;
 							}
 						}
@@ -385,8 +384,7 @@ bool brutforce(game g,int a, bool * deldup){
 						if (!check_update(g)){
 							game_print(g);
 							//printf("i:%d j:%d state : %d, flags: %d\n",i,j,game_get_state(g,i,j),game_get_flags(g,i,j));
-							if (delDupNext != NULL && a > 0)
-								free(delDupNext);
+							free(delDupNext);
 							return false;
 						}
 					}
@@ -394,8 +392,7 @@ bool brutforce(game g,int a, bool * deldup){
 			}
 		}
 	}
-	if (delDupNext != NULL && a > 0)
-		free(delDupNext);
+	free(delDupNext);
 	return true;
 }
 
@@ -432,6 +429,8 @@ bool test_game_play_move(void){
 	assert(!game_equal(g,g1));
 	game_update_flags(g1);
 	assert(game_equal(g,g1));
+	game_delete(g);
+	game_delete(g1);
 	return EXIT_SUCCESS;
 }
 
@@ -459,6 +458,7 @@ bool test_game_check_move(void){
 	assert(game_check_move(g,1,0,S_BLANK));
 	assert(game_check_move(g,1,0,S_MARK));
 	assert(game_check_move(g,1,0,S_LIGHTBULB));
+	game_delete(g);
 	return EXIT_SUCCESS;
 }
 
