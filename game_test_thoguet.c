@@ -100,15 +100,21 @@ bool test_game_default(void){
 	game g = game_default();
 	//a verif aps sur
 	assert(g);
-	assert(game_get_square(g,0,2) == S_BLACK1);
-	assert(game_get_square(g,1,2) == S_BLACK2);
-	assert(game_get_square(g,2,5) == S_BLACKU);
-	assert(game_get_square(g,2,6) == S_BLACK2);
-	assert(game_get_square(g,4,0) == S_BLACK1);
-	assert(game_get_square(g,4,1) == S_BLACKU);
-	assert(game_get_square(g,5,4) == S_BLACK2);
-	assert(game_get_square(g,6,4) == S_BLACKU);
+	square tab[49] = 
+	{
+                /*X0       X1       X2       X3       X4        X5      X6*/
+        /*Y 0*/ S_BLANK, S_BLANK, S_BLACK1, S_BLANK, S_BLANK, S_BLANK, S_BLANK,
+        /*Y 1*/ S_BLANK, S_BLANK, S_BLACK2, S_BLANK, S_BLANK, S_BLANK, S_BLANK,
+        /*Y 2*/ S_BLANK, S_BLANK, S_BLANK, S_BLANK, S_BLANK, S_BLACKU, S_BLACK2,
+        /*Y 3*/ S_BLANK, S_BLANK, S_BLANK, S_BLANK, S_BLANK, S_BLANK, S_BLANK,
+        /*Y 4*/ S_BLACK1, S_BLACKU, S_BLANK, S_BLANK, S_BLANK, S_BLANK, S_BLANK,
+        /*Y 5*/ S_BLANK, S_BLANK, S_BLANK, S_BLANK, S_BLACK2, S_BLANK, S_BLANK,
+        /*Y 6*/ S_BLANK, S_BLANK, S_BLANK, S_BLANK, S_BLACKU, S_BLANK, S_BLANK
+	};
+	game g1 = game_new(tab);
+	assert(game_equal(g,g1));
 	game_delete(g);
+	game_delete(g1);
 	return EXIT_SUCCESS;
 }
 
@@ -116,27 +122,21 @@ bool test_game_default(void){
 
 bool test_game_default_solution(void){
 	game g = game_default_solution();
+	game g1 = game_default();
 	assert(g);
-	//default
-	assert(game_get_square(g,0,2) == S_BLACK1);
-	assert(game_get_square(g,1,2) == S_BLACK2);
-	assert(game_get_square(g,2,5) == S_BLACKU);
-	assert(game_get_square(g,2,6) == S_BLACK2);
-	assert(game_get_square(g,4,0) == S_BLACK1);
-	assert(game_get_square(g,4,1) == S_BLACKU);
-	assert(game_get_square(g,5,4) == S_BLACK2);
-	assert(game_get_square(g,6,4) == S_BLACKU);
 	//solution
-	assert(game_get_square(g,0,0) == (S_LIGHTBULB|F_LIGHTED));
-	assert(game_get_square(g,1,1) == (S_LIGHTBULB|F_LIGHTED));
-	assert(game_get_square(g,0,3) == (S_LIGHTBULB|F_LIGHTED));
-	assert(game_get_square(g,1,6) == (S_LIGHTBULB|F_LIGHTED));
-	assert(game_get_square(g,2,2) == (S_LIGHTBULB|F_LIGHTED));
-	assert(game_get_square(g,3,6) == (S_LIGHTBULB|F_LIGHTED));
-	assert(game_get_square(g,4,4) == (S_LIGHTBULB|F_LIGHTED));
-	assert(game_get_square(g,5,0) == (S_LIGHTBULB|F_LIGHTED));
-	assert(game_get_square(g,5,5) == (S_LIGHTBULB|F_LIGHTED));
-	assert(game_get_square(g,6,1) == (S_LIGHTBULB|F_LIGHTED));
+	game_set_square(g1,0,0,S_LIGHTBULB);
+	game_set_square(g1,1,1,S_LIGHTBULB);
+	game_set_square(g1,0,3,S_LIGHTBULB);
+	game_set_square(g1,1,6,S_LIGHTBULB);
+	game_set_square(g1,2,2,S_LIGHTBULB);
+	game_set_square(g1,3,6,S_LIGHTBULB);
+	game_set_square(g1,4,4,S_LIGHTBULB);
+	game_set_square(g1,5,0,S_LIGHTBULB);
+	game_set_square(g1,5,5,S_LIGHTBULB);
+	game_set_square(g1,6,1,S_LIGHTBULB);
+	game_update_flags(g1);
+	assert(game_equal(g,g1));
 	game_delete(g);
 	return EXIT_SUCCESS;
 }

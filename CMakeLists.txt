@@ -33,8 +33,8 @@ add_test(test_thoguet_game_default_solution ./game_test_thoguet game_default_sol
 add_test(test_thoguet_game_restart ./game_test_thoguet game_restart)
 add_test(test_thoguet_game_is_over ./game_test_thoguet game_is_over)
 add_test(test_thoguet_game_update_flags ./game_test_thoguet game_update_flags)
-add_test(test_game_play_move ./game_test_thoguet game_play_move)
-add_test(test_game_check_move ./game_test_thoguet game_check_move)
+add_test(test_thoguet_game_play_move ./game_test_thoguet game_play_move)
+add_test(test_thoguet_game_check_move ./game_test_thoguet game_check_move)
 
 add_test(test_thperrier_dummy ./game_test_thperrier dummy)
 add_test(test_thperrier_game_copy ./game_test_thperrier game_copy)
