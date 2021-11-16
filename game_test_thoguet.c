@@ -409,6 +409,58 @@ bool test_game_update_flags(void){
 	return EXIT_SUCCESS;
 }
 
+/* ****** game_play_move ****** */
+
+bool test_game_play_move(void){
+	game g = game_new_empty();
+	game g1 = game_new_empty();
+	game_play_move(g,0,0,S_LIGHTBULB);
+	assert(!game_equal(g,g1));
+	game_set_square(g1,0,0,S_LIGHTBULB);
+	assert(!game_equal(g,g1));
+	game_update_flags(g1);
+	assert(game_equal(g,g1));
+	game_play_move(g,3,0,S_MARK);
+	assert(!game_equal(g,g1));
+	game_set_square(g1,3,0,S_MARK);
+	assert(!game_equal(g,g1));
+	game_update_flags(g1);
+	assert(game_equal(g,g1));
+	game_play_move(g,0,3,S_BLANK);
+	assert(game_equal(g,g1));
+	game_set_square(g1,0,3,S_BLANK);
+	assert(!game_equal(g,g1));
+	game_update_flags(g1);
+	assert(game_equal(g,g1));
+	return EXIT_SUCCESS;
+}
+
+
+/* ***** game_check_move ***** */
+
+bool test_game_check_move(void){
+	game g = game_new_empty();
+	assert(!game_check_move(g,10,10,S_BLANK));
+	assert(!game_check_move(g,10,10,S_BLACK0));
+	assert(!game_check_move(g,0,0,S_BLACK0));
+	assert(!game_check_move(g,0,0,S_BLACK1));
+	assert(!game_check_move(g,0,0,S_BLACK2));
+	assert(!game_check_move(g,0,0,S_BLACK3));
+	assert(!game_check_move(g,0,0,S_BLACK4));
+	assert(!game_check_move(g,0,0,S_BLACKU));
+	assert(!game_check_move(g,0,0,F_LIGHTED));
+	assert(!game_check_move(g,0,0,F_ERROR));
+	for (uint i = 0 ; i < S_BLACKU-S_BLACK0 ; i ++){
+		game_set_square(g,0,0,S_BLACK0+i);
+		assert(!game_check_move(g,0,0,S_BLANK));
+		assert(!game_check_move(g,0,0,S_MARK));
+		assert(!game_check_move(g,0,0,S_LIGHTBULB));
+	}
+	assert(game_check_move(g,1,0,S_BLANK));
+	assert(game_check_move(g,1,0,S_MARK));
+	assert(game_check_move(g,1,0,S_LIGHTBULB));
+	return EXIT_SUCCESS;
+}
 
 /* ********** USAGE ********** */
 
@@ -444,6 +496,10 @@ int main(int argc, char * argv[]){
 		ok = test_game_is_over();
 	else if (strcmp("game_update_flags", argv[1]) == 0)
 		ok = test_game_update_flags();
+	else if (strcmp("game_play_move", argv[1]) == 0)
+		ok = test_game_play_move();
+	else if (strcmp("game_check_move", argv[1]) == 0)
+		ok = test_game_check_move();
 	else {
     	fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
     	exit(EXIT_FAILURE);
