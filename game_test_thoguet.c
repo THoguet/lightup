@@ -29,12 +29,19 @@ bool test_game_is_over(void){
 /* ******* game_restart ******* */
 
 bool test_game_restart(void){
-	game g = game_default_solution();
-	game_update_flags(g);
-	game g1 = game_default();
-	game_update_flags(g1);
+	game g = game_default();
+	game g1 = game_default_solution();
+	game_set_square(g,1,5,S_BLACK4);
+	game_set_square(g1,1,5,S_BLACK4);
+	game_set_square(g,3,2,S_BLACK3);
+	game_set_square(g1,3,2,S_BLACK3);
+	game_set_square(g,0,1,S_LIGHTBULB);
+	game_set_square(g1,0,1,S_LIGHTBULB);
+	game_play_move(g,2,0,S_MARK);
+	game_play_move(g1,2,0,S_MARK);
+	assert(!game_equal(g,g1));
+	game_restart(g1);
 	game_restart(g);
-	game_update_flags(g);
 	assert(game_equal(g,g1));
 	game_delete(g);
 	game_delete(g1);
