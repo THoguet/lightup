@@ -30,8 +30,11 @@ bool test_game_is_over(void){
 
 bool test_game_restart(void){
 	game g = game_default_solution();
+	game_update_flags(g);
 	game g1 = game_default();
+	game_update_flags(g1);
 	game_restart(g);
+	game_update_flags(g);
 	assert(game_equal(g,g1));
 	game_delete(g);
 	game_delete(g1);
