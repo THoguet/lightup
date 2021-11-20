@@ -18,7 +18,6 @@ bool test_game_is_over(void){
 	game g = game_default_solution();
 	game_update_flags(g);
 	assert(game_is_over(g));
-	game_delete(g);
 	g = game_default();
 	game_update_flags(g);
 	assert(!game_is_over(g));
