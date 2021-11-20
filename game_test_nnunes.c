@@ -134,11 +134,6 @@ bool test_game_get_square(void){
     game_delete(g);
     return false;
   } 
-  game_set_square(g, 0, 0, (S_BLACKU|F_LIGHTED));
-  if (game_get_square(g, 0, 0) != (S_BLACKU|F_LIGHTED)){
-    game_delete(g);
-    return false;
-  }
   game_set_square(g, 0, 0, (S_LIGHTBULB|F_LIGHTED|F_ERROR));
   if (game_get_square(g, 0, 0) != (S_LIGHTBULB|F_LIGHTED|F_ERROR)){
     game_delete(g);
@@ -153,12 +148,7 @@ bool test_game_get_square(void){
   if (game_get_square(g, 0, 0) != (S_MARK|F_LIGHTED|F_ERROR)){
     game_delete(g);
     return false;
-  }  
-  game_set_square(g, 0, 0, (S_BLACKU|F_LIGHTED|F_ERROR));
-  if (game_get_square(g, 0, 0) != (S_BLACKU|F_LIGHTED|F_ERROR)){
-    game_delete(g);
-    return false;
-  }  
+  }   
   game_delete(g);
   return true;                           
 }
@@ -262,6 +252,11 @@ bool test_game_is_lighted(void){
     game_delete(g);
     return true;
   }
+  game_set_square(g, 0, 0, S_BLANK|F_LIGHTED|F_ERROR);
+  if((game_get_flags(g, 0, 0) == (F_LIGHTED|F_ERROR)) && game_is_lighted(g, 0, 0)){
+    game_delete(g);
+    return true;
+  }     
   game_delete(g);
   return false;
 }
@@ -269,16 +264,18 @@ bool test_game_is_lighted(void){
 /* ************** game_has_error ************** */
 bool test_game_has_error(void){
   game g = game_new_empty();
-  for(int i=0; i < DEFAULT_SIZE; i++){
-    for(int j=0; j < DEFAULT_SIZE; j++){
-      if(((game_get_flags(g, i, j) == F_ERROR)||(game_get_flags(g, i, j) == (F_ERROR|F_LIGHTED))) && (game_has_error(g, i, j) == false)){
-        game_delete(g);
-        return false;
-      }
+  game_set_square(g, 0, 0, S_BLANK|F_ERROR);
+    if((game_get_flags(g, 0, 0) == F_ERROR) && game_has_error(g, 0, 0)){
+      game_delete(g);
+      return true;
     }
-  }
+  game_set_square(g, 0, 0, S_BLANK|F_LIGHTED|F_ERROR);
+  if((game_get_flags(g, 0, 0) == (F_LIGHTED|F_ERROR)) && game_has_error(g, 0, 0)){
+    game_delete(g);
+    return true;
+  }   
   game_delete(g);
-  return true;
+  return false;
 }
 
 int main(int argc, char * argv[]){
