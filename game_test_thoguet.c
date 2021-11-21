@@ -18,6 +18,11 @@ bool test_game_is_over(void){
 	game g = game_default_solution();
 	game_update_flags(g);
 	assert(game_is_over(g));
+	game_set_square(g,0,0,(S_LIGHTBULB|F_LIGHTED|F_ERROR));
+	assert(!game_is_over(g));
+	game_update_flags(g);
+	game_set_square(g,0,1,S_BLANK);
+	assert(!game_is_over(g));
 	game_delete(g);
 	g = game_default();
 	game_update_flags(g);
