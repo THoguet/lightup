@@ -7,11 +7,10 @@
 #include "game_aux.h"
 
 bool test_dummy(void){
-    return EXIT_SUCCESS;
+    return true;
 }
 
-void usage(int argc, char *argv[])
-{
+void usage(int argc, char *argv[]){
   fprintf(stderr, "Usage: %s <testname> [<...>]\n", argv[0]);
   exit(EXIT_FAILURE);
 }
