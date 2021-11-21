@@ -205,6 +205,86 @@ bool test_game_get_state(void){
     game_delete(g);
     return false;
   }
+  game_set_square(g, 0, 0, (S_LIGHTBULB|F_ERROR));
+  if (game_get_state(g, 0, 0) != S_LIGHTBULB){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, (S_BLANK|F_ERROR));
+  if (game_get_state(g, 0, 0) != S_BLANK){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, (S_MARK|F_ERROR));
+  if (game_get_state(g, 0, 0) != S_MARK){
+    game_delete(g);
+    return false;
+  }  
+  game_set_square(g, 0, 0, (S_BLACK|F_ERROR));
+  if (game_get_state(g, 0, 0) != S_BLACK){
+    game_delete(g);
+    return false;
+  } 
+  game_set_square(g, 0, 0, (S_BLACK0|F_ERROR));
+  if (game_get_state(g, 0, 0) != S_BLACK0){
+    game_delete(g);
+    return false;
+  } 
+  game_set_square(g, 0, 0, (S_BLACK1|F_ERROR));
+  if (game_get_state(g, 0, 0) != S_BLACK1){
+    game_delete(g);
+    return false;
+  }  
+  game_set_square(g, 0, 0, (S_BLACK2|F_ERROR));
+  if (game_get_state(g, 0, 0) != S_BLACK2){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, (S_BLACK3|F_ERROR));
+  if (game_get_state(g, 0, 0) != S_BLACK3){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, (S_BLACK4|F_ERROR));
+  if (game_get_state(g, 0, 0) != S_BLACK4){
+    game_delete(g);
+    return false;
+  } 
+  game_set_square(g, 0, 0, (S_BLACKU|F_ERROR));
+  if (game_get_state(g, 0, 0) != S_BLACKU){
+    game_delete(g);
+    return false;
+  }  
+  game_set_square(g, 0, 0, (S_LIGHTBULB|F_LIGHTED));
+  if (game_get_state(g, 0, 0) != S_LIGHTBULB){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, (S_BLANK|F_LIGHTED));
+  if (game_get_state(g, 0, 0) != S_BLANK){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, (S_MARK|F_LIGHTED));
+  if (game_get_state(g, 0, 0) != S_MARK){
+    game_delete(g);
+    return false;
+  } 
+  game_set_square(g, 0, 0, (S_LIGHTBULB|F_LIGHTED|F_ERROR));
+  if (game_get_state(g, 0, 0) != S_LIGHTBULB){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, (S_BLANK|F_LIGHTED|F_ERROR));
+  if (game_get_state(g, 0, 0) != S_BLANK){
+    game_delete(g);
+    return false;
+  }
+  game_set_square(g, 0, 0, (S_MARK|F_LIGHTED|F_ERROR));
+  if (game_get_state(g, 0, 0) != S_MARK){
+    game_delete(g);
+    return false;
+  }   
   game_delete(g);
   return true;   
 }
