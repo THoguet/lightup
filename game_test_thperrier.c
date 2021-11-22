@@ -186,16 +186,27 @@ bool test_game_new_empty(){
 /* ********** game_copy ********** */
 bool test_game_copy(){
     game g1 = game_new_empty();
+    game_set_square(g1, 0, 0, S_LIGHTBULB);
+    game_set_square(g1, 0, 1, S_MARK);
+    game_set_square(g1, 0, 2, S_BLACK);
+    game_set_square(g1, 0, 3, S_BLACK0);
+    game_set_square(g1, 0, 4, S_BLACK1);
+    game_set_square(g1, 0, 5, S_BLACK2);
+    game_set_square(g1, 0, 6, S_BLACK3);
+    game_set_square(g1, 1, 0, S_BLACK4);
+    game_set_square(g1, 1, 1, S_BLACKU);
+    game_set_square(g1, 1, 2, F_LIGHTED);
+    game_set_square(g1, 1, 3, F_ERROR);
     game g2 = game_copy(g1);
     assert(g2);
-    if (game_equal(g1, g2) == true){
+    if (game_equal(g1, g2)){
         game_delete(g1);
         game_delete(g2);
         return true;
     }
     game_delete(g1);
     game_delete(g2);
-    return true;
+    return false;
 }
 /* ********** usage ********** */
 void usage(int argc, char *argv[]){
