@@ -1,5 +1,9 @@
 #include "game.h"
 
+struct game_s{
+    square ** tab_cell;
+};
+
 game game_new(square *squares){
     return;
 }
