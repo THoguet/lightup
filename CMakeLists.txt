@@ -22,7 +22,7 @@ target_link_libraries(game_text game)
 target_link_libraries(game_test_thoguet game)
 target_link_libraries(game_test_thperrier game)
 target_link_libraries(game_test_nnunes game)
-add_library (game game.o game_aux.c)
+add_library (game game.c game_aux.c)
 
 add_test(test_thoguet_dummy ./game_test_thoguet dummy)
 add_test(test_thoguet_game_new ./game_test_thoguet game_new)
