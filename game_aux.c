@@ -1,5 +1,3 @@
-#ifndef __GAME_AUX_H__
-#define __GAME_AUX_H__
 #include <stdbool.h>
 #include <stdio.h>
 #include "game.h"
@@ -92,5 +90,3 @@ game game_default_solution(void){
     game_update_flags(g);
     return g;
 }
-
-#endif
