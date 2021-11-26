@@ -7,7 +7,24 @@ struct game_s {
 };
 
 game game_new(square* squares) {
-	return NULL;
+	game g = (game)malloc(sizeof(game));
+	if (g == NULL) {
+		fprintf(stderr, "not enough memory\n");
+		exit(EXIT_FAILURE);
+	}
+	g->tab_cell = (square**)malloc(sizeof(square**) * DEFAULT_SIZE);
+	if (g->tab_cell == NULL) {
+		fprintf(stderr, "not enough memory\n");
+		exit(EXIT_FAILURE);
+	}
+	for (int i = 0; i < DEFAULT_SIZE; i++) {
+		g->tab_cell[i] = (square*)malloc(sizeof(square*) * DEFAULT_SIZE);
+		if (g->tab_cell[i] == NULL) {
+			fprintf(stderr, "not enough memory\n");
+			exit(EXIT_FAILURE);
+		}
+	}
+	return g;
 }
 
 game game_new_empty(void) {
