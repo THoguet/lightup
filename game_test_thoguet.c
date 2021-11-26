@@ -131,21 +131,19 @@ bool test_game_default(void) {
 	game g = game_default();
 	// a verif aps sur
 	assert(g);
-	square tab[49] = {/*X0       X1       X2       X3       X4        X5 X6*/
-	                  /*Y 0*/ S_BLANK,  S_BLANK,  S_BLACK1, S_BLANK,
-	                  S_BLANK,          S_BLANK,  S_BLANK,
-	                  /*Y 1*/ S_BLANK,  S_BLANK,  S_BLACK2, S_BLANK,
-	                  S_BLANK,          S_BLANK,  S_BLANK,
-	                  /*Y 2*/ S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,
-	                  S_BLANK,          S_BLACKU, S_BLACK2,
-	                  /*Y 3*/ S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,
-	                  S_BLANK,          S_BLANK,  S_BLANK,
-	                  /*Y 4*/ S_BLACK1, S_BLACKU, S_BLANK,  S_BLANK,
-	                  S_BLANK,          S_BLANK,  S_BLANK,
-	                  /*Y 5*/ S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,
-	                  S_BLACK2,         S_BLANK,  S_BLANK,
-	                  /*Y 6*/ S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,
-	                  S_BLACKU,         S_BLANK,  S_BLANK};
+	// clang-format off
+	square tab[49] = 
+	{
+                /*X0       X1       X2       X3       X4        X5      X6*/
+        /*Y 0*/ S_BLANK, S_BLANK, S_BLACK1, S_BLANK, S_BLANK, S_BLANK, S_BLANK,
+        /*Y 1*/ S_BLANK, S_BLANK, S_BLACK2, S_BLANK, S_BLANK, S_BLANK, S_BLANK,
+        /*Y 2*/ S_BLANK, S_BLANK, S_BLANK, S_BLANK, S_BLANK, S_BLACKU, S_BLACK2,
+        /*Y 3*/ S_BLANK, S_BLANK, S_BLANK, S_BLANK, S_BLANK, S_BLANK, S_BLANK,
+        /*Y 4*/ S_BLACK1, S_BLACKU, S_BLANK, S_BLANK, S_BLANK, S_BLANK, S_BLANK,
+        /*Y 5*/ S_BLANK, S_BLANK, S_BLANK, S_BLANK, S_BLACK2, S_BLANK, S_BLANK,
+        /*Y 6*/ S_BLANK, S_BLANK, S_BLANK, S_BLANK, S_BLACKU, S_BLANK, S_BLANK
+	};
+	// clang-format on
 	game g1 = game_new(tab);
 	assert(game_equal(g, g1));
 	game_delete(g);
