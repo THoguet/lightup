@@ -144,8 +144,9 @@ bool test_game_is_blank() {
 
 /* ********** game_delete ********** */
 bool test_game_delete() {
-	game g1 = game_new_empty();
-	game_delete(g1);
+	game g = game_new_empty();
+	assert(g);
+	game_delete(g);
 	return true;
 }
 

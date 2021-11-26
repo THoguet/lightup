@@ -89,6 +89,7 @@ bool test_game_print(void) {
 		}
 		printf("%d\n", i);
 		g = game_new(tab);
+		assert(g);
 		game_print(g);
 		game_delete(g);
 	}
@@ -398,6 +399,10 @@ bool check_update(game g) {
 bool brutforce(game g, int a, bool* deldup) {
 	// char c;
 	bool* delDupNext = (bool*)calloc(DEFAULT_SIZE * DEFAULT_SIZE, sizeof(bool));
+	if (delDupNext == NULL) {
+		fprintf(stderr, "Not enought memory\n");
+		exit(EXIT_FAILURE);
+	}
 	square list[] = {S_LIGHTBULB, S_MARK,   S_BLACK0, S_BLACK1, S_BLACK2,
 	                 S_BLACK3,    S_BLACK4, S_BLACKU, S_BLANK};
 	for (uint i = 0; i < DEFAULT_SIZE; i++) {
@@ -439,6 +444,7 @@ bool brutforce(game g, int a, bool* deldup) {
 
 bool test_game_update_flags(void) {
 	game g = game_default();
+	assert(g);
 	if (!brutforce(g, 1, NULL)) {
 		game_delete(g);
 		return EXIT_FAILURE;
