@@ -70,7 +70,7 @@ bool test_game_new(void) {
 		g = game_new(tab);
 		for (uint i2 = 0; i2 < DEFAULT_SIZE; i2++) {
 			for (uint j = 0; j < DEFAULT_SIZE; j++) {
-				printf("list :%d, get square :%d", list[i],
+				printf("list :%d, get square :%d\n", list[i],
 				       game_get_square(g, i2, j));
 				assert(list[i] == game_get_square(g, i2, j));
 			}
