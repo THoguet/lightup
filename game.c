@@ -40,8 +40,14 @@ game game_new_empty(void) {
 	return g;
 }
 
-game game_copy(cgame g) {
-	return NULL;
+game game_copy(cgame g1) {
+	game g2 = game_new_empty();
+	for (int i = 0; i < DEFAULT_SIZE; i++) {
+		for (int j = 0; j < DEFAULT_SIZE; j++) {
+			g2->tab_cell[i][j] = g1->tab_cell[i][j];
+		}
+	}
+	return g2;
 }
 
 bool game_equal(cgame g1, cgame g2) {
