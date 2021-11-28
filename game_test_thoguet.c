@@ -89,6 +89,11 @@ bool test_game_print(void) {
 		}
 		printf("%d\n", i);
 		g = game_new(tab);
+		for (uint i = 0; i < DEFAULT_SIZE; i++) {
+			for (uint j = 0; j < DEFAULT_SIZE; j++) {
+				assert(list[i] == game_get_square(g, i, j));
+			}
+		}
 		assert(g);
 		game_print(g);
 		game_delete(g);
