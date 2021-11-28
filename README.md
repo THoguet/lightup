@@ -8,8 +8,8 @@ Projet Techno
 
 | Fonction                             | REF                                                                          | Assigned to | Notes |        Finished        |
 | ------------------------------------ | ---------------------------------------------------------------------------- | ----------- | ----- | :--------------------: |
-| [game_new](./game.c#L?)              | [game game_new(square *squares)](./game.h#L73-81)                            | @thperrier  |       | <ul><li>[ ] </li></ul> |
-| [game_new_empty](./game.c#L?)        | [game game_new_empty(void)](./game.h#L83-88)                                 | @thperrier  |       | <ul><li>[ ] </li></ul> |
+| [game_new](./game.c#L9-17)              | [game game_new(square *squares)](./game.h#L73-81)                            | @thperrier  |       | <ul><li>[x] </li></ul> |
+| [game_new_empty](./game.c#L?)        | [game game_new_empty(void)](./game.h#L83-88)                                 | @thperrier  |       | <ul><li>[x] </li></ul> |
 | [game_copy](./game.c#L?)             | [game game_copy(cgame g)](./game.h#L90-96)                                   | @thperrier  |       | <ul><li>[ ] </li></ul> |
 | [game_equal](./game.c#L?)            | [bool game_equal(cgame g1, cgame g2)](./game.h#L98-106)                      | @thperrier  |       | <ul><li>[ ] </li></ul> |
 | [game_delete](./game.c#L?)           | [void game_delete(game g);](./game.h#L108-113)                               | @thperrier  |       | <ul><li>[ ] </li></ul> |
