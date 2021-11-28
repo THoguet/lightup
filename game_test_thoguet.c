@@ -68,9 +68,11 @@ bool test_game_new(void) {
 		}
 		printf("%d\n", i);
 		g = game_new(tab);
-		for (uint i = 0; i < DEFAULT_SIZE; i++) {
+		for (uint i2 = 0; i2 < DEFAULT_SIZE; i2++) {
 			for (uint j = 0; j < DEFAULT_SIZE; j++) {
-				assert(list[i] == game_get_square(g, i, j));
+				printf("list :%d, get square :%d", list[i],
+				       game_get_square(g, i2, j));
+				assert(list[i] == game_get_square(g, i2, j));
 			}
 		}
 		assert(g);
