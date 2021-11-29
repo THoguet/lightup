@@ -26,7 +26,7 @@ Projet Techno
 | [game_has_error](./game.c#L?)        | [bool game_has_error(cgame g, uint i, uint j)](./game.h#L240-252)            | @nnunes     |       | <ul><li>[ ] </li></ul> |
 | [game_check_move](./game.c#L122-128)       | [bool game_check_move(cgame g, uint i, uint j, square s)](./game.h#L242-269) | @thoguet    |       | <ul><li>[X] </li></ul> |
 | [game_play_move](./game.c#L130-133)        | [void game_play_move(game g, uint i, uint j, square s)](./game.h#L271-284)   | @thoguet    |       | <ul><li>[X] </li></ul> |
-| [game_update_flags](./game.c#L?)     | [void game_update_flags(game g)](./game.h#L145-406)                          | @thoguet    |       | <ul><li>[ ] </li></ul> |
+| [game_update_flags](./game.c#L?135-234)     | [void game_update_flags(game g)](./game.h#L145-406)                          | @thoguet    |       | <ul><li>[X] </li></ul> |
 | [game_is_over](./game.c#L139-150)          | [bool game_is_over(cgame g)](./game.h#L295-304)                              | @thoguet    |       | <ul><li>[X] </li></ul> |
 | [game_restart](./game.c#L152-160)          | [void game_restart(game g)](./game.h#L306-313)                               | @thoguet    |       | <ul><li>[X] </li></ul> |
 
