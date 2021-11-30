@@ -17,7 +17,7 @@ game game_new(square* squares) {
 }
 
 game game_new_empty(void) {
-	game g = (game)malloc(sizeof(game));
+	game g = (game)malloc(sizeof(struct game_s));
 	if (g == NULL) {
 		fprintf(stderr, "not enough memory\n");
 		exit(EXIT_FAILURE);
@@ -92,7 +92,10 @@ bool game_is_blank(cgame g, uint i, uint j) {
 }
 
 bool game_is_lightbulb(cgame g, uint i, uint j) {
-	return false;
+	return ((g->tab_cell[i][j] == S_LIGHTBULB) ||
+	        (g->tab_cell[i][j] == (S_LIGHTBULB | F_LIGHTED)) ||
+	        (g->tab_cell[i][j] == (S_LIGHTBULB | F_ERROR)) ||
+	        (g->tab_cell[i][j] == (S_LIGHTBULB | F_LIGHTED | F_ERROR)));
 }
 
 bool game_is_black(cgame g, uint i, uint j) {
