@@ -80,7 +80,7 @@ void game_set_square(game g, uint i, uint j, square s) {
 	if (s == S_LIGHTBULB) {
 		g->tab_cell[i][j] = S_LIGHTBULB;
 		return;
-	}	
+	}
 	if (s == S_MARK) {
 		g->tab_cell[i][j] = S_MARK;
 		return;
@@ -114,72 +114,72 @@ void game_set_square(game g, uint i, uint j, square s) {
 		return;
 	}
 	// Avec F_LIGHTED //
-	if (s == (S_BLANK|F_LIGHTED)) {
-		g->tab_cell[i][j] = (S_BLANK|F_LIGHTED);
+	if (s == (S_BLANK | F_LIGHTED)) {
+		g->tab_cell[i][j] = (S_BLANK | F_LIGHTED);
 		return;
 	}
-	if (s == (S_LIGHTBULB|F_LIGHTED)) {
-		g->tab_cell[i][j] = (S_LIGHTBULB|F_LIGHTED);
+	if (s == (S_LIGHTBULB | F_LIGHTED)) {
+		g->tab_cell[i][j] = (S_LIGHTBULB | F_LIGHTED);
 		return;
-	}	
-	if (s == (S_MARK|F_LIGHTED)) {
-		g->tab_cell[i][j] = (S_MARK|F_LIGHTED);
+	}
+	if (s == (S_MARK | F_LIGHTED)) {
+		g->tab_cell[i][j] = (S_MARK | F_LIGHTED);
 		return;
 	}
 	// Avec F_ERROR //
-	if (s == (S_BLANK|F_ERROR)) {
-		g->tab_cell[i][j] = (S_BLANK|F_ERROR);
+	if (s == (S_BLANK | F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLANK | F_ERROR);
 		return;
 	}
-	if (s == (S_LIGHTBULB|F_ERROR)) {
-		g->tab_cell[i][j] = (S_LIGHTBULB|F_ERROR);
-		return;
-	}	
-	if (s == (S_MARK|F_ERROR)) {
-		g->tab_cell[i][j] = (S_MARK|F_ERROR);
+	if (s == (S_LIGHTBULB | F_ERROR)) {
+		g->tab_cell[i][j] = (S_LIGHTBULB | F_ERROR);
 		return;
 	}
-	if (s == (S_BLACK|F_ERROR)) {
-		g->tab_cell[i][j] = (S_BLACK|F_ERROR);
+	if (s == (S_MARK | F_ERROR)) {
+		g->tab_cell[i][j] = (S_MARK | F_ERROR);
 		return;
 	}
-	if (s == (S_BLACK0|F_ERROR)) {
-		g->tab_cell[i][j] = (S_BLACK0|F_ERROR);
+	if (s == (S_BLACK | F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLACK | F_ERROR);
 		return;
 	}
-	if (s == (S_BLACK1|F_ERROR)) {
-		g->tab_cell[i][j] = (S_BLACK1|F_ERROR);
+	if (s == (S_BLACK0 | F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLACK0 | F_ERROR);
 		return;
 	}
-	if (s == (S_BLACK2|F_ERROR)) {
-		g->tab_cell[i][j] = (S_BLACK2|F_ERROR);
+	if (s == (S_BLACK1 | F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLACK1 | F_ERROR);
 		return;
 	}
-	if (s == (S_BLACK3|F_ERROR)) {
-		g->tab_cell[i][j] = (S_BLACK3|F_ERROR);
+	if (s == (S_BLACK2 | F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLACK2 | F_ERROR);
 		return;
 	}
-	if (s == (S_BLACK4|F_ERROR)) {
-		g->tab_cell[i][j] = (S_BLACK4|F_ERROR);
+	if (s == (S_BLACK3 | F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLACK3 | F_ERROR);
 		return;
 	}
-	if (s == (S_BLACKU|F_ERROR)) {
-		g->tab_cell[i][j] = (S_BLACKU|F_ERROR);
+	if (s == (S_BLACK4 | F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLACK4 | F_ERROR);
+		return;
+	}
+	if (s == (S_BLACKU | F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLACKU | F_ERROR);
 		return;
 	}
 	// Avec les 2 flags //
-	if (s == (S_BLANK|F_LIGHTED|F_ERROR)) {
-		g->tab_cell[i][j] = (S_BLANK|F_LIGHTED|F_ERROR);
+	if (s == (S_BLANK | F_LIGHTED | F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLANK | F_LIGHTED | F_ERROR);
 		return;
 	}
-	if (s == (S_LIGHTBULB|F_LIGHTED|F_ERROR)) {
-		g->tab_cell[i][j] = (S_LIGHTBULB|F_LIGHTED|F_ERROR);
+	if (s == (S_LIGHTBULB | F_LIGHTED | F_ERROR)) {
+		g->tab_cell[i][j] = (S_LIGHTBULB | F_LIGHTED | F_ERROR);
 		return;
-	}	
-	if (s == (S_MARK|F_LIGHTED|F_ERROR)) {
-		g->tab_cell[i][j] = (S_MARK|F_LIGHTED|F_ERROR);
+	}
+	if (s == (S_MARK | F_LIGHTED | F_ERROR)) {
+		g->tab_cell[i][j] = (S_MARK | F_LIGHTED | F_ERROR);
 		return;
-	}											
+	}
 	return;
 }
 
@@ -222,7 +222,7 @@ bool game_is_lighted(cgame g, uint i, uint j) {
 }
 
 bool game_has_error(cgame g, uint i, uint j) {
-	return false ;
+	return false;
 }
 
 bool game_check_move(cgame g, uint i, uint j, square s) {
