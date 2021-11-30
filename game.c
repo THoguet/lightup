@@ -4,6 +4,7 @@
 
 struct game_s {
 	square** tab_cell;
+	int menfou;
 };
 
 game game_new(square* squares) {
@@ -17,7 +18,7 @@ game game_new(square* squares) {
 }
 
 game game_new_empty(void) {
-	game g = (game)malloc(sizeof(game));
+	game g = (game)malloc(sizeof(struct game_s));
 	if (g == NULL) {
 		fprintf(stderr, "not enough memory\n");
 		exit(EXIT_FAILURE);
@@ -114,7 +115,7 @@ bool game_is_lighted(cgame g, uint i, uint j) {
 }
 
 bool game_has_error(cgame g, uint i, uint j) {
-	return false;
+	return false ;
 }
 
 bool game_check_move(cgame g, uint i, uint j, square s) {
