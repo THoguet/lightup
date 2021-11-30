@@ -47,6 +47,7 @@ add_test(test_thperrier_game_is_black ./game_test_thperrier game_is_black)
 add_test(test_thperrier_game_get_black_number ./game_test_thperrier game_get_black_number)
 
 add_test(test_nnunes_dummy ./game_test_nnunes dummy)
+add_test(test_nnunes_game_set_square ./game_test_nnunes game_set_square)
 add_test(test_nnunes_game_get_square ./game_test_nnunes game_get_square)
 add_test(test_nnunes_game_get_state ./game_test_nnunes game_get_state)
 add_test(test_nnunes_game_get_flags ./game_test_nnunes game_get_flags)
