@@ -72,8 +72,9 @@ void game_delete(game g) {
 }
 
 void game_set_square(game g, uint i, uint j, square s) {
-	return;
-}
+    g->tab_cell[i][j] = s;
+    return;
+}	
 
 square game_get_square(cgame g, uint i, uint j) {
 	return g->tab_cell[i][j];
