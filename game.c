@@ -96,9 +96,7 @@ bool game_is_lightbulb(cgame g, uint i, uint j) {
 }
 
 bool game_is_black(cgame g, uint i, uint j) {
-	if (game_get_state(g, i, j) >= 8 && game_get_state(g, i, j) <= 13)
-		return true;
-	return false;
+	return game_get_state(g, i, j) >= 8 && game_get_state(g, i, j) <= 13;
 }
 
 int game_get_black_number(cgame g, uint i, uint j) {
