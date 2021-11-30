@@ -15,8 +15,8 @@ void usage(int argc, char* argv[]) {
 	exit(EXIT_FAILURE);
 }
 
-/* ************** game_get_square ************** */
-bool test_game_get_square(void) {
+/* ************** game_set_square ************** */
+bool test_game_set_square(void) {
 	game g = game_new_empty();
 	game_set_square(g, 0, 0, S_LIGHTBULB);
 	if (game_get_square(g, 0, 0) != S_LIGHTBULB) {
@@ -367,8 +367,8 @@ int main(int argc, char* argv[]) {
 	bool success = false;
 	if (strcmp("dummy", argv[1]) == 0)
 		success = test_dummy();
-	else if (strcmp("game_get_square", argv[1]) == 0) {
-		success = test_game_get_square();
+	else if (strcmp("game_set_square", argv[1]) == 0) {
+		success = test_game_set_square();
 	} else if (strcmp("game_get_state", argv[1]) == 0) {
 		success = test_game_get_state();
 	} else if (strcmp("game_get_flags", argv[1]) == 0) {

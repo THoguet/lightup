@@ -73,6 +73,113 @@ void game_delete(game g) {
 }
 
 void game_set_square(game g, uint i, uint j, square s) {
+	if (s == S_BLANK) {
+		g->tab_cell[i][j] = S_BLANK;
+		return;
+	}
+	if (s == S_LIGHTBULB) {
+		g->tab_cell[i][j] = S_LIGHTBULB;
+		return;
+	}	
+	if (s == S_MARK) {
+		g->tab_cell[i][j] = S_MARK;
+		return;
+	}
+	if (s == S_BLACK) {
+		g->tab_cell[i][j] = S_BLACK;
+		return;
+	}
+	if (s == S_BLACK0) {
+		g->tab_cell[i][j] = S_BLACK0;
+		return;
+	}
+	if (s == S_BLACK1) {
+		g->tab_cell[i][j] = S_BLACK1;
+		return;
+	}
+	if (s == S_BLACK2) {
+		g->tab_cell[i][j] = S_BLACK2;
+		return;
+	}
+	if (s == S_BLACK3) {
+		g->tab_cell[i][j] = S_BLACK3;
+		return;
+	}
+	if (s == S_BLACK4) {
+		g->tab_cell[i][j] = S_BLACK4;
+		return;
+	}
+	if (s == S_BLACKU) {
+		g->tab_cell[i][j] = S_BLACKU;
+		return;
+	}
+	// Avec F_LIGHTED //
+	if (s == (S_BLANK|F_LIGHTED)) {
+		g->tab_cell[i][j] = (S_BLANK|F_LIGHTED);
+		return;
+	}
+	if (s == (S_LIGHTBULB|F_LIGHTED)) {
+		g->tab_cell[i][j] = (S_LIGHTBULB|F_LIGHTED);
+		return;
+	}	
+	if (s == (S_MARK|F_LIGHTED)) {
+		g->tab_cell[i][j] = (S_MARK|F_LIGHTED);
+		return;
+	}
+	// Avec F_ERROR //
+	if (s == (S_BLANK|F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLANK|F_ERROR);
+		return;
+	}
+	if (s == (S_LIGHTBULB|F_ERROR)) {
+		g->tab_cell[i][j] = (S_LIGHTBULB|F_ERROR);
+		return;
+	}	
+	if (s == (S_MARK|F_ERROR)) {
+		g->tab_cell[i][j] = (S_MARK|F_ERROR);
+		return;
+	}
+	if (s == (S_BLACK|F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLACK|F_ERROR);
+		return;
+	}
+	if (s == (S_BLACK0|F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLACK0|F_ERROR);
+		return;
+	}
+	if (s == (S_BLACK1|F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLACK1|F_ERROR);
+		return;
+	}
+	if (s == (S_BLACK2|F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLACK2|F_ERROR);
+		return;
+	}
+	if (s == (S_BLACK3|F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLACK3|F_ERROR);
+		return;
+	}
+	if (s == (S_BLACK4|F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLACK4|F_ERROR);
+		return;
+	}
+	if (s == (S_BLACKU|F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLACKU|F_ERROR);
+		return;
+	}
+	// Avec les 2 flags //
+	if (s == (S_BLANK|F_LIGHTED|F_ERROR)) {
+		g->tab_cell[i][j] = (S_BLANK|F_LIGHTED|F_ERROR);
+		return;
+	}
+	if (s == (S_LIGHTBULB|F_LIGHTED|F_ERROR)) {
+		g->tab_cell[i][j] = (S_LIGHTBULB|F_LIGHTED|F_ERROR);
+		return;
+	}	
+	if (s == (S_MARK|F_LIGHTED|F_ERROR)) {
+		g->tab_cell[i][j] = (S_MARK|F_LIGHTED|F_ERROR);
+		return;
+	}											
 	return;
 }
 
