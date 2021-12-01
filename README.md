@@ -21,9 +21,9 @@ Projet Techno
 | [game_is_lightbulb](./game.c#L?)     | [bool game_is_lightbulb(cgame g, uint i, uint j)](./game.h#L180-190)         | @thperrier  |       | <ul><li>[x] </li></ul> |
 | [game_is_black](./game.c#L98-102)         | [bool game_is_black(cgame g, uint i, uint j)](./game.h#L192-202)             | @thoguet    |       | <ul><li>[X] </li></ul> |
 | [game_get_black_number](./game.c#L104-108) | [int game_get_black_number(cgame g, uint i, uint j)](./game.h#L204-214)      | @thoguet    |       | <ul><li>[X] </li></ul> |
-| [game_is_marked](./game.c#L?)        | [bool game_is_marked(cgame g, uint i, uint j)](./game.h#L216-226)            | @nnunes     |       | <ul><li>[ ] </li></ul> |
-| [game_is_lighted](./game.c#L?)       | [bool game_is_lighted(cgame g, uint i, uint j)](./game.h#L228-238)           | @nnunes     |       | <ul><li>[ ] </li></ul> |
-| [game_has_error](./game.c#L?)        | [bool game_has_error(cgame g, uint i, uint j)](./game.h#L240-252)            | @nnunes     |       | <ul><li>[ ] </li></ul> |
+| [game_is_marked](./game.c#L?)        | [bool game_is_marked(cgame g, uint i, uint j)](./game.h#L216-226)            | @nnunes     |       | <ul><li>[x] </li></ul> |
+| [game_is_lighted](./game.c#L?)       | [bool game_is_lighted(cgame g, uint i, uint j)](./game.h#L228-238)           | @nnunes     |       | <ul><li>[x] </li></ul> |
+| [game_has_error](./game.c#L?)        | [bool game_has_error(cgame g, uint i, uint j)](./game.h#L240-252)            | @nnunes     |       | <ul><li>[x] </li></ul> |
 | [game_check_move](./game.c#L122-128)       | [bool game_check_move(cgame g, uint i, uint j, square s)](./game.h#L242-269) | @thoguet    |       | <ul><li>[X] </li></ul> |
 | [game_play_move](./game.c#L130-133)        | [void game_play_move(game g, uint i, uint j, square s)](./game.h#L271-284)   | @thoguet    |       | <ul><li>[X] </li></ul> |
 | [game_update_flags](./game.c#L135-234)     | [void game_update_flags(game g)](./game.h#L145-406)                          | @thoguet    |       | <ul><li>[X] </li></ul> |

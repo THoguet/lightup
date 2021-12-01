@@ -128,14 +128,26 @@ int game_get_black_number(cgame g, uint i, uint j) {
 }
 
 bool game_is_marked(cgame g, uint i, uint j) {
-	return false;
+	return ((g->tab_cell[i][j] == S_MARK) ||
+	        (g->tab_cell[i][j] == (S_MARK | F_LIGHTED)) ||
+	        (g->tab_cell[i][j] == (S_MARK | F_ERROR)) ||
+	        (g->tab_cell[i][j] == (S_MARK | F_LIGHTED | F_ERROR)));
 }
 
 bool game_is_lighted(cgame g, uint i, uint j) {
+	if (g->tab_cell[i][j] >= F_ERROR) {
+		g->tab_cell[i][j] -= F_ERROR;
+	}	
+	if (g->tab_cell[i][j] >= F_LIGHTED) {
+		return true;
+	}
 	return false;
 }
 
 bool game_has_error(cgame g, uint i, uint j) {
+	if (g->tab_cell[i][j] >= F_ERROR) {
+		return true;
+	}	
 	return false;
 }
 
