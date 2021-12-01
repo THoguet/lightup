@@ -15,8 +15,8 @@ Projet Techno
 | [game_delete](./game.c#L64-72)           | [void game_delete(game g);](./game.h#L108-113)                               | @thperrier  |       | <ul><li>[x] </li></ul> |
 | [game_set_square](./game.c#L?)       | [void game_set_square(game g, uint i, uint j, square s)](./game.h#L115-128)  | @nnunes     |       | <ul><li>[x] </li></ul> |
 | [game_get_square](./game.c#L78-80)       | [square game_get_square(cgame g, uint i, uint j)](./game.h#L130-140)         | @thoguet    |       | <ul><li>[X] </li></ul> |
-| [game_get_state](./game.c#L?)        | [square game_get_state(cgame g, uint i, uint j)](./game.h#L142-153)          | @nnunes     |       | <ul><li>[ ] </li></ul> |
-| [game_get_flags](./game.c#L?)        | [square game_get_flags(cgame g, uint i, uint j)](./game.h#L155-166)          | @nnunes     |       | <ul><li>[ ] </li></ul> |
+| [game_get_state](./game.c#L?)        | [square game_get_state(cgame g, uint i, uint j)](./game.h#L142-153)          | @nnunes     |       | <ul><li>[x] </li></ul> |
+| [game_get_flags](./game.c#L?)        | [square game_get_flags(cgame g, uint i, uint j)](./game.h#L155-166)          | @nnunes     |       | <ul><li>[x] </li></ul> |
 | [game_is_blank](./game.c#L?)         | [bool game_is_blank(cgame g, uint i, uint j)](./game.h#L168-178)             | @thperrier  |       | <ul><li>[X] </li></ul> |
 | [game_is_lightbulb](./game.c#L?)     | [bool game_is_lightbulb(cgame g, uint i, uint j)](./game.h#L180-190)         | @thperrier  |       | <ul><li>[x] </li></ul> |
 | [game_is_black](./game.c#L98-102)         | [bool game_is_black(cgame g, uint i, uint j)](./game.h#L192-202)             | @thoguet    |       | <ul><li>[X] </li></ul> |

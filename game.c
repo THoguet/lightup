@@ -81,11 +81,27 @@ square game_get_square(cgame g, uint i, uint j) {
 }
 
 square game_get_state(cgame g, uint i, uint j) {
-	return 0;
+	if(g->tab_cell[i][j] >= F_ERROR) {
+		g->tab_cell[i][j] -= F_ERROR;
+	}
+	if(g->tab_cell[i][j] >= F_LIGHTED) {
+		g->tab_cell[i][j] -= F_LIGHTED;
+	}
+	return g->tab_cell[i][j];
 }
 
 square game_get_flags(cgame g, uint i, uint j) {
-	return 0;
+	if (g->tab_cell[i][j] >= F_ERROR) {
+		g->tab_cell[i][j] -= F_ERROR;
+		if (g->tab_cell[i][j] >= F_LIGHTED) {
+			return (F_ERROR|F_LIGHTED);
+		}
+		return (F_ERROR);
+	}
+	if (g->tab_cell[i][j] >= F_LIGHTED) {
+		return (F_LIGHTED);
+	}
+	return (S_BLANK);	
 }
 
 bool game_is_blank(cgame g, uint i, uint j) {
