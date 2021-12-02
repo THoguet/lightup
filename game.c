@@ -91,14 +91,15 @@ square game_get_state(cgame g, uint i, uint j) {
 }
 
 square game_get_flags(cgame g, uint i, uint j) {
-	if (g->tab_cell[i][j] >= F_ERROR) {
-		g->tab_cell[i][j] -= F_ERROR;
-		if (g->tab_cell[i][j] >= F_LIGHTED) {
+	square temp = g->tab_cell[i][j];
+	if (temp >= F_ERROR) {
+		temp -= F_ERROR;
+		if (temp >= F_LIGHTED) {
 			return (F_ERROR | F_LIGHTED);
 		}
 		return (F_ERROR);
 	}
-	if (g->tab_cell[i][j] >= F_LIGHTED) {
+	if (temp >= F_LIGHTED) {
 		return (F_LIGHTED);
 	}
 	return (S_BLANK);
