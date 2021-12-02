@@ -81,10 +81,10 @@ square game_get_square(cgame g, uint i, uint j) {
 }
 
 square game_get_state(cgame g, uint i, uint j) {
-	if(g->tab_cell[i][j] >= F_ERROR) {
+	if (g->tab_cell[i][j] >= F_ERROR) {
 		g->tab_cell[i][j] -= F_ERROR;
 	}
-	if(g->tab_cell[i][j] >= F_LIGHTED) {
+	if (g->tab_cell[i][j] >= F_LIGHTED) {
 		g->tab_cell[i][j] -= F_LIGHTED;
 	}
 	return g->tab_cell[i][j];
@@ -94,14 +94,14 @@ square game_get_flags(cgame g, uint i, uint j) {
 	if (g->tab_cell[i][j] >= F_ERROR) {
 		g->tab_cell[i][j] -= F_ERROR;
 		if (g->tab_cell[i][j] >= F_LIGHTED) {
-			return (F_ERROR|F_LIGHTED);
+			return (F_ERROR | F_LIGHTED);
 		}
 		return (F_ERROR);
 	}
 	if (g->tab_cell[i][j] >= F_LIGHTED) {
 		return (F_LIGHTED);
 	}
-	return (S_BLANK);	
+	return (S_BLANK);
 }
 
 bool game_is_blank(cgame g, uint i, uint j) {
@@ -137,7 +137,7 @@ bool game_is_marked(cgame g, uint i, uint j) {
 bool game_is_lighted(cgame g, uint i, uint j) {
 	if (g->tab_cell[i][j] >= F_ERROR) {
 		g->tab_cell[i][j] -= F_ERROR;
-	}	
+	}
 	if (g->tab_cell[i][j] >= F_LIGHTED) {
 		return true;
 	}
@@ -147,7 +147,7 @@ bool game_is_lighted(cgame g, uint i, uint j) {
 bool game_has_error(cgame g, uint i, uint j) {
 	if (g->tab_cell[i][j] >= F_ERROR) {
 		return true;
-	}	
+	}
 	return false;
 }
 
@@ -186,8 +186,7 @@ void game_update_flags(game g) {
 					game_set_square(g, i2, j,
 					                (game_get_state(g, i2, j) | F_LIGHTED));
 				}
-				for (uint i2 = i - 1; i2 >= 0 && !game_is_black(g, i2, j);
-				     i2--) {
+				for (int i2 = i - 1; i2 > 0 && !game_is_black(g, i2, j); i2--) {
 					if (game_get_state(g, i2, j) == S_LIGHTBULB)
 						// update initial lightbulb on F_ERROR
 						game_set_square(g, i, j,
@@ -195,8 +194,7 @@ void game_update_flags(game g) {
 					game_set_square(g, i2, j,
 					                (game_get_state(g, i2, j) | F_LIGHTED));
 				}
-				for (uint j2 = j - 1; j2 >= 0 && !game_is_black(g, i, j2);
-				     j2--) {
+				for (int j2 = j - 1; j2 > 0 && !game_is_black(g, i, j2); j2--) {
 					if (game_get_state(g, i, j2) == S_LIGHTBULB)
 						// update initial lightbulb on F_ERROR
 						game_set_square(g, i, j,
