@@ -81,13 +81,14 @@ square game_get_square(cgame g, uint i, uint j) {
 }
 
 square game_get_state(cgame g, uint i, uint j) {
-	if (g->tab_cell[i][j] >= F_ERROR) {
-		g->tab_cell[i][j] -= F_ERROR;
+	square tmp = g->tab_cell[i][j];
+	if (tmp >= F_ERROR) {
+		tmp -= F_ERROR;
 	}
-	if (g->tab_cell[i][j] >= F_LIGHTED) {
-		g->tab_cell[i][j] -= F_LIGHTED;
+	if (tmp >= F_LIGHTED) {
+		tmp -= F_LIGHTED;
 	}
-	return g->tab_cell[i][j];
+	return tmp;
 }
 
 square game_get_flags(cgame g, uint i, uint j) {
@@ -172,11 +173,15 @@ void game_update_flags(game g) {
 			game_set_square(g, i, j, game_get_state(g, i, j));
 		}
 	}
-	// update flags
+	// update flags lighted and lightbulb error
 	for (uint i = 0; i < DEFAULT_SIZE; i++) {
 		for (uint j = 0; j < DEFAULT_SIZE; j++) {
 			if (game_get_state(g, i, j) == S_LIGHTBULB) {
-				game_set_square(g, i, j, (S_LIGHTBULB | F_LIGHTED));
+				if (game_get_flags(g, i, j) > 16)
+					game_set_square(g, i, j,
+					                (S_LIGHTBULB | F_LIGHTED | F_ERROR));
+				else
+					game_set_square(g, i, j, (S_LIGHTBULB | F_LIGHTED));
 				for (uint i2 = i + 1;
 				     i2 < DEFAULT_SIZE && !game_is_black(g, i2, j); i2++) {
 					if (game_get_state(g, i2, j) == S_LIGHTBULB)
@@ -212,52 +217,61 @@ void game_update_flags(game g) {
 					game_set_square(g, i, j2,
 					                (game_get_state(g, i, j2) | F_LIGHTED));
 				}
-			} else if (game_is_black(g, i, j)) {
-				square choice[4];
-				int size = 0;
-				int lb = 0;
-				int notempty = 0;
-				if (i > 0) {
-					choice[size] = game_get_square(g, i - 1, j);
-					size++;
-				} else {
-					notempty++;
-				}
-				if (i < DEFAULT_SIZE - 1) {
-					choice[size] = game_get_square(g, i + 1, j);
-					size++;
-				} else {
-					notempty++;
-				}
-				if (j > 0) {
-					choice[size] = game_get_square(g, i, j - 1);
-					size++;
-				} else {
-					notempty++;
-				}
-				if (j < DEFAULT_SIZE - 1) {
-					choice[size] = game_get_square(g, i, j + 1);
-					size++;
-				} else {
-					notempty++;
-				}
-				for (int l = 0; l < size; l++) {
-					if (choice[l] == S_LIGHTBULB ||
-					    choice[l] == (S_LIGHTBULB | F_LIGHTED) ||
-					    choice[l] == (S_LIGHTBULB | F_LIGHTED | F_ERROR)) {
-						lb++;
-					} else if (choice[l] != S_BLANK) {
+			}
+		}
+	}
+	// update flags wall
+	for (uint i = 0; i < DEFAULT_SIZE; i++) {
+		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+			if (game_is_black(g, i, j)) {
+				if (game_get_black_number(g, i, j) >= 0) {
+					square choice[4];
+					int size = 0;
+					int lb = 0;
+					int notempty = 0;
+					if (i > 0) {
+						choice[size] = game_get_square(g, i - 1, j);
+						size++;
+					} else {
 						notempty++;
 					}
-				}
-				if (lb > game_get_black_number(g, i, j)) {
-					game_set_square(g, i, j,
-					                (game_get_state(g, i, j) | F_ERROR));
-				}
-				// look if there is enough empty cell around the wall
-				else if (notempty > abs(game_get_black_number(g, i, j) - 4)) {
-					game_set_square(g, i, j,
-					                (game_get_state(g, i, j) | F_ERROR));
+					if (i < DEFAULT_SIZE - 1) {
+						choice[size] = game_get_square(g, i + 1, j);
+						size++;
+					} else {
+						notempty++;
+					}
+					if (j > 0) {
+						choice[size] = game_get_square(g, i, j - 1);
+						size++;
+					} else {
+						notempty++;
+					}
+					if (j < DEFAULT_SIZE - 1) {
+						choice[size] = game_get_square(g, i, j + 1);
+						size++;
+					} else {
+						notempty++;
+					}
+					for (int l = 0; l < size; l++) {
+						if (choice[l] == S_LIGHTBULB ||
+						    choice[l] == (S_LIGHTBULB | F_LIGHTED) ||
+						    choice[l] == (S_LIGHTBULB | F_LIGHTED | F_ERROR)) {
+							lb++;
+						} else if (choice[l] != S_BLANK) {
+							notempty++;
+						}
+					}
+					if (lb > game_get_black_number(g, i, j)) {
+						game_set_square(g, i, j,
+						                (game_get_state(g, i, j) | F_ERROR));
+					}
+					// look if there is enough empty cell around the wall
+					else if (notempty >
+					         abs(game_get_black_number(g, i, j) - 4)) {
+						game_set_square(g, i, j,
+						                (game_get_state(g, i, j) | F_ERROR));
+					}
 				}
 			}
 		}
@@ -285,4 +299,5 @@ void game_restart(game g) {
 				game_set_square(g, i, j, S_BLANK);
 		}
 	}
+	game_update_flags(g);
 }
