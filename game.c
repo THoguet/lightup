@@ -67,7 +67,6 @@ void game_delete(game g) {
 	}
 	free(g->tab_cell);
 	free(g);
-	g = NULL;
 	return;
 }
 
