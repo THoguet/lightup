@@ -64,9 +64,12 @@ bool game_equal(cgame g1, cgame g2) {
 void game_delete(game g) {
 	for (int i = 0; i < DEFAULT_SIZE; i++) {
 		free(g->tab_cell[i]);
+		g->tab_cell[i] = NULL;
 	}
 	free(g->tab_cell);
+	g->tab_cell = NULL;
 	free(g);
+	g = NULL;
 	return;
 }
 
