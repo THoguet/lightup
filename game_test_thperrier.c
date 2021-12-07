@@ -208,15 +208,17 @@ bool test_game_copy() {
 			game_set_square(g2, i, j, S_BLACK3);
 		}
 	}
-	g2 = game_copy(g1);  // c koi ca ? (UNE FUITE MEMOIRE)
-	assert(g2);
-	if (!game_equal(g1, g2)) {
+	game g3 = game_copy(g2);
+	assert(g3);
+	if (!game_equal(g2, g3)) {
 		game_delete(g1);
 		game_delete(g2);
+		game_delete(g3);
 		return false;
 	}
 	game_delete(g1);
 	game_delete(g2);
+	game_delete(g3);
 	return true;
 }
 /* ********** usage ********** */
