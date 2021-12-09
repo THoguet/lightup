@@ -332,8 +332,7 @@ bool test_game_is_lighted(void) {
 		return true;
 	}
 	game_set_square(g, 0, 0, S_BLANK | F_LIGHTED | F_ERROR);
-	if ((game_get_flags(g, 0, 0) == (F_LIGHTED | F_ERROR)) &&
-	    game_is_lighted(g, 0, 0)) {
+	if ((game_get_flags(g, 0, 0) == (F_LIGHTED | F_ERROR)) && game_is_lighted(g, 0, 0)) {
 		game_delete(g);
 		return true;
 	}
@@ -350,8 +349,7 @@ bool test_game_has_error(void) {
 		return true;
 	}
 	game_set_square(g, 0, 0, S_LIGHTBULB | F_LIGHTED | F_ERROR);
-	if ((game_get_flags(g, 0, 0) == (F_LIGHTED | F_ERROR)) &&
-	    game_has_error(g, 0, 0)) {
+	if ((game_get_flags(g, 0, 0) == (F_LIGHTED | F_ERROR)) && game_has_error(g, 0, 0)) {
 		game_delete(g);
 		return true;
 	}
