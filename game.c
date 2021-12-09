@@ -64,10 +64,15 @@ bool game_equal(cgame g1, cgame g2) {
 void game_delete(game g) {
 	for (int i = 0; i < DEFAULT_SIZE; i++) {
 		free(g->tab_cell[i]);
-		g->tab_cell[i] = NULL;
+		if (g->tab_cell[i] != NULL)
+			g->tab_cell[i] = NULL;
 	}
+	free(g->tab_cell);
+	if (g->tab_cell != NULL)
+		g->tab_cell = NULL;
 	free(g);
-	g = NULL;
+	if (g != NULL)
+		g = NULL;
 	return;
 }
 
@@ -192,7 +197,8 @@ void game_update_flags(game g) {
 					game_set_square(g, i2, j,
 					                (game_get_state(g, i2, j) | F_LIGHTED));
 				}
-				for (int i2 = i - 1; i2 > 0 && !game_is_black(g, i2, j); i2--) {
+				for (int i2 = i - 1; i2 >= 0 && !game_is_black(g, i2, j);
+				     i2--) {
 					if (game_get_state(g, i2, j) == S_LIGHTBULB)
 						// update initial lightbulb on F_ERROR
 						game_set_square(g, i, j,
@@ -200,7 +206,8 @@ void game_update_flags(game g) {
 					game_set_square(g, i2, j,
 					                (game_get_state(g, i2, j) | F_LIGHTED));
 				}
-				for (int j2 = j - 1; j2 > 0 && !game_is_black(g, i, j2); j2--) {
+				for (int j2 = j - 1; j2 >= 0 && !game_is_black(g, i, j2);
+				     j2--) {
 					if (game_get_state(g, i, j2) == S_LIGHTBULB)
 						// update initial lightbulb on F_ERROR
 						game_set_square(g, i, j,

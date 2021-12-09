@@ -278,7 +278,7 @@ bool check_update(game g) {
 				}
 				// loop checking every case before i
 				wall = false;
-				for (int k = i - 1; k > 0; k--) {
+				for (int k = i - 1; k >= 0; k--) {
 					if (/*test if current case is a wall*/ game_is_black(g, k,
 					                                                     j)) {
 						wall = true;
@@ -308,7 +308,7 @@ bool check_update(game g) {
 					}
 				}
 				wall = false;
-				for (int k = j - 1; k > 0; k--) {
+				for (int k = j - 1; k >= 0; k--) {
 					if (/*test if current case is a wall*/ game_is_black(g, i,
 					                                                     k)) {
 						wall = true;
