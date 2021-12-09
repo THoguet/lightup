@@ -4,6 +4,9 @@
 
 struct game_s {
 	square** tab_cell;
+	bool wrapped;
+	uint height;
+	uint width;
 };
 
 game game_new(square* squares) {
@@ -37,6 +40,9 @@ game game_new_empty(void) {
 			g->tab_cell[i][j] = S_BLANK;
 		}
 	}
+	g->wrapped = false;
+	g->height = DEFAULT_SIZE;
+	g->width = DEFAULT_SIZE;
 	return g;
 }
 
