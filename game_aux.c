@@ -7,13 +7,10 @@ char charPrintCell(square sqState) {
 		return ' ';
 	}
 	if ((sqState == S_LIGHTBULB) ||
-	    (sqState == (S_LIGHTBULB | F_ERROR)) |
-	        (sqState == (S_LIGHTBULB | F_LIGHTED)) |
-	        (sqState == (S_LIGHTBULB | F_ERROR | F_LIGHTED))) {
+	    (sqState == (S_LIGHTBULB | F_ERROR)) | (sqState == (S_LIGHTBULB | F_LIGHTED)) | (sqState == (S_LIGHTBULB | F_ERROR | F_LIGHTED))) {
 		return '*';
 	}
-	if ((sqState == S_MARK) ||
-	    (sqState == (S_MARK | F_ERROR)) | (sqState == (S_MARK | F_LIGHTED))) {
+	if ((sqState == S_MARK) || (sqState == (S_MARK | F_ERROR)) | (sqState == (S_MARK | F_LIGHTED))) {
 		return '-';
 	}
 	if (sqState == S_BLACK0 || sqState == (S_BLACK0 | F_ERROR)) {

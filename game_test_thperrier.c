@@ -122,8 +122,7 @@ bool test_game_is_black() {
 bool test_game_is_lightbulb() {
 	game g = game_new_empty();
 	game_set_square(g, 0, 0, S_LIGHTBULB);
-	if ((game_get_square(g, 0, 0) == S_LIGHTBULB) &&
-	    game_is_lightbulb(g, 0, 0)) {
+	if ((game_get_square(g, 0, 0) == S_LIGHTBULB) && game_is_lightbulb(g, 0, 0)) {
 		game_delete(g);
 		return true;
 	}

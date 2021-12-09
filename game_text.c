@@ -79,8 +79,7 @@ int main(void) {
 				return EXIT_SUCCESS;
 			} else if (c == 'l' || c == 'm' || c == 'b') {
 				if (scanf(" %u %u", &i, &j) == 2) {
-					if (i < DEFAULT_SIZE && j < DEFAULT_SIZE &&
-					    !game_is_black(g, i, j)) {
+					if (i < DEFAULT_SIZE && j < DEFAULT_SIZE && !game_is_black(g, i, j)) {
 						if (c == 'l') {
 							game_set_square(g, i, j, S_LIGHTBULB);
 							game_update_flags(g);
