@@ -118,7 +118,7 @@ square game_get_flags(cgame g, uint i, uint j) {
 }
 
 bool game_is_blank(cgame g, uint i, uint j) {
-	return (g->tab_cell[i][j] == S_BLANK);
+	return game_get_state(g, i, j) == S_BLANK;
 }
 
 bool game_is_lightbulb(cgame g, uint i, uint j) {
@@ -217,7 +217,7 @@ void game_update_flags(game g) {
 					if (j + tab[y + 1] >= 0 && j + tab[y + 1] < DEFAULT_SIZE && i + tab[y] >= 0 && i + tab[y] < DEFAULT_SIZE) {
 						if (game_is_lightbulb(g, i + tab[y], j + tab[y + 1]))
 							lb++;
-						else if (!game_is_blank(g, i + tab[y], j + tab[y + 1]))
+						else if (!game_is_blank(g, i + tab[y], j + tab[y + 1]) || game_is_lighted(g, i + tab[y], j + tab[y + 1]))
 							notempty++;
 					} else {
 						notempty++;
