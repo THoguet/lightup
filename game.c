@@ -171,7 +171,7 @@ void game_play_move(game g, uint i, uint j, square s) {
 	game_update_flags(g);
 }
 
-void delete_flags(g) {
+void delete_flags(game g) {
 	// delete prev flags
 	for (uint i = 0; i < DEFAULT_SIZE; i++) {
 		for (uint j = 0; j < DEFAULT_SIZE; j++) {
@@ -180,91 +180,68 @@ void delete_flags(g) {
 	}
 }
 
+void addF_LIGHTED(game g, uint i, uint j) {
+	square flags = game_get_flags(g, i, j);
+	if (flags == S_BLANK)
+		game_set_square(g, i, j, game_get_state(g, i, j) | F_LIGHTED);
+	else if (flags == F_ERROR) {
+		game_set_square(g, i, j, game_get_state(g, i, j) | F_LIGHTED | F_ERROR);
+	}
+}
+
 void game_update_flags(game g) {
 	delete_flags(g);
 	// update flags lighted and lightbulb error
-	for (uint i = 0; i < DEFAULT_SIZE; i++) {
-		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+	for (int i = 0; i < DEFAULT_SIZE; i++) {
+		for (int j = 0; j < DEFAULT_SIZE; j++) {
 			if (game_get_state(g, i, j) == S_LIGHTBULB) {
-				if (game_get_flags(g, i, j) == F_ERROR)
-					game_set_square(g, i, j, (S_LIGHTBULB | F_LIGHTED | F_ERROR));
-				else
-					game_set_square(g, i, j, (S_LIGHTBULB | F_LIGHTED));
-				for (uint i2 = i + 1; i2 < DEFAULT_SIZE && !game_is_black(g, i2, j); i2++) {
-					if (game_get_state(g, i2, j) == S_LIGHTBULB)
-						// update initial lightbulb on F_ERROR
-						game_set_square(g, i, j, (S_LIGHTBULB | F_LIGHTED | F_ERROR));
-					// update cases on FLIGHTED
-					game_set_square(g, i2, j, (game_get_state(g, i2, j) | F_LIGHTED));
-				}
-				for (int i2 = i - 1; i2 >= 0 && !game_is_black(g, i2, j); i2--) {
-					if (game_get_state(g, i2, j) == S_LIGHTBULB)
-						// update initial lightbulb on F_ERROR
-						game_set_square(g, i, j, (S_LIGHTBULB | F_LIGHTED | F_ERROR));
-					game_set_square(g, i2, j, (game_get_state(g, i2, j) | F_LIGHTED));
-				}
-				for (int j2 = j - 1; j2 >= 0 && !game_is_black(g, i, j2); j2--) {
-					if (game_get_state(g, i, j2) == S_LIGHTBULB)
-						// update initial lightbulb on F_ERROR
-						game_set_square(g, i, j, (S_LIGHTBULB | F_LIGHTED | F_ERROR));
-					game_set_square(g, i, j2, (game_get_state(g, i, j2) | F_LIGHTED));
-				}
-				for (uint j2 = j + 1; j2 < DEFAULT_SIZE && !game_is_black(g, i, j2); j2++) {
-					if (game_get_state(g, i, j2) == S_LIGHTBULB)
-						// update initial lightbulb on F_ERROR
-						game_set_square(g, i, j, (S_LIGHTBULB | F_LIGHTED | F_ERROR));
-					game_set_square(g, i, j2, (game_get_state(g, i, j2) | F_LIGHTED));
+				// add FLIGHTED to the current lightbulb
+				addF_LIGHTED(g, i, j);
+				// add FLIGHTED on the 4 directions, when a wall is hit stop this direction, when another lightbulb is hit put the initial lighbulb on error
+				int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
+				for (int x = 1; x < DEFAULT_SIZE; x++) {
+					for (uint y = 0; y < 7; y = y + 2) {
+						if (tab[y] != tab[y + 1] && j + x * tab[y + 1] >= 0 && j + x * tab[y + 1] < DEFAULT_SIZE && i + x * tab[y] >= 0 &&
+						    i + x * tab[y] < DEFAULT_SIZE) {
+							if (game_is_black(g, i + x * tab[y], j + x * tab[y + 1])) {
+								tab[y] = 0;
+								tab[y + 1] = 0;
+							} else {
+								// if we found another lightbulb on the line
+								if (game_get_state(g, i + x * tab[y], j + x * tab[y + 1]) == S_LIGHTBULB)
+									// update initial lightbulb on F_ERROR
+									game_set_square(g, i, j, (S_LIGHTBULB | F_LIGHTED | F_ERROR));
+								addF_LIGHTED(g, i + x * tab[y], j + x * tab[y + 1]);
+							}
+						}
+					}
 				}
 			}
 		}
 	}
-	// update flags wall
-	for (uint i = 0; i < DEFAULT_SIZE; i++) {
-		for (uint j = 0; j < DEFAULT_SIZE; j++) {
-			if (game_is_black(g, i, j)) {
-				if (game_get_black_number(g, i, j) >= 0) {
-					square choice[4];
-					int size = 0;
-					int lb = 0;
-					int notempty = 0;
-					if (i > 0) {
-						choice[size] = game_get_square(g, i - 1, j);
-						size++;
-					} else {
-						notempty++;
-					}
-					if (i < DEFAULT_SIZE - 1) {
-						choice[size] = game_get_square(g, i + 1, j);
-						size++;
-					} else {
-						notempty++;
-					}
-					if (j > 0) {
-						choice[size] = game_get_square(g, i, j - 1);
-						size++;
-					} else {
-						notempty++;
-					}
-					if (j < DEFAULT_SIZE - 1) {
-						choice[size] = game_get_square(g, i, j + 1);
-						size++;
-					} else {
-						notempty++;
-					}
-					for (int l = 0; l < size; l++) {
-						if (choice[l] == S_LIGHTBULB || choice[l] == (S_LIGHTBULB | F_LIGHTED) || choice[l] == (S_LIGHTBULB | F_LIGHTED | F_ERROR)) {
+	// update flags wall (need to wait all FLIGHTED being updated)
+	for (int i = 0; i < DEFAULT_SIZE; i++) {
+		for (int j = 0; j < DEFAULT_SIZE; j++) {
+			if (game_is_black(g, i, j) && game_get_black_number(g, i, j) >= 0) {
+				int lb = 0;
+				int notempty = 0;
+				int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
+				for (uint y = 0; y < 7; y = y + 2) {
+					if (j + tab[y + 1] >= 0 && j + tab[y + 1] < DEFAULT_SIZE && i + tab[y] >= 0 && i + tab[y] < DEFAULT_SIZE) {
+						if (game_is_lightbulb(g, i + tab[y], j + tab[y + 1]))
 							lb++;
-						} else if (choice[l] != S_BLANK) {
+						else if (!game_is_blank(g, i + tab[y], j + tab[y + 1]))
 							notempty++;
-						}
+					} else {
+						notempty++;
 					}
-					if (lb > game_get_black_number(g, i, j)) {
-						game_set_square(g, i, j, (game_get_state(g, i, j) | F_ERROR));
-					}
-					// look if there is enough empty cell around the wall
-					else if (notempty > abs(game_get_black_number(g, i, j) - 4)) {
-						game_set_square(g, i, j, (game_get_state(g, i, j) | F_ERROR));
-					}
+				}
+				if (lb > game_get_black_number(g, i, j)) {
+					game_set_square(g, i, j, (game_get_state(g, i, j) | F_ERROR));
+				}
+				// look if there is enough empty cell around the wall
+				else if (notempty > abs(game_get_black_number(g, i, j) - 4)) {
+					game_set_square(g, i, j, (game_get_state(g, i, j) | F_ERROR));
 				}
 			}
 		}
