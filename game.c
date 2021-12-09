@@ -122,14 +122,11 @@ bool game_is_blank(cgame g, uint i, uint j) {
 }
 
 bool game_is_lightbulb(cgame g, uint i, uint j) {
-	return ((g->tab_cell[i][j] == S_LIGHTBULB) || (g->tab_cell[i][j] == (S_LIGHTBULB | F_LIGHTED)) || (g->tab_cell[i][j] == (S_LIGHTBULB | F_ERROR)) ||
-	        (g->tab_cell[i][j] == (S_LIGHTBULB | F_LIGHTED | F_ERROR)));
+	return game_get_state(g, i, j) == S_LIGHTBULB;
 }
 
 bool game_is_black(cgame g, uint i, uint j) {
-	if (game_get_state(g, i, j) >= 8 && game_get_state(g, i, j) <= 13)
-		return true;
-	return false;
+	return game_get_state(g, i, j) >= S_BLACK0 && game_get_state(g, i, j) <= S_BLACKU;
 }
 
 int game_get_black_number(cgame g, uint i, uint j) {
@@ -139,25 +136,15 @@ int game_get_black_number(cgame g, uint i, uint j) {
 }
 
 bool game_is_marked(cgame g, uint i, uint j) {
-	return ((g->tab_cell[i][j] == S_MARK) || (g->tab_cell[i][j] == (S_MARK | F_LIGHTED)) || (g->tab_cell[i][j] == (S_MARK | F_ERROR)) ||
-	        (g->tab_cell[i][j] == (S_MARK | F_LIGHTED | F_ERROR)));
+	return game_get_state(g, i, j) == S_MARK;
 }
 
 bool game_is_lighted(cgame g, uint i, uint j) {
-	if (g->tab_cell[i][j] >= F_ERROR) {
-		g->tab_cell[i][j] -= F_ERROR;
-	}
-	if (g->tab_cell[i][j] >= F_LIGHTED) {
-		return true;
-	}
-	return false;
+	return game_get_flags(g, i, j) >= F_LIGHTED;
 }
 
 bool game_has_error(cgame g, uint i, uint j) {
-	if (g->tab_cell[i][j] >= F_ERROR) {
-		return true;
-	}
-	return false;
+	return g->tab_cell[i][j] >= F_ERROR;
 }
 
 bool game_check_move(cgame g, uint i, uint j, square s) {
