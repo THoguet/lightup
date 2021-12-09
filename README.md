@@ -4,6 +4,18 @@ Projet Techno
 
 :warning: <b>LE PREMIER QUI COMMIT DU CODE QUI COMPILE PAS JE L'ATTRAPE </b> :warning:
 
+## game_ext.h
+
+| Fonction                             | REF                                                                          | Assigned to | Notes |        Finished        |
+| ------------------------------------ | ---------------------------------------------------------------------------- | ----------- | ----- | :--------------------: |
+| [game_new_ext](./game_ext.c#L?)              | [game game_new_ext(uint nb_rows, uint nb_cols, square *squares, bool wrapping)](./game_ext.h#L20-30)                            | @thoguet  |       | <ul><li>[ ] </li></ul> |
+| [game_new_empty_ext](./game_ext.c#L?)              | [game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping);](./game_ext.h#L32-41)                            | @thoguet  |       | <ul><li>[ ] </li></ul> |
+| [game_nb_rows](./game_ext.c#L?)              | [uint game_nb_rows(cgame g);](./game_ext.h#L43-59)                            | @nnunes  |       | <ul><li>[ ] </li></ul> |
+| [game_nb_cols](./game_ext.c#L?)              | [uint game_nb_cols(cgame g);](./game_ext.h#L51-57)                            | @nnunes  |       | <ul><li>[ ] </li></ul> |
+| [game_is_wrapping](./game_ext.c#L?)              | [bool game_is_wrapping(cgame g);](./game_ext.h#L59-64)                            | @nnunes  |       | <ul><li>[ ] </li></ul> |
+| [game_undo](./game_ext.c#L?)              | [void game_undo(game g);](./game_ext.h#L66-75)                            | @thperrier  |       | <ul><li>[ ] </li></ul> |
+| [game_redo](./game_ext.c#L?)              | [void game_redo(game g);](./game_ext.h#L77-86)                            | @thperrier  |       | <ul><li>[ ] </li></ul> |
+
 ## game.c
 
 | Fonction                             | REF                                                                          | Assigned to | Notes |        Finished        |
