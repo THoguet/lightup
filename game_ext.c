@@ -56,6 +56,14 @@ bool game_is_wrapping(cgame g) {
 }
 
 void game_undo(game g) {
+	if (history_prev(g->hist) == NULL){
+		printf("waiting for your first move");
+	}
+	else{
+	game_set_square(g, history_i(history_prev(g->hist)), history_j(history_prev(g->hist)), history_state(history_prev(g->hist)));
+	game_update_flags(g);
+	g->hist = history_prev(g->hist);
+	}
 	return;
 }
 
