@@ -15,23 +15,23 @@ void game_print(cgame g) {
 	if (g != NULL) {
 		uint i;
 		printf("   0");
-		for (i = 1; i < DEFAULT_SIZE; i++) {
+		for (i = 1; i < g->width; i++) {
 			printf("%u", i);
 		}
 		printf("\n   -");
-		for (i = 1; i < DEFAULT_SIZE; i++) {
+		for (i = 1; i < g->width; i++) {
 			printf("-");
 		}
 		printf("\n");
-		for (i = 0; i < DEFAULT_SIZE; i++) {
+		for (i = 0; i < g->height; i++) {
 			printf("%u |", i);
-			for (uint j = 0; j < DEFAULT_SIZE; j++) {
+			for (uint j = 0; j < g->width; j++) {
 				printf("%c", charPrintCell(g, i, j));
 			}
 			printf("|\n");
 		}
 		printf("   -");
-		for (i = 1; i < DEFAULT_SIZE; i++) {
+		for (i = 1; i < g->width; i++) {
 			printf("-");
 		}
 		printf("\n");
