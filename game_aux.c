@@ -2,39 +2,13 @@
 #include <stdio.h>
 #include "game.h"
 
-char charPrintCell(square sqState) {
-	if (sqState == S_BLANK) {
-		return ' ';
-	}
-	if ((sqState == S_LIGHTBULB) ||
-	    (sqState == (S_LIGHTBULB | F_ERROR)) | (sqState == (S_LIGHTBULB | F_LIGHTED)) | (sqState == (S_LIGHTBULB | F_ERROR | F_LIGHTED))) {
-		return '*';
-	}
-	if ((sqState == S_MARK) || (sqState == (S_MARK | F_ERROR)) | (sqState == (S_MARK | F_LIGHTED))) {
-		return '-';
-	}
-	if (sqState == S_BLACK0 || sqState == (S_BLACK0 | F_ERROR)) {
-		return '0';
-	}
-	if (sqState == S_BLACK1 || sqState == (S_BLACK1 | F_ERROR)) {
-		return '1';
-	}
-	if (sqState == S_BLACK2 || sqState == (S_BLACK2 | F_ERROR)) {
-		return '2';
-	}
-	if (sqState == S_BLACK3 || sqState == (S_BLACK3 | F_ERROR)) {
-		return '3';
-	}
-	if (sqState == S_BLACK4 || sqState == (S_BLACK4 | F_ERROR)) {
-		return '4';
-	}
-	if (sqState == S_BLACKU || sqState == (S_BLACKU | F_ERROR)) {
-		return 'w';
-	}
-	if (sqState == F_LIGHTED) {
-		return '.';
-	}
-	return -1;
+char charPrintCell(cgame g, uint i, uint j) {
+	square sqState = game_get_state(g, i, j);
+	square sqFlags = game_get_flags(g, i, j);
+	char tab[] = {' ', '*', '-', '?', '?', '?', '?', '?', '0', '1', '2', '3', '4', 'w', '?', '?', '.'};
+	if (!sqState)
+		return tab[sqFlags];
+	return tab[sqState];
 }
 
 void game_print(cgame g) {
@@ -52,7 +26,7 @@ void game_print(cgame g) {
 		for (i = 0; i < DEFAULT_SIZE; i++) {
 			printf("%u |", i);
 			for (uint j = 0; j < DEFAULT_SIZE; j++) {
-				printf("%c", charPrintCell(game_get_square(g, i, j)));
+				printf("%c", charPrintCell(g, i, j));
 			}
 			printf("|\n");
 		}
@@ -88,6 +62,5 @@ game game_default_solution(void) {
 	game_set_square(g, 5, 0, S_LIGHTBULB);
 	game_set_square(g, 5, 5, S_LIGHTBULB);
 	game_set_square(g, 6, 1, S_LIGHTBULB);
-	game_update_flags(g);
 	return g;
 }
