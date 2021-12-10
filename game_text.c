@@ -10,8 +10,8 @@ bool checkerr(cgame g, char taberr[]) {
 	}
 	uint err = 0;
 	taberr[0] = '\0';
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
-		for (int j = 0; j < DEFAULT_SIZE; j++) {
+	for (int i = 0; i < g->height; i++) {
+		for (int j = 0; j < g->width; j++) {
 			// check each case
 			if (game_has_error(g, i, j)) {
 				// if error append taberr with coo+,
@@ -54,7 +54,7 @@ int main(void) {
 	// test if game is over
 	uint i;
 	uint j;
-	char taberr[DEFAULT_SIZE * DEFAULT_SIZE * 4];
+	char taberr[g->height * g->width * 4];
 	char c;
 	// print game
 	game_print(g);

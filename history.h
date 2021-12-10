@@ -1,6 +1,9 @@
 #ifndef __HISTORY_H__
 #define __HISTORY_H__
 #include <stdbool.h>
+
+typedef struct s_history* history;
+
 #include "game.h"
 
 struct s_history {
@@ -10,8 +13,6 @@ struct s_history {
 	struct s_history* next;
 	struct s_history* prev;
 };
-
-typedef struct s_history* history;
 
 /**
  * @brief fprintf not enought memory + exit

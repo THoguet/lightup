@@ -80,8 +80,6 @@ bool test_game_new(void) {
 
 /* ******** game_print ******** */
 
-// est ce qu'il faut faire avec un tab invalide ?
-
 bool test_game_print(void) {
 	square tab[DEFAULT_SIZE * DEFAULT_SIZE];
 	square list[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
@@ -205,7 +203,7 @@ int checklightbulb(game g, uint i, uint j, bool wall) {
 					break;
 				}
 			}
-			for (int i2 = i + 1; i2 < DEFAULT_SIZE; i2++) {
+			for (int i2 = i + 1; i2 < g->height; i2++) {
 				flags = game_get_square(g, i2, j);
 				if (flags == (S_LIGHTBULB | F_LIGHTED) || flags == (S_LIGHTBULB | F_LIGHTED | F_ERROR)) {
 					return -1;
@@ -223,7 +221,7 @@ int checklightbulb(game g, uint i, uint j, bool wall) {
 					break;
 				}
 			}
-			for (int j2 = j + 1; j2 < DEFAULT_SIZE; j2++) {
+			for (int j2 = j + 1; j2 < g->width; j2++) {
 				flags = game_get_square(g, i, j2);
 				if (flags == (S_LIGHTBULB | F_LIGHTED) || flags == (S_LIGHTBULB | F_LIGHTED | F_ERROR)) {
 					return -1;
@@ -246,8 +244,8 @@ bool check_update(game g) {
 	uint notempty;
 	bool res;
 	bool wall;
-	for (uint i = 0; i < DEFAULT_SIZE; i++) {
-		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+	for (uint i = 0; i < g->height; i++) {
+		for (uint j = 0; j < g->width; j++) {
 			if (game_is_lightbulb(g, i, j)) {
 				square flags = game_get_flags(g, i, j);
 				if (/*test if this lightbulb is well updated*/ flags == S_BLANK || flags == F_ERROR) {
@@ -270,7 +268,7 @@ bool check_update(game g) {
 					}
 				}
 				wall = false;
-				for (int k = i + 1; k < DEFAULT_SIZE; k++) {
+				for (int k = i + 1; k < g->height; k++) {
 					if (/*test if current case is a wall*/ game_is_black(g, k, j)) {
 						wall = true;
 					} else {
@@ -298,7 +296,7 @@ bool check_update(game g) {
 					}
 				}
 				wall = false;
-				for (int k = j + 1; k < DEFAULT_SIZE; k++) {
+				for (int k = j + 1; k < g->width; k++) {
 					if (/*test if current case is a wall*/ game_is_black(g, i, k)) {
 						wall = true;
 					} else {
@@ -324,7 +322,7 @@ bool check_update(game g) {
 					} else {
 						notempty++;
 					}
-					if (i < DEFAULT_SIZE - 1) {
+					if (i < g->height - 1) {
 						choice[size] = game_get_square(g, i + 1, j);
 						size++;
 					} else {
@@ -336,7 +334,7 @@ bool check_update(game g) {
 					} else {
 						notempty++;
 					}
-					if (j < DEFAULT_SIZE - 1) {
+					if (j < g->width - 1) {
 						choice[size] = game_get_square(g, i, j + 1);
 						size++;
 					} else {
@@ -376,19 +374,19 @@ bool check_update(game g) {
 // a > 2 = temps d'exec > 3 min et expo
 bool brutforce(game g, int a, bool* deldup) {
 	// char c;
-	bool* delDupNext = (bool*)calloc(DEFAULT_SIZE * DEFAULT_SIZE, sizeof(bool));
+	bool* delDupNext = (bool*)calloc(g->height * g->width, sizeof(bool));
 	if (delDupNext == NULL) {
 		fprintf(stderr, "Not enought memory\n");
 		exit(EXIT_FAILURE);
 	}
 	square list[] = {S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU, S_BLANK};
-	for (uint i = 0; i < DEFAULT_SIZE; i++) {
-		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+	for (uint i = 0; i < g->height; i++) {
+		for (uint j = 0; j < g->width; j++) {
 			// printf("state: %d i:%d j:%d\n",game_get_state(g,i,j),i,j);
-			if (deldup == NULL || !(deldup[i * DEFAULT_SIZE + j])) {
+			if (deldup == NULL || !(deldup[i * g->width + j])) {
 				if (game_get_state(g, i, j) == S_BLANK) {
 					if (delDupNext != NULL && a > 0)
-						delDupNext[i * DEFAULT_SIZE + j] = true;
+						delDupNext[i * g->width + j] = true;
 					for (uint k = 0; k < 9; k++) {
 						game_set_square(g, i, j, list[k]);
 						// if (k == 0){

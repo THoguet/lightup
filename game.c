@@ -2,54 +2,64 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int max(int a, int b) {
+	if (a > b)
+		return a;
+	return b;
+}
+
 game game_new(square* squares) {
 	game g = game_new_empty();
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
-		for (int j = 0; j < DEFAULT_SIZE; j++) {
-			g->tab_cell[i][j] = squares[DEFAULT_SIZE * i + j];
+	for (int i = 0; i < g->height; i++) {
+		for (int j = 0; j < g->width; j++) {
+			g->tab_cell[i][j] = squares[g->width * i + j];
 		}
 	}
 	return g;
 }
 
 game game_new_empty(void) {
+	// alloc struct
 	game g = (game)malloc(sizeof(struct game_s));
 	if (g == NULL) {
 		fprintf(stderr, "not enough memory\n");
 		exit(EXIT_FAILURE);
 	}
-	g->tab_cell = (square**)malloc(sizeof(square*) * DEFAULT_SIZE);
-	if (g->tab_cell == NULL) {
-		fprintf(stderr, "not enough memory\n");
-		exit(EXIT_FAILURE);
-	}
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
-		g->tab_cell[i] = (square*)malloc(sizeof(square) * DEFAULT_SIZE);
-		if (g->tab_cell[i] == NULL) {
-			fprintf(stderr, "not enough memory\n");
-			exit(EXIT_FAILURE);
-		}
-		for (int j = 0; j < DEFAULT_SIZE; j++) {
-			g->tab_cell[i][j] = S_BLANK;
-		}
-	}
+	// set variable of struct
 	g->wrapped = false;
 	g->height = DEFAULT_SIZE;
 	g->width = DEFAULT_SIZE;
 	g->hist = NULL;
+	// alloc the tab with variables set before
+	g->tab_cell = (square**)malloc(sizeof(square*) * g->height);
+	if (g->tab_cell == NULL) {
+		fprintf(stderr, "not enough memory\n");
+		exit(EXIT_FAILURE);
+	}
+	for (int i = 0; i < g->height; i++) {
+		g->tab_cell[i] = (square*)malloc(sizeof(square) * g->width);
+		if (g->tab_cell[i] == NULL) {
+			fprintf(stderr, "not enough memory\n");
+			exit(EXIT_FAILURE);
+		}
+		for (int j = 0; j < g->width; j++) {
+			g->tab_cell[i][j] = S_BLANK;
+		}
+	}
 	return g;
 }
-
+// TODO
 game game_copy(cgame g1) {
 	game g2 = game_new_empty();
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
-		for (int j = 0; j < DEFAULT_SIZE; j++) {
+	for (int i = 0; i < g2->height; i++) {
+		for (int j = 0; j < g2->width; j++) {
 			g2->tab_cell[i][j] = g1->tab_cell[i][j];
 		}
 	}
 	return g2;
 }
 
+// TODO
 bool game_equal(cgame g1, cgame g2) {
 	for (int i = 0; i < DEFAULT_SIZE; i++) {
 		for (int j = 0; j < DEFAULT_SIZE; j++) {
@@ -62,7 +72,7 @@ bool game_equal(cgame g1, cgame g2) {
 }
 
 void game_delete(game g) {
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
+	for (int i = 0; i < g->height; i++) {
 		free(g->tab_cell[i]);
 		if (g->tab_cell[i] != NULL)
 			g->tab_cell[i] = NULL;
@@ -145,9 +155,7 @@ bool game_has_error(cgame g, uint i, uint j) {
 }
 
 bool game_check_move(cgame g, uint i, uint j, square s) {
-	if (i >= DEFAULT_SIZE || j >= DEFAULT_SIZE || (s != S_BLANK && s != S_MARK && s != S_LIGHTBULB) || game_is_black(g, i, j))
-		return false;
-	return true;
+	return !(i >= g->height || j >= g->width || (s != S_BLANK && s != S_MARK && s != S_LIGHTBULB) || game_is_black(g, i, j));
 }
 
 void game_play_move(game g, uint i, uint j, square s) {
@@ -157,8 +165,8 @@ void game_play_move(game g, uint i, uint j, square s) {
 
 void delete_flags(game g) {
 	// delete prev flags
-	for (uint i = 0; i < DEFAULT_SIZE; i++) {
-		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+	for (uint i = 0; i < g->height; i++) {
+		for (uint j = 0; j < g->width; j++) {
 			game_set_square(g, i, j, game_get_state(g, i, j));
 		}
 	}
@@ -176,17 +184,17 @@ void addF_LIGHTED(game g, uint i, uint j) {
 void game_update_flags(game g) {
 	delete_flags(g);
 	// update flags lighted and lightbulb error
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
-		for (int j = 0; j < DEFAULT_SIZE; j++) {
+	for (int i = 0; i < g->height; i++) {
+		for (int j = 0; j < g->width; j++) {
 			if (game_get_state(g, i, j) == S_LIGHTBULB) {
 				// add FLIGHTED to the current lightbulb
 				addF_LIGHTED(g, i, j);
 				// add FLIGHTED on the 4 directions, when a wall is hit stop this direction, when another lightbulb is hit put the initial lighbulb on error
 				int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
-				for (int x = 1; x < DEFAULT_SIZE; x++) {
+				for (int x = 1; x < max(g->width, g->height); x++) {
 					for (uint y = 0; y < 7; y = y + 2) {
-						if (tab[y] != tab[y + 1] && j + x * tab[y + 1] >= 0 && j + x * tab[y + 1] < DEFAULT_SIZE && i + x * tab[y] >= 0 &&
-						    i + x * tab[y] < DEFAULT_SIZE) {
+						if (tab[y] != tab[y + 1] && j + x * tab[y + 1] >= 0 && j + x * tab[y + 1] < g->width && i + x * tab[y] >= 0 &&
+						    i + x * tab[y] < g->height) {
 							if (game_is_black(g, i + x * tab[y], j + x * tab[y + 1])) {
 								tab[y] = 0;
 								tab[y + 1] = 0;
@@ -204,14 +212,14 @@ void game_update_flags(game g) {
 		}
 	}
 	// update flags wall (need to wait all FLIGHTED being updated)
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
-		for (int j = 0; j < DEFAULT_SIZE; j++) {
+	for (int i = 0; i < g->height; i++) {
+		for (int j = 0; j < g->width; j++) {
 			if (game_is_black(g, i, j) && game_get_black_number(g, i, j) >= 0) {
 				int lb = 0;
 				int notempty = 0;
 				int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
 				for (uint y = 0; y < 7; y = y + 2) {
-					if (j + tab[y + 1] >= 0 && j + tab[y + 1] < DEFAULT_SIZE && i + tab[y] >= 0 && i + tab[y] < DEFAULT_SIZE) {
+					if (j + tab[y + 1] >= 0 && j + tab[y + 1] < g->width && i + tab[y] >= 0 && i + tab[y] < g->height) {
 						if (game_is_lightbulb(g, i + tab[y], j + tab[y + 1]))
 							lb++;
 						else if (!game_is_blank(g, i + tab[y], j + tab[y + 1]) || game_is_lighted(g, i + tab[y], j + tab[y + 1]))
@@ -233,8 +241,8 @@ void game_update_flags(game g) {
 }
 
 bool game_is_over(cgame g) {
-	for (uint i = 0; i < DEFAULT_SIZE; i++) {
-		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+	for (uint i = 0; i < g->height; i++) {
+		for (uint j = 0; j < g->width; j++) {
 			if ((game_get_state(g, i, j) == S_BLANK && game_get_flags(g, i, j) == S_BLANK) || game_get_flags(g, i, j) == F_ERROR ||
 			    game_get_flags(g, i, j) == (F_LIGHTED | F_ERROR))
 				return false;
@@ -244,8 +252,8 @@ bool game_is_over(cgame g) {
 }
 
 void game_restart(game g) {
-	for (uint i = 0; i < DEFAULT_SIZE; i++) {
-		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+	for (uint i = 0; i < g->height; i++) {
+		for (uint j = 0; j < g->width; j++) {
 			if (game_get_state(g, i, j) == S_MARK || game_get_state(g, i, j) == S_LIGHTBULB)
 				game_set_square(g, i, j, S_BLANK);
 		}

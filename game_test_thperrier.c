@@ -171,8 +171,8 @@ bool test_game_equal() {
 bool test_game_new_empty() {
 	game g = game_new_empty();
 	assert(g);
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
-		for (int j = 0; j < DEFAULT_SIZE; j++) {
+	for (int i = 0; i < g->height; i++) {
+		for (int j = 0; j < g->width; j++) {
 			if (game_get_square(g, i, j) != S_BLANK) {
 				game_delete(g);
 				return false;
@@ -186,7 +186,7 @@ bool test_game_new_empty() {
 /* ********** game_copy ********** */
 bool test_game_copy() {
 	game g1 = game_new_empty();
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
+	for (int i = 0; i < g1->height; i++) {
 		game_set_square(g1, i, 0, S_LIGHTBULB);
 		game_set_square(g1, i, 1, S_MARK);
 		game_set_square(g1, i, 2, S_BLACKU);
@@ -202,8 +202,8 @@ bool test_game_copy() {
 		game_delete(g2);
 		return false;
 	}
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
-		for (int j = 0; j < DEFAULT_SIZE; j++) {
+	for (int i = 0; i < g2->height; i++) {
+		for (int j = 0; j < g2->width; j++) {
 			game_set_square(g2, i, j, S_BLACK3);
 		}
 	}

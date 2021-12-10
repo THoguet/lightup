@@ -8,8 +8,6 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 #include <stdbool.h>
-#include "history.h"
-
 /**
  * @brief Standard unsigned integer type.
  **/
@@ -59,11 +57,12 @@ typedef enum {
 /** square mask used in square enum */
 #define A_MASK 0xFF
 
+#include "history.h"
 struct game_s {
 	square** tab_cell;
 	bool wrapped;
-	uint height;
-	uint width;
+	uint height;  // i in general
+	uint width;   // j in general
 	history hist;
 };
 
