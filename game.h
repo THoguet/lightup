@@ -60,7 +60,7 @@ typedef enum {
 #include "history.h"
 struct game_s {
 	square** tab_cell;
-	bool wrapped;
+	bool wrapping;
 	uint height;  // i in general
 	uint width;   // j in general
 	history hist;

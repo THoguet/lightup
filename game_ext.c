@@ -20,7 +20,7 @@ game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping) {
 		exit(EXIT_FAILURE);
 	}
 	// set variable of struct
-	g->wrapped = wrapping;
+	g->wrapping = wrapping;
 	g->height = nb_rows;
 	g->width = nb_cols;
 	g->hist = history_create_empty();

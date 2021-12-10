@@ -26,7 +26,7 @@ game game_new_empty(void) {
 		exit(EXIT_FAILURE);
 	}
 	// set variable of struct
-	g->wrapped = false;
+	g->wrapping = false;
 	g->height = DEFAULT_SIZE;
 	g->width = DEFAULT_SIZE;
 	g->hist = NULL;
@@ -50,10 +50,15 @@ game game_new_empty(void) {
 }
 // TODO
 game game_copy(cgame g1) {
-	game g2 = game_new_empty();
+	game g2 = game_new_empty_ext(g1->height, g1->width, g1->wrapping);
 	for (int i = 0; i < g2->height; i++) {
 		for (int j = 0; j < g2->width; j++) {
+			if (g1->tab_cell[i][j] == (S_BLANK | S_LIGHTBULB | S_MARK)){
+				game_play_move(g2, i, j, g1->tab_cell[i][j]);
+			}
+			else {
 			g2->tab_cell[i][j] = g1->tab_cell[i][j];
+			}
 		}
 	}
 	return g2;
