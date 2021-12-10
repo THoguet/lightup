@@ -36,6 +36,7 @@ game game_new_empty(void) {
 	g->wrapped = false;
 	g->height = DEFAULT_SIZE;
 	g->width = DEFAULT_SIZE;
+	g->hist = NULL;
 	return g;
 }
 
@@ -69,6 +70,9 @@ void game_delete(game g) {
 	free(g->tab_cell);
 	if (g->tab_cell != NULL)
 		g->tab_cell = NULL;
+	history_delete_entire_history(g->hist);
+	if (g->hist != NULL)
+		g->hist = NULL;
 	free(g);
 	if (g != NULL)
 		g = NULL;

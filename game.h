@@ -8,6 +8,7 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 #include <stdbool.h>
+#include "history.h"
 
 /**
  * @brief Standard unsigned integer type.
@@ -63,6 +64,7 @@ struct game_s {
 	bool wrapped;
 	uint height;
 	uint width;
+	history hist;
 };
 
 /**

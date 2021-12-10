@@ -43,7 +43,7 @@ void history_free(history h);
 history history_create_empty(void);
 
 /**
- * @brief Delete every element after h
+ * @brief Delete every element of h (before and after)
  *
  * @param h the head of the history
  */
