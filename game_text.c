@@ -4,7 +4,7 @@
 #include "game.h"
 #include "game_aux.h"
 
-bool checkerr(game g, char taberr[]) {
+bool checkerr(cgame g, char taberr[]) {
 	if (taberr == NULL || g == NULL) {
 		return -1;
 	}
@@ -74,36 +74,35 @@ int main(void) {
 				game_print(g);
 			} else if (c == 'q') {
 				printf("Solution: \n");
-				game_print(game_default_solution());
+				game sol = game_default_solution();
+				game_update_flags(sol);
+				game_print(sol);
+				game_delete(sol);
+				game_delete(g);
 				printf("shame\n");
 				return EXIT_SUCCESS;
 			} else if (c == 'l' || c == 'm' || c == 'b') {
 				if (scanf(" %u %u", &i, &j) == 2) {
-					if (i < DEFAULT_SIZE && j < DEFAULT_SIZE && !game_is_black(g, i, j)) {
-						if (c == 'l') {
-							game_set_square(g, i, j, S_LIGHTBULB);
-							game_update_flags(g);
-							game_print(g);
-						} else if (c == 'm') {
-							game_set_square(g, i, j, S_MARK);
-							game_update_flags(g);
-							game_print(g);
-						} else if (c == 'b') {
-							game_set_square(g, i, j, S_BLANK);
-							game_update_flags(g);
-							game_print(g);
-						}
-					} else {
+					if (c == 'l' && game_check_move(g, i, j, S_LIGHTBULB)) {
+						game_play_move(g, i, j, S_LIGHTBULB);
+						game_print(g);
+					} else if (c == 'm' && game_check_move(g, i, j, S_MARK)) {
+						game_play_move(g, i, j, S_MARK);
+						game_print(g);
+					} else if (c == 'b' && game_check_move(g, i, j, S_BLANK)) {
+						game_play_move(g, i, j, S_BLANK);
+						game_print(g);
+					} else
 						printf("Erreur: (<i>,<j>) invalide.\n");
-					}
-				} else {
-					printf("Commande inconnue.\n");
 				}
 			} else {
 				printf("Commande inconnue.\n");
 			}
+		} else {
+			printf("Commande inconnue.\n");
 		}
 	}
 	printf("congratulation\n");
+	game_delete(g);
 	return EXIT_SUCCESS;
 }
