@@ -166,6 +166,13 @@ bool game_check_move(cgame g, uint i, uint j, square s) {
 void game_play_move(game g, uint i, uint j, square s) {
 	game_set_square(g, i, j, s);
 	game_update_flags(g);
+	if (g->hist == NULL){
+		g->hist = history_create_empty();
+		g->hist = history_insert_first(g->hist, s, i, j);
+	}
+	else {
+		g->hist = history_next(history_insert_after(g->hist,g->hist,s,i,j));
+	}
 }
 
 void delete_flags(game g) {
