@@ -58,6 +58,13 @@ typedef enum {
 /** square mask used in square enum */
 #define A_MASK 0xFF
 
+struct game_s {
+	square** tab_cell;
+	bool wrapped;
+	uint height;
+	uint width;
+};
+
 /**
  * @brief The structure pointer that stores the game state.
  **/

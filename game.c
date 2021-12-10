@@ -2,13 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct game_s {
-	square** tab_cell;
-	bool wrapped;
-	uint height;
-	uint width;
-};
-
 game game_new(square* squares) {
 	game g = game_new_empty();
 	for (int i = 0; i < DEFAULT_SIZE; i++) {
