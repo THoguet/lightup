@@ -12,7 +12,7 @@ void errPointer(void) {
 	exit(EXIT_FAILURE);
 }
 
-history history_alloc() {
+history history_alloc(void) {
 	history h = (history)malloc(sizeof(struct s_history));
 	if (h == NULL)
 		memoryError();
