@@ -62,5 +62,6 @@ game game_default_solution(void) {
 	game_set_square(g, 5, 0, S_LIGHTBULB);
 	game_set_square(g, 5, 5, S_LIGHTBULB);
 	game_set_square(g, 6, 1, S_LIGHTBULB);
+	game_update_flags(g);
 	return g;
 }

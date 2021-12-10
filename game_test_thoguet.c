@@ -162,7 +162,6 @@ bool test_game_default_solution(void) {
 	game_set_square(g1, 5, 5, S_LIGHTBULB);
 	game_set_square(g1, 6, 1, S_LIGHTBULB);
 	game_update_flags(g1);
-	game_update_flags(g);
 	assert(game_equal(g, g1));
 	game_delete(g);
 	game_delete(g1);
