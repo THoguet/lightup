@@ -46,9 +46,8 @@ history history_create_empty(void);
  * @brief Delete every element after h
  *
  * @param h the head of the history
- * @return the new history (NULL)
  */
-history history_delete_entire_history(history h);
+void history_delete_entire_history(history h);
 
 /**
  * @brief Test if the given history is empty or not.
@@ -199,4 +198,13 @@ history history_first(history h);
  * @return h
  */
 history history_append(history h, square state, uint i, uint j);
+
+/**
+ * @brief Delete all the elements after p
+ *
+ * @param h an history
+ * @param p an element of h
+ * @return h
+ */
+history history_delete_all_after(history h, history p);
 #endif

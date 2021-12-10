@@ -77,18 +77,6 @@ history history_insert_first(history h, square state, uint i, uint j) {
 	return new;
 }
 
-history history_delete_first(history h) {
-	if (!history_is_empty(h)) {
-		history tmp = h->next;
-		history_free(h);
-		h = tmp;
-		if (!history_is_empty(h)) {
-			h->prev = NULL;
-		}
-	}
-	return h;
-}
-
 history history_insert_after(history h, history p, square state, uint i, uint j) {
 	if (history_is_empty(h) || history_is_empty(p))
 		errPointer();
@@ -105,7 +93,7 @@ history history_insert_after(history h, history p, square state, uint i, uint j)
 }
 
 history history_delete_after(history h, history p) {
-	if (history_is_empty(h) || history_is_empty(p))
+	if (history_is_empty(p))
 		errPointer();
 	if (!history_is_empty(history_next(p))) {
 		history to_be_deleted = p->next;
@@ -145,4 +133,59 @@ history history_delete_before(history h, history p) {
 		history_free(to_be_deleted);
 	}
 	return h;
+}
+
+history history_last(history h) {
+	if (history_is_empty(h))
+		errPointer();
+	if (history_is_empty(history_next(h)))
+		return h;
+	return history_last(history_next(h));
+}
+
+history history_first(history h) {
+	if (history_is_empty(h))
+		errPointer();
+	if (history_is_empty(history_prev(h)))
+		return h;
+	return history_first(history_prev(h));
+}
+
+history history_delete_first(history h) {
+	if (!history_is_empty(h)) {
+		h = history_first(h);
+		history tmp = h->next;
+		history_free(h);
+		h = tmp;
+		if (!history_is_empty(h)) {
+			h->prev = NULL;
+		}
+	}
+	return h;
+}
+
+history history_append(history h, square state, uint i, uint j) {
+	if (history_is_empty(h))
+		return history_insert_first(h, state, i, j);
+	if (history_is_empty(history_next(h)))
+		return history_insert_after(h, h, state, i, j);
+	history_append(history_next(h), state, i, j);
+	return h;
+}
+
+history history_delete_all_after(history h, history p) {
+	if (history_is_empty(p))
+		return h;
+	if (history_is_empty(history_next(p)))
+		return h;
+	history_delete_all_after(h, history_next(p));
+	return history_delete_after(h, p);
+}
+
+void history_delete_entire_history(history h) {
+	if (history_is_empty(h))
+		return;
+	if (history_is_empty(history_prev(h)))
+		return history_free(history_delete_all_after(h, h));
+	return history_delete_entire_history(history_prev(h));
 }
