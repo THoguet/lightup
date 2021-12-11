@@ -53,19 +53,19 @@ game game_copy(cgame g1) {
 	game g2 = game_new_empty_ext(g1->height, g1->width, g1->wrapping);
 	for (int i = 0; i < g2->height; i++) {
 		for (int j = 0; j < g2->width; j++) {
-			if (g1->tab_cell[i][j] == S_BLANK || g1->tab_cell[i][j] == S_LIGHTBULB || g1->tab_cell[i][j] == S_MARK){
+			if (g1->tab_cell[i][j] == S_BLANK || g1->tab_cell[i][j] == S_LIGHTBULB || g1->tab_cell[i][j] == S_MARK) {
 				game_play_move(g2, i, j, g1->tab_cell[i][j]);
-			}
-			else {
-			g2->tab_cell[i][j] = g1->tab_cell[i][j];
+			} else {
+				g2->tab_cell[i][j] = g1->tab_cell[i][j];
 			}
 		}
 	}
 	return g2;
 }
 
-// TODO
 bool game_equal(cgame g1, cgame g2) {
+	if (g1->height != g2->height || g1->width != g2->width || g1->wrapping != g2->wrapping)
+		return false;
 	for (int i = 0; i < DEFAULT_SIZE; i++) {
 		for (int j = 0; j < DEFAULT_SIZE; j++) {
 			if (g1->tab_cell[i][j] != g2->tab_cell[i][j]) {
@@ -166,12 +166,11 @@ bool game_check_move(cgame g, uint i, uint j, square s) {
 void game_play_move(game g, uint i, uint j, square s) {
 	game_set_square(g, i, j, s);
 	game_update_flags(g);
-	if (g->hist == NULL){
+	if (g->hist == NULL) {
 		g->hist = history_create_empty();
 		g->hist = history_insert_first(g->hist, s, i, j);
-	}
-	else {
-		g->hist = history_next(history_insert_after(g->hist,g->hist,s,i,j));
+	} else {
+		g->hist = history_next(history_insert_after(g->hist, g->hist, s, i, j));
 		g->hist = history_delete_all_after(g->hist, g->hist);
 	}
 }
