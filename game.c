@@ -204,7 +204,7 @@ void game_update_flags(game g) {
 				addF_LIGHTED(g, i, j);
 				// add FLIGHTED on the 4 directions, when a wall is hit stop this direction, when another lightbulb is hit put the initial lighbulb on error
 				int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
-				for (int x = 1; x <= max(g->width, g->height); x++) {
+				for (int x = 1; x < max(g->width, g->height); x++) {
 					for (uint y = 0; y < 7 /*tab size*/; y = y + 2) {
 						if (/* test if both tab are not 0*/ tab[y] != tab[y + 1] &&
 						    (/* normal check */ (j + x * tab[y + 1] >= 0 && j + x * tab[y + 1] < g->width && i + x * tab[y] >= 0 &&
