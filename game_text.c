@@ -71,12 +71,10 @@ int main(void) {
 			} else if (c == 'r') {
 				game_restart(g);
 				printf("Partie réinitialisé avec success !\n");
-				game_update_flags(g);
 				game_print(g);
 			} else if (c == 'q') {
 				printf("Solution: \n");
 				game sol = game_default_solution();
-				game_update_flags(sol);
 				game_print(sol);
 				game_delete(sol);
 				game_delete(g);
