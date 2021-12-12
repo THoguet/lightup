@@ -5,6 +5,31 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "(gdb) game_text",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/game_text",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "${fileDirname}",
+			"environment": [],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{
+					"description": "Set Disassembly Flavor to Intel",
+					"text": "-gdb-set disassembly-flavor intel",
+					"ignoreFailures": true
+				}
+			],
+			"preLaunchTask": "make_build"
+		},
+		{
 			"name": "(gdb) debug tests thoguet",
 			"type": "cppdbg",
 			"request": "launch",

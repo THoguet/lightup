@@ -1,6 +1,7 @@
 #include "game.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "game_ext.h"
 
 int max(int a, int b) {
 	if (a > b)
@@ -203,19 +204,21 @@ void game_update_flags(game g) {
 				addF_LIGHTED(g, i, j);
 				// add FLIGHTED on the 4 directions, when a wall is hit stop this direction, when another lightbulb is hit put the initial lighbulb on error
 				int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
-				for (int x = 1; x < max(g->width, g->height); x++) {
-					for (uint y = 0; y < 7; y = y + 2) {
-						if (tab[y] != tab[y + 1] && j + x * tab[y + 1] >= 0 && j + x * tab[y + 1] < g->width && i + x * tab[y] >= 0 &&
-						    i + x * tab[y] < g->height) {
-							if (game_is_black(g, i + x * tab[y], j + x * tab[y + 1])) {
+				for (int x = 1; x <= max(g->width, g->height); x++) {
+					for (uint y = 0; y < 7 /*tab size*/; y = y + 2) {
+						if (/* test if both tab are not 0*/ tab[y] != tab[y + 1] &&
+						    (/* normal check */ (j + x * tab[y + 1] >= 0 && j + x * tab[y + 1] < g->width && i + x * tab[y] >= 0 &&
+						                         i + x * tab[y] < g->height) ||
+						     /* wrapping check*/ g->wrapping)) {
+							if (game_is_black(g, ((i + g->height + x * tab[y]) % g->height), ((j + g->width + x * tab[y + 1]) % g->width))) {
 								tab[y] = 0;
 								tab[y + 1] = 0;
 							} else {
 								// if we found another lightbulb on the line
-								if (game_get_state(g, i + x * tab[y], j + x * tab[y + 1]) == S_LIGHTBULB)
+								if (game_get_state(g, ((i + g->height + x * tab[y]) % g->height), ((j + g->width + x * tab[y + 1]) % g->width)) == S_LIGHTBULB)
 									// update initial lightbulb on F_ERROR
 									game_set_square(g, i, j, (S_LIGHTBULB | F_LIGHTED | F_ERROR));
-								addF_LIGHTED(g, i + x * tab[y], j + x * tab[y + 1]);
+								addF_LIGHTED(g, ((i + g->height + x * tab[y]) % g->height), ((j + g->width + x * tab[y + 1]) % g->width));
 							}
 						}
 					}
@@ -231,10 +234,12 @@ void game_update_flags(game g) {
 				int notempty = 0;
 				int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
 				for (uint y = 0; y < 7; y = y + 2) {
-					if (j + tab[y + 1] >= 0 && j + tab[y + 1] < g->width && i + tab[y] >= 0 && i + tab[y] < g->height) {
-						if (game_is_lightbulb(g, i + tab[y], j + tab[y + 1]))
+					if (/* normal check*/ (j + tab[y + 1] >= 0 && j + tab[y + 1] < g->width && i + tab[y] >= 0 && i + tab[y] < g->height) ||
+					    /*wrapping check*/ g->wrapping) {
+						if (game_is_lightbulb(g, (i + g->height + tab[y]) % g->height, (j + g->width + tab[y + 1]) % g->width))
 							lb++;
-						else if (!game_is_blank(g, i + tab[y], j + tab[y + 1]) || game_is_lighted(g, i + tab[y], j + tab[y + 1]))
+						else if (!game_is_blank(g, (i + g->height + tab[y]) % g->height, (j + g->width + tab[y + 1]) % g->width) ||
+						         game_is_lighted(g, (i + g->height + tab[y]) % g->height, (j + g->width + tab[y + 1]) % g->width))
 							notempty++;
 					} else {
 						notempty++;
