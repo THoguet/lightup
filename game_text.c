@@ -82,17 +82,15 @@ int main(void) {
 				return EXIT_SUCCESS;
 			} else if (c == 'l' || c == 'm' || c == 'b') {
 				if (scanf(" %u %u", &i, &j) == 2) {
-					if (c == 'l' && game_check_move(g, i, j, S_LIGHTBULB)) {
+					if (c == 'l' && game_check_move(g, i, j, S_LIGHTBULB))
 						game_play_move(g, i, j, S_LIGHTBULB);
-						game_print(g);
-					} else if (c == 'm' && game_check_move(g, i, j, S_MARK)) {
+					else if (c == 'm' && game_check_move(g, i, j, S_MARK))
 						game_play_move(g, i, j, S_MARK);
-						game_print(g);
-					} else if (c == 'b' && game_check_move(g, i, j, S_BLANK)) {
+					else if (c == 'b' && game_check_move(g, i, j, S_BLANK))
 						game_play_move(g, i, j, S_BLANK);
-						game_print(g);
-					} else
+					else
 						printf("Erreur: (<i>,<j>) invalide.\n");
+					game_print(g);
 				}
 			} else {
 				printf("Commande inconnue.\n");
