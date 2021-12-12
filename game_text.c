@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "game.h"
 #include "game_aux.h"
+#include "game_ext.h"
 
 bool checkerr(cgame g, char taberr[]) {
 	if (taberr == NULL || g == NULL) {
