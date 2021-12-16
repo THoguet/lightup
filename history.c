@@ -189,3 +189,27 @@ void history_delete_entire_history(history h) {
 		return history_free(history_delete_all_after(h, h));
 	return history_delete_entire_history(history_prev(h));
 }
+
+history history_copy(history h) {
+	history tmp = h;
+	if (history_is_empty(h)) {
+		return h;
+	}
+	h = history_first(h);
+	uint cpt = 0;
+	while (h != tmp) {
+		h = history_next(h);
+		cpt++;
+	}
+	history h2 = history_insert_first(history_create_empty(), h->state, h->i, h->j);
+	while (!history_is_empty(history_next(h))) {
+		h = history_next(h);
+		h2 = history_insert_after(h2, h2, h->state, h->i, h->j);
+		h2 = history_next(h2);
+	}
+	h2 = history_first(h2);
+	for (uint i = 0; i < cpt; i++) {
+		h2 = history_next(h2);
+	}
+	return h2;
+}

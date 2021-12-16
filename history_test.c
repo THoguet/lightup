@@ -165,6 +165,18 @@ bool test_history_append(void) {
 	return true;
 }
 
+bool test_history_copy(void) {
+	history new = history_insert_first(history_create_empty(), S_LIGHTBULB, 4, 3);
+	assert(new);
+	new = history_insert_after(new, new, S_BLANK, 5, 8);
+	history h2 = history_copy(new);
+	assert(history_state(h2) != history_state(new));
+	assert(history_state(history_next(h2)) == history_state(history_next(new)));
+	history_delete_entire_history(h2);
+	history_delete_entire_history(new);
+	return true;
+}
+
 int usage(int argc, char* argv[]) {
 	fprintf(stderr, "Usage: %s <testname> [<...>]\n", argv[0]);
 	exit(EXIT_FAILURE);
@@ -206,6 +218,8 @@ int main(int argc, char* argv[]) {
 		ok = test_history_first();
 	else if (strcmp("history_append", argv[1]) == 0)
 		ok = test_history_append();
+	else if (strcmp("history_copy", argv[1]) == 0)
+		ok = test_history_copy();
 	else {
 		fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
 		exit(EXIT_FAILURE);
