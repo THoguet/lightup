@@ -54,12 +54,9 @@ game game_copy(cgame g1) {
 	game g2 = game_new_empty_ext(g1->height, g1->width, g1->wrapping);
 	for (int i = 0; i < g2->height; i++) {
 		for (int j = 0; j < g2->width; j++) {
-			if (g1->tab_cell[i][j] == S_BLANK || g1->tab_cell[i][j] == S_LIGHTBULB || g1->tab_cell[i][j] == S_MARK) {
-				game_play_move(g2, i, j, g1->tab_cell[i][j]);
-			} else {
-				g2->tab_cell[i][j] = g1->tab_cell[i][j];
-			}
+			g2->tab_cell[i][j] = g1->tab_cell[i][j];
 		}
+		//g2->hist = history_copy(g1);
 	}
 	return g2;
 }
