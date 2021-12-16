@@ -5,6 +5,7 @@
 #include <string.h>
 #include "game.h"
 #include "game_aux.h"
+#include "game_ext.h"
 
 /* ********** DUMMY ********** */
 bool test_dummy() {
@@ -220,6 +221,32 @@ bool test_game_copy() {
 	game_delete(g3);
 	return true;
 }
+
+/* ********** game_undo ********** */
+bool test_game_undo(){
+	game g1 = game_new_empty();
+	game_play_move(g1, 2, 3, S_LIGHTBULB);
+	game_play_move(g1, 0, 0, S_MARK);
+	game_play_move(g1, 2, 3, S_BLANK);
+	game g2 = game_copy(g1);
+	game_play_move(g2, 2, 3, S_LIGHTBULB);
+	game_undo(g1);
+	if (!game_equal(g1, g2)){
+		return false;
+	}
+	game_play_move(g2, 0, 0, S_BLANK);
+	game_undo(g1);
+	if (!game_equal(g1, g2)){
+		return false;
+	}
+	game_play_move(g2, 2, 3, S_BLANK);
+	game_undo(g1);
+	if (!game_equal(g1, g2)){
+		return false;
+	}
+	return true;
+}
+
 /* ********** usage ********** */
 void usage(int argc, char* argv[]) {
 	fprintf(stderr, "Usage: %s <testname>\n", argv[0]);
@@ -248,6 +275,8 @@ int main(int argc, char* argv[]) {
 		success = test_game_is_black();
 	} else if (strcmp("game_get_black_number", argv[1]) == 0) {
 		success = test_game_get_black_number();
+	} else if (strcmp("game_undo", argv[1]) == 0) {
+		success = test_game_undo();
 	} else {
 		fprintf(stderr, "test \"%s\" is not a valid test name.\n", argv[1]);
 		return EXIT_FAILURE;
