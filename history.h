@@ -208,4 +208,12 @@ history history_append(history h, square state, uint i, uint j);
  * @return h
  */
 history history_delete_all_after(history h, history p);
+
+/**
+ * @brief Copy history
+ *
+ * @param h an history
+ * @return the new history
+ */
+history history_copy(history h);
 #endif
