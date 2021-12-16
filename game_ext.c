@@ -70,8 +70,8 @@ void game_redo(game g) {
 		printf("waiting for you to undo first");
 	}
 	else{
-	game_set_square(g, history_i(history_next(g->hist)), history_j(history_next(g->hist)), history_state(history_next(g->hist)));
-	game_update_flags(g);
-	g->hist = history_next(g->hist);
+		game_set_square(g, history_i(history_next(g->hist)), history_j(history_next(g->hist)), history_state(history_next(g->hist)));
+		game_update_flags(g);
+		g->hist = history_next(g->hist);
 	}
 }
