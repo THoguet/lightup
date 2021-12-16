@@ -170,7 +170,7 @@ bool test_history_copy(void) {
 	assert(new);
 	new = history_insert_after(new, new, S_BLANK, 5, 8);
 	history h2 = history_copy(new);
-	assert(history_state(h2) != history_state(new));
+	assert(history_state(h2) == history_state(new));
 	assert(history_state(history_next(h2)) == history_state(history_next(new)));
 	history_delete_entire_history(h2);
 	history_delete_entire_history(new);
