@@ -25,9 +25,11 @@ target_link_libraries(game_test_thperrier game history)
 target_link_libraries(game_test_nnunes game history)
 target_link_libraries(history_test game history)
 
-add_library (game game.c game_aux.c)
+#Libraries
+add_library (game game.c game_aux.c game_ext.c)
 add_library(history history.c)
 
+#Tests THOGUET
 add_test(test_thoguet_dummy ./game_test_thoguet dummy)
 add_test(test_thoguet_game_new ./game_test_thoguet game_new)
 add_test(test_thoguet_game_print ./game_test_thoguet game_print)
@@ -40,6 +42,7 @@ add_test(test_thoguet_game_update_flags ./game_test_thoguet game_update_flags)
 add_test(test_thoguet_game_play_move ./game_test_thoguet game_play_move)
 add_test(test_thoguet_game_check_move ./game_test_thoguet game_check_move)
 
+#Tests THPERRIER
 add_test(test_thperrier_dummy ./game_test_thperrier dummy)
 add_test(test_thperrier_game_copy ./game_test_thperrier game_copy)
 add_test(test_thperrier_game_new_empty ./game_test_thperrier game_new_empty)
@@ -50,6 +53,7 @@ add_test(test_thperrier_game_is_lightbulb ./game_test_thperrier game_is_lightbul
 add_test(test_thperrier_game_is_black ./game_test_thperrier game_is_black)
 add_test(test_thperrier_game_get_black_number ./game_test_thperrier game_get_black_number)
 
+#Tests NNUNES
 add_test(test_nnunes_dummy ./game_test_nnunes dummy)
 add_test(test_nnunes_game_set_square ./game_test_nnunes game_set_square)
 add_test(test_nnunes_game_get_state ./game_test_nnunes game_get_state)
@@ -58,6 +62,7 @@ add_test(test_nnunes_game_is_marked ./game_test_nnunes game_is_marked)
 add_test(test_nnunes_game_is_lighted ./game_test_nnunes game_is_lighted)
 add_test(test_nnunes_game_has_error ./game_test_nnunes game_has_error)
 
+#Tests HISTORY
 add_test(test_history_history_alloc ./history_test history_alloc)
 add_test(test_history_create_empty ./history_test history_create_empty)
 add_test(test_history_delete_entire_history ./history_test history_delete_entire_history)

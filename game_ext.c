@@ -44,25 +44,24 @@ game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping) {
 }
 
 uint game_nb_rows(cgame g) {
-	return;
+	return 0;
 }
 
 uint game_nb_cols(cgame g) {
-	return;
+	return 0;
 }
 
 bool game_is_wrapping(cgame g) {
-	return;
+	return false;
 }
 
 void game_undo(game g) {
-	if (history_prev(g->hist) == NULL){
+	if (history_prev(g->hist) == NULL) {
 		printf("waiting for your first move");
-	}
-	else{
-	game_set_square(g, history_i(history_prev(g->hist)), history_j(history_prev(g->hist)), history_state(history_prev(g->hist)));
-	game_update_flags(g);
-	g->hist = history_prev(g->hist);
+	} else {
+		game_set_square(g, history_i(history_prev(g->hist)), history_j(history_prev(g->hist)), history_state(history_prev(g->hist)));
+		game_update_flags(g);
+		g->hist = history_prev(g->hist);
 	}
 }
 

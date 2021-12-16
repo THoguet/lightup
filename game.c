@@ -1,6 +1,7 @@
 #include "game.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "game_ext.h"
 
 int max(int a, int b) {
 	if (a > b)
@@ -53,19 +54,19 @@ game game_copy(cgame g1) {
 	game g2 = game_new_empty_ext(g1->height, g1->width, g1->wrapping);
 	for (int i = 0; i < g2->height; i++) {
 		for (int j = 0; j < g2->width; j++) {
-			if (g1->tab_cell[i][j] == S_BLANK || g1->tab_cell[i][j] == S_LIGHTBULB || g1->tab_cell[i][j] == S_MARK){
+			if (g1->tab_cell[i][j] == S_BLANK || g1->tab_cell[i][j] == S_LIGHTBULB || g1->tab_cell[i][j] == S_MARK) {
 				game_play_move(g2, i, j, g1->tab_cell[i][j]);
-			}
-			else {
-			g2->tab_cell[i][j] = g1->tab_cell[i][j];
+			} else {
+				g2->tab_cell[i][j] = g1->tab_cell[i][j];
 			}
 		}
 	}
 	return g2;
 }
 
-// TODO
 bool game_equal(cgame g1, cgame g2) {
+	if (g1->height != g2->height || g1->width != g2->width || g1->wrapping != g2->wrapping)
+		return false;
 	for (int i = 0; i < DEFAULT_SIZE; i++) {
 		for (int j = 0; j < DEFAULT_SIZE; j++) {
 			if (g1->tab_cell[i][j] != g2->tab_cell[i][j]) {
@@ -166,12 +167,11 @@ bool game_check_move(cgame g, uint i, uint j, square s) {
 void game_play_move(game g, uint i, uint j, square s) {
 	game_set_square(g, i, j, s);
 	game_update_flags(g);
-	if (g->hist == NULL){
+	if (g->hist == NULL) {
 		g->hist = history_create_empty();
 		g->hist = history_insert_first(g->hist, s, i, j);
-	}
-	else {
-		g->hist = history_next(history_insert_after(g->hist,g->hist,s,i,j));
+	} else {
+		g->hist = history_next(history_insert_after(g->hist, g->hist, s, i, j));
 		g->hist = history_delete_all_after(g->hist, g->hist);
 	}
 }
@@ -205,18 +205,20 @@ void game_update_flags(game g) {
 				// add FLIGHTED on the 4 directions, when a wall is hit stop this direction, when another lightbulb is hit put the initial lighbulb on error
 				int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
 				for (int x = 1; x < max(g->width, g->height); x++) {
-					for (uint y = 0; y < 7; y = y + 2) {
-						if (tab[y] != tab[y + 1] && j + x * tab[y + 1] >= 0 && j + x * tab[y + 1] < g->width && i + x * tab[y] >= 0 &&
-						    i + x * tab[y] < g->height) {
-							if (game_is_black(g, i + x * tab[y], j + x * tab[y + 1])) {
+					for (uint y = 0; y < 7 /*tab size*/; y = y + 2) {
+						if (/* test if both tab are not 0*/ tab[y] != tab[y + 1] &&
+						    (/* normal check */ (j + x * tab[y + 1] >= 0 && j + x * tab[y + 1] < g->width && i + x * tab[y] >= 0 &&
+						                         i + x * tab[y] < g->height) ||
+						     /* wrapping check*/ g->wrapping)) {
+							if (game_is_black(g, ((i + g->height + x * tab[y]) % g->height), ((j + g->width + x * tab[y + 1]) % g->width))) {
 								tab[y] = 0;
 								tab[y + 1] = 0;
 							} else {
 								// if we found another lightbulb on the line
-								if (game_get_state(g, i + x * tab[y], j + x * tab[y + 1]) == S_LIGHTBULB)
+								if (game_get_state(g, ((i + g->height + x * tab[y]) % g->height), ((j + g->width + x * tab[y + 1]) % g->width)) == S_LIGHTBULB)
 									// update initial lightbulb on F_ERROR
 									game_set_square(g, i, j, (S_LIGHTBULB | F_LIGHTED | F_ERROR));
-								addF_LIGHTED(g, i + x * tab[y], j + x * tab[y + 1]);
+								addF_LIGHTED(g, ((i + g->height + x * tab[y]) % g->height), ((j + g->width + x * tab[y + 1]) % g->width));
 							}
 						}
 					}
@@ -232,10 +234,12 @@ void game_update_flags(game g) {
 				int notempty = 0;
 				int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
 				for (uint y = 0; y < 7; y = y + 2) {
-					if (j + tab[y + 1] >= 0 && j + tab[y + 1] < g->width && i + tab[y] >= 0 && i + tab[y] < g->height) {
-						if (game_is_lightbulb(g, i + tab[y], j + tab[y + 1]))
+					if (/* normal check*/ (j + tab[y + 1] >= 0 && j + tab[y + 1] < g->width && i + tab[y] >= 0 && i + tab[y] < g->height) ||
+					    /*wrapping check*/ g->wrapping) {
+						if (game_is_lightbulb(g, (i + g->height + tab[y]) % g->height, (j + g->width + tab[y + 1]) % g->width))
 							lb++;
-						else if (!game_is_blank(g, i + tab[y], j + tab[y + 1]) || game_is_lighted(g, i + tab[y], j + tab[y + 1]))
+						else if (!game_is_blank(g, (i + g->height + tab[y]) % g->height, (j + g->width + tab[y + 1]) % g->width) ||
+						         game_is_lighted(g, (i + g->height + tab[y]) % g->height, (j + g->width + tab[y + 1]) % g->width))
 							notempty++;
 					} else {
 						notempty++;
