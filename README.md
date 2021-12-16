@@ -13,8 +13,8 @@ Projet Techno
 | [game_nb_rows](./game_ext.c#L?)              | [uint game_nb_rows(cgame g);](./game_ext.h#L43-59)                            | @nnunes  |       | <ul><li>[ ] </li></ul> |
 | [game_nb_cols](./game_ext.c#L?)              | [uint game_nb_cols(cgame g);](./game_ext.h#L51-57)                            | @nnunes  |       | <ul><li>[ ] </li></ul> |
 | [game_is_wrapping](./game_ext.c#L?)              | [bool game_is_wrapping(cgame g);](./game_ext.h#L59-64)                            | @nnunes  |       | <ul><li>[ ] </li></ul> |
-| [game_undo](./game_ext.c#L?)              | [void game_undo(game g);](./game_ext.h#L66-75)                            | @thperrier  |       | <ul><li>[ ] </li></ul> |
-| [game_redo](./game_ext.c#L?)              | [void game_redo(game g);](./game_ext.h#L77-86)                            | @thperrier  |       | <ul><li>[ ] </li></ul> |
+| [game_undo](./game_ext.c#L?)              | [void game_undo(game g);](./game_ext.h#L66-75)                            | @thperrier  |       | <ul><li>[X] </li></ul> |
+| [game_redo](./game_ext.c#L?)              | [void game_redo(game g);](./game_ext.h#L77-86)                            | @thperrier  |       | <ul><li>[X] </li></ul> |
 
 ## game.c
 

@@ -64,9 +64,15 @@ void game_undo(game g) {
 	game_update_flags(g);
 	g->hist = history_prev(g->hist);
 	}
-	return;
 }
 
 void game_redo(game g) {
-	return;
+	if (history_next(g->hist) == NULL){
+		printf("waiting for you to undo first");
+	}
+	else{
+	game_set_square(g, history_i(history_next(g->hist)), history_j(history_next(g->hist)), history_state(history_next(g->hist)));
+	game_update_flags(g);
+	g->hist = history_next(g->hist);
+	}
 }
