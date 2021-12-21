@@ -357,6 +357,33 @@ bool test_game_has_error(void) {
 	return false;
 }
 
+/* ************** game_nb_rows ************** */
+bool test_game_nb_rows(void) {
+	game g = game_new_empty();
+	if (game_nb_rows(g) != g->height){
+		return false;
+	}
+	return true;
+}
+
+/* ************** game_nb_cols ************** */
+bool test_game_nb_cols(void) {
+	game g = game_new_empty();
+	if (game_nb_cols(g) != g->width){
+		return false;
+	}
+	return true;
+}
+
+/* ************** game_is_wrapping ************** */
+bool test_game_is_wrapping(void) {
+	game g = game_new_empty();
+	if (game_is_wrapping(g) != g->wrapping){
+		return false;
+	}
+	return true;
+}
+
 int main(int argc, char* argv[]) {
 	if (argc != 2) {
 		usage(argc, argv);

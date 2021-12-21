@@ -62,6 +62,9 @@ add_test(test_nnunes_game_get_flags ./game_test_nnunes game_get_flags)
 add_test(test_nnunes_game_is_marked ./game_test_nnunes game_is_marked)
 add_test(test_nnunes_game_is_lighted ./game_test_nnunes game_is_lighted)
 add_test(test_nnunes_game_has_error ./game_test_nnunes game_has_error)
+add_test(test_nnunes_game_nb_rows ./game_test_nnunes game_nb_rows)
+add_test(test_nnunes_game_nb_cols ./game_test_nnunes game_nb_cols)
+add_test(test_nnunes_game_is_wrapping ./game_test_nnunes game_is_wrapping)
 
 #Tests HISTORY
 add_test(test_history_history_alloc ./history_test history_alloc)
