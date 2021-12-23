@@ -273,4 +273,5 @@ void game_restart(game g) {
 		}
 	}
 	game_update_flags(g);
+	history_delete_entire_history(g->hist);
 }
