@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
 				printhelp();
 			} else if (c == 'r') {
 				game_restart(g);
-				printf("Partie réinitialisé avec success !\n");
+				printf("Partie réinitialisé avec succes !\n");
 				game_print(g);
 			} else if (c == 'q') {
 				printf("Solution: \n");
