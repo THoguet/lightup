@@ -51,9 +51,18 @@ void printhelp(void) {
 	    "(<i>,<j>).\n");
 }
 
-int main(void) {
-	// Create new game
-	game g = game_default();
+void usage(int argc, char* argv[]) {
+	printf("Usage : %s => play the default game\n", argv[0]);
+	exit(EXIT_FAILURE);
+}
+
+int main(int argc, char* argv[]) {
+	game g;
+	if (argc == 1)
+		// Create new game
+		g = game_default();
+	else
+		usage(argc, argv);
 	// test if game is over
 	uint i;
 	uint j;
