@@ -405,6 +405,12 @@ int main(int argc, char* argv[]) {
 		success = test_game_is_lighted();
 	} else if (strcmp("game_has_error", argv[1]) == 0) {
 		success = test_game_has_error();
+	} else if (strcmp("game_nb_rows", argv[1]) == 0) {
+		success = test_game_nb_rows();
+	} else if (strcmp("game_nb_cols", argv[1]) == 0) {
+		success = test_game_nb_cols();
+	} else if (strcmp("game_is_wrapping", argv[1]) == 0) {
+		success = test_game_is_wrapping();						
 	} else {
 		fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
 		exit(EXIT_FAILURE);
