@@ -56,7 +56,7 @@ game game_copy(cgame g1) {
 		for (int j = 0; j < g2->width; j++) {
 			g2->tab_cell[i][j] = g1->tab_cell[i][j];
 		}
-		//g2->hist = history_copy(g1);
+		// g2->hist = history_copy(g1);
 	}
 	return g2;
 }
@@ -162,15 +162,15 @@ bool game_check_move(cgame g, uint i, uint j, square s) {
 }
 
 void game_play_move(game g, uint i, uint j, square s) {
-	game_set_square(g, i, j, s);
-	game_update_flags(g);
 	if (g->hist == NULL) {
 		g->hist = history_create_empty();
-		g->hist = history_insert_first(g->hist, s, i, j);
+		g->hist = history_insert_first(g->hist, game_get_square(g, i, j), i, j);
 	} else {
-		g->hist = history_next(history_insert_after(g->hist, g->hist, s, i, j));
+		g->hist = history_next(history_insert_after(g->hist, g->hist, game_get_square(g, i, j), i, j));
 		g->hist = history_delete_all_after(g->hist, g->hist);
 	}
+	game_set_square(g, i, j, s);
+	game_update_flags(g);
 }
 
 void delete_flags(game g) {

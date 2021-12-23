@@ -54,13 +54,13 @@ square history_state(history h) {
 	return h->state;
 }
 
-square history_i(history h) {
+uint history_i(history h) {
 	if (history_is_empty(h))
 		errPointer();
 	return h->i;
 }
 
-square history_j(history h) {
+uint history_j(history h) {
 	if (history_is_empty(h))
 		errPointer();
 	return h->j;

@@ -5,6 +5,7 @@
 #include <string.h>
 #include "game.h"
 #include "game_aux.h"
+#include "game_ext.h"
 
 bool test_dummy(void) {
 	return true;
@@ -360,7 +361,7 @@ bool test_game_has_error(void) {
 /* ************** game_nb_rows ************** */
 bool test_game_nb_rows(void) {
 	game g = game_new_empty();
-	if (game_nb_rows(g) != g->height){
+	if (game_nb_rows(g) != g->height) {
 		return false;
 	}
 	return true;
@@ -369,7 +370,7 @@ bool test_game_nb_rows(void) {
 /* ************** game_nb_cols ************** */
 bool test_game_nb_cols(void) {
 	game g = game_new_empty();
-	if (game_nb_cols(g) != g->width){
+	if (game_nb_cols(g) != g->width) {
 		return false;
 	}
 	return true;
@@ -378,7 +379,7 @@ bool test_game_nb_cols(void) {
 /* ************** game_is_wrapping ************** */
 bool test_game_is_wrapping(void) {
 	game g = game_new_empty();
-	if (game_is_wrapping(g) != g->wrapping){
+	if (game_is_wrapping(g) != g->wrapping) {
 		return false;
 	}
 	return true;

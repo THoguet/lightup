@@ -40,6 +40,8 @@ void printhelp(void) {
 	printf("h : Affiche cette aide.\n");
 	printf("r : Réinitialise la partie.\n");
 	printf("q : Quitter la partie (abandon).\n");
+	printf("z : Annulez le coup (undo).\n");
+	printf("y : Annulez l'annulation du coup (redo).\n");
 	printf(
 	    "l <i> <j> : Place une ampoule (*light bulb*) dans la case "
 	    "(<i>,<j>).\n");
@@ -80,6 +82,12 @@ int main(void) {
 				game_delete(g);
 				printf("shame\n");
 				return EXIT_SUCCESS;
+			} else if (c == 'z') {
+				game_undo(g);
+				game_print(g);
+			} else if (c == 'y') {
+				game_redo(g);
+				game_print(g);
 			} else if (c == 'l' || c == 'm' || c == 'b') {
 				if (scanf(" %u %u", &i, &j) == 2) {
 					if (c == 'l' && game_check_move(g, i, j, S_LIGHTBULB))
