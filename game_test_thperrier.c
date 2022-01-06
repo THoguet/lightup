@@ -225,26 +225,12 @@ bool test_game_copy() {
 /* ********** game_undo ********** */
 bool test_game_undo(){
 	game g1 = game_new_empty();
-	game_play_move(g1, 2, 3, S_LIGHTBULB);
-	game_play_move(g1, 0, 0, S_MARK);
-	game_play_move(g1, 2, 3, S_BLANK);
+	game_play_move(g1, 0, 0, S_LIGHTBULB);
+	game_play_move(g1, 1, 1, S_MARK);
 	game g2 = game_copy(g1);
-	game_play_move(g2, 2, 3, S_LIGHTBULB);
+	game_play_move(g2, 1, 1, S_BLANK);
 	game_undo(g1);
-	if (!game_equal(g1, g2)){
-		return false;
-	}
-	game_play_move(g2, 0, 0, S_BLANK);
-	game_undo(g1);
-	if (!game_equal(g1, g2)){
-		return false;
-	}
-	game_play_move(g2, 2, 3, S_BLANK);
-	game_undo(g1);
-	if (!game_equal(g1, g2)){
-		return false;
-	}
-	return true;
+	return game_equal(g1, g2);
 }
 
 /* ********** game_redo ********** */
