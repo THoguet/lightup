@@ -31,13 +31,10 @@ game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping) {
 		exit(EXIT_FAILURE);
 	}
 	for (int i = 0; i < g->height; i++) {
-		g->tab_cell[i] = (square*)malloc(sizeof(square) * g->width);
+		g->tab_cell[i] = (square*)calloc(g->width, sizeof(square));
 		if (g->tab_cell[i] == NULL) {
 			fprintf(stderr, "not enough memory\n");
 			exit(EXIT_FAILURE);
-		}
-		for (int j = 0; j < g->width; j++) {
-			g->tab_cell[i][j] = S_BLANK;
 		}
 	}
 	return g;
