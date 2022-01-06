@@ -58,7 +58,7 @@ void game_undo(game g) {
 	} else {
 		game_set_square(g, history_i(g->hist), history_j(g->hist), history_state(g->hist));
 		game_update_flags(g);
-		g->hist = history_append(g->hist, g->hist->state, g->hist->i, g->hist->j);
+		g->hist = history_prev(g->hist);
 	}
 }
 
