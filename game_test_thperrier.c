@@ -223,29 +223,56 @@ bool test_game_copy() {
 }
 
 /* ********** game_undo ********** */
-bool test_game_undo(){
+bool test_game_undo() {
+	game g1 = game_new_empty();
+	game g2 = game_copy(g1);
+	game_undo(g1);
+	if (!game_equal(g1, g2)) {
+		game_delete(g1);
+		game_delete(g2);
+		return false;
+	}
+	game_play_move(g1, 0, 0, S_LIGHTBULB);
+	game_play_move(g1, 1, 1, S_MARK);
+	game g3 = game_copy(g1);
+	game_play_move(g3, 1, 1, S_BLANK);
+	game_undo(g1);
+	if (!game_equal(g1, g3)) {
+		game_delete(g1);
+		game_delete(g2);
+		game_delete(g3);
+		return false;
+	}
+	game_delete(g1);
+	game_delete(g2);
+	game_delete(g3);
+	return true;
+}
+
+/* ********** game_redo ********** */
+bool test_game_redo() {
 	game g1 = game_new_empty();
 	game_play_move(g1, 0, 0, S_LIGHTBULB);
 	game_play_move(g1, 1, 1, S_MARK);
 	game g2 = game_copy(g1);
-	game_play_move(g2, 1, 1, S_BLANK);
-	game_undo(g1);
-	return game_equal(g1, g2);
-}
-
-/* ********** game_redo ********** */
-bool test_game_redo(){
-	game g1 = game_new_empty();
-	game_play_move(g1, 0, 0, S_LIGHTBULB);
-	game_play_move(g1, 0, 1, S_MARK);
-	game_play_move(g1, 0, 0, S_BLANK);
-	game g2 = game_copy(g1);
 	game_undo(g1);
 	game_redo(g1);
-	if (!game_equal(g1, g2)){
+	game_redo(g1);
+	if (!game_equal(g1, g2)) {
+		game_delete(g1);
+		game_delete(g2);
 		return false;
 	}
-	
+	game_play_move(g1, 2, 2, S_LIGHTBULB);
+	game_play_move(g2, 2, 2, S_LIGHTBULB);
+	game_redo(g1);
+	if (!game_equal(g1, g2)) {
+		game_delete(g1);
+		game_delete(g2);
+		return false;
+	}
+	game_delete(g1);
+	game_delete(g2);
 	return true;
 }
 

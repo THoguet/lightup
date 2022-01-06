@@ -53,7 +53,7 @@ add_test(test_thperrier_game_is_lightbulb ./game_test_thperrier game_is_lightbul
 add_test(test_thperrier_game_is_black ./game_test_thperrier game_is_black)
 add_test(test_thperrier_game_get_black_number ./game_test_thperrier game_get_black_number)
 add_test(test_thperrier_game_undo ./game_test_thperrier game_undo)
-add_test(test_thperrier_game_undo ./game_test_thperrier game_redo)
+add_test(test_thperrier_game_redo ./game_test_thperrier game_redo)
 
 #Tests NNUNES
 add_test(test_nnunes_dummy ./game_test_nnunes dummy)
