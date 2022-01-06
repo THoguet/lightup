@@ -247,6 +247,22 @@ bool test_game_undo(){
 	return true;
 }
 
+/* ********** game_redo ********** */
+bool test_game_redo(){
+	game g1 = game_new_empty();
+	game_play_move(g1, 0, 0, S_LIGHTBULB);
+	game_play_move(g1, 0, 1, S_MARK);
+	game_play_move(g1, 0, 0, S_BLANK);
+	game g2 = game_copy(g1);
+	game_undo(g1);
+	game_redo(g1);
+	if (!game_equal(g1, g2)){
+		return false;
+	}
+	
+	return true;
+}
+
 /* ********** usage ********** */
 void usage(int argc, char* argv[]) {
 	fprintf(stderr, "Usage: %s <testname>\n", argv[0]);
@@ -277,6 +293,8 @@ int main(int argc, char* argv[]) {
 		success = test_game_get_black_number();
 	} else if (strcmp("game_undo", argv[1]) == 0) {
 		success = test_game_undo();
+	} else if (strcmp("game_redo", argv[1]) == 0) {
+		success = test_game_redo();
 	} else {
 		fprintf(stderr, "test \"%s\" is not a valid test name.\n", argv[1]);
 		return EXIT_FAILURE;
