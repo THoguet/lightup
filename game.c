@@ -77,18 +77,14 @@ bool game_equal(cgame g1, cgame g2) {
 void game_delete(game g) {
 	for (int i = 0; i < g->height; i++) {
 		free(g->tab_cell[i]);
-		if (g->tab_cell[i] != NULL)
-			g->tab_cell[i] = NULL;
+		g->tab_cell[i] = NULL;
 	}
 	free(g->tab_cell);
-	if (g->tab_cell != NULL)
-		g->tab_cell = NULL;
+	g->tab_cell = NULL;
 	history_delete_entire_history(g->hist);
-	if (g->hist != NULL)
-		g->hist = NULL;
+	g->hist = NULL;
 	free(g);
-	if (g != NULL)
-		g = NULL;
+	g = NULL;
 	return;
 }
 
@@ -274,4 +270,5 @@ void game_restart(game g) {
 	}
 	game_update_flags(g);
 	history_delete_entire_history(g->hist);
+	g->hist = NULL;
 }
