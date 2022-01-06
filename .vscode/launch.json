@@ -89,7 +89,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/game_test_thperrier",
 			"args": [
-				"game_undo"
+				"game_copy"
 			],
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
