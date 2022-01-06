@@ -188,13 +188,13 @@ bool test_game_new_empty() {
 bool test_game_copy() {
 	game g1 = game_new_empty();
 	for (int i = 0; i < g1->height; i++) {
-		game_set_square(g1, i, 0, S_LIGHTBULB);
-		game_set_square(g1, i, 1, S_MARK);
-		game_set_square(g1, i, 2, S_BLACKU);
-		game_set_square(g1, i, 3, S_BLACK0);
-		game_set_square(g1, i, 4, S_BLACK1);
-		game_set_square(g1, 1, 2, F_LIGHTED);
-		game_set_square(g1, 1, 3, F_ERROR);
+		game_play_move(g1, i, 0, S_LIGHTBULB);
+		game_play_move(g1, i, 1, S_MARK);
+		game_play_move(g1, i, 2, S_BLACKU);
+		game_play_move(g1, i, 3, S_BLACK0);
+		game_play_move(g1, i, 4, S_BLACK1);
+		game_play_move(g1, i, 5, F_LIGHTED);
+		game_play_move(g1, i, 6, F_ERROR);
 	}
 	game g2 = game_copy(g1);
 	assert(g2);
