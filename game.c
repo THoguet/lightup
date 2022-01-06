@@ -271,5 +271,5 @@ void game_restart(game g) {
 	}
 	game_update_flags(g);
 	history_delete_entire_history(g->hist);
-	g->hist = NULL;
+	g->hist = history_insert_first(history_create_empty(),F_ERROR,0,0);
 }
