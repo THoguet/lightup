@@ -30,7 +30,7 @@ game game_new_empty(void) {
 	g->wrapping = false;
 	g->height = DEFAULT_SIZE;
 	g->width = DEFAULT_SIZE;
-	g->hist = NULL;
+	g->hist = history_create_empty();
 	// alloc the tab with variables set before
 	g->tab_cell = (square**)malloc(sizeof(square*) * g->height);
 	if (g->tab_cell == NULL) {
@@ -47,6 +47,7 @@ game game_new_empty(void) {
 			g->tab_cell[i][j] = S_BLANK;
 		}
 	}
+	g->hist = history_insert_first(g->hist,F_ERROR,0,0);
 	return g;
 }
 // TODO

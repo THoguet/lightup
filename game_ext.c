@@ -37,6 +37,7 @@ game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping) {
 			exit(EXIT_FAILURE);
 		}
 	}
+	g->hist = history_insert_first(g->hist,F_ERROR,0,0);
 	return g;
 }
 
@@ -53,21 +54,25 @@ bool game_is_wrapping(cgame g) {
 }
 
 void game_undo(game g) {
-	if (g->hist == NULL) {
+	if (g->hist == NULL || history_is_empty(history_prev(g->hist))) {
 		printf("you are at your first move\n");
 	} else {
+		square tmp = game_get_state(g, history_i(g->hist), history_j(g->hist));
 		game_set_square(g, history_i(g->hist), history_j(g->hist), history_state(g->hist));
 		game_update_flags(g);
+		g->hist->state = tmp;
 		g->hist = history_prev(g->hist);
 	}
 }
 
 void game_redo(game g) {
-	if ((g->hist == NULL && (history_next(g->hist) == NULL)) || g->hist == NULL) {
-		printf("waiting for you to undo first");
+	if (g->hist == NULL || history_next(g->hist) == NULL) {
+		printf("you are at your last move\n");
 	} else {
-		game_set_square(g, history_i(history_next(g->hist)), history_j(history_next(g->hist)), history_state(history_next(g->hist)));
-		game_update_flags(g);
 		g->hist = history_next(g->hist);
+		square tmp = game_get_state(g, history_i(g->hist), history_j(g->hist));
+		game_set_square(g, history_i(g->hist), history_j(g->hist), history_state(g->hist));
+		game_update_flags(g);
+		g->hist->state = tmp;
 	}
 }
