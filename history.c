@@ -201,6 +201,7 @@ history history_copy(history h) {
 		h = history_next(h);
 		cpt++;
 	}
+	h = history_first(h);
 	history h2 = history_insert_first(history_create_empty(), h->state, h->i, h->j);
 	while (!history_is_empty(history_next(h))) {
 		h = history_next(h);
