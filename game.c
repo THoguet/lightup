@@ -57,8 +57,8 @@ game game_copy(cgame g1) {
 		for (int j = 0; j < g2->width; j++) {
 			g2->tab_cell[i][j] = g1->tab_cell[i][j];
 		}
-		g2->hist = history_copy(g1->hist);
 	}
+	g2->hist = history_copy(g1->hist);
 	return g2;
 }
 
