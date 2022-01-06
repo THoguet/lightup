@@ -58,6 +58,7 @@ game game_copy(cgame g1) {
 			g2->tab_cell[i][j] = g1->tab_cell[i][j];
 		}
 	}
+	history_delete_entire_history(g2->hist);
 	g2->hist = history_copy(g1->hist);
 	return g2;
 }
