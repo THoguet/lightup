@@ -5,6 +5,7 @@
 #include <string.h>
 #include "game.h"
 #include "game_aux.h"
+#include "game_ext.h"
 typedef unsigned int uint;
 
 /* ********** DUMMY ********** */
@@ -81,18 +82,22 @@ bool test_game_new(void) {
 /* ******** game_print ******** */
 
 bool test_game_print(void) {
-	square tab[DEFAULT_SIZE * DEFAULT_SIZE];
-	square list[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
-	game g;
-	for (uint i = 0; i < sizeof(list) / sizeof(list[0]); i++) {
-		for (uint j = 0; j < DEFAULT_SIZE * DEFAULT_SIZE; j++) {
-			tab[j] = list[i];
+	for (int h = 1; h <= 10; h++) {
+		for (int w = 1; w <= 10; w++) {
+			square tab[w * h];
+			square list[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
+			game g;
+			for (uint i = 0; i < sizeof(list) / sizeof(list[0]); i++) {
+				for (uint j = 0; j < w * h; j++) {
+					tab[j] = list[i];
+				}
+				printf("%d\n", i);
+				g = game_new_ext(h, w, tab, false);
+				assert(g);
+				game_print(g);
+				game_delete(g);
+			}
 		}
-		printf("%d\n", i);
-		g = game_new(tab);
-		assert(g);
-		game_print(g);
-		game_delete(g);
 	}
 	return EXIT_SUCCESS;
 }
@@ -101,16 +106,20 @@ bool test_game_print(void) {
 
 bool test_game_get_square(void) {
 	game g;
-	square tab[DEFAULT_SIZE * DEFAULT_SIZE];
-	square list[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU, F_ERROR};
-	for (uint i = 0; i < sizeof(list) / sizeof(list[0]); i++) {
-		for (uint j = 0; j < DEFAULT_SIZE * DEFAULT_SIZE; j++) {
-			tab[j] = list[i];
-			g = game_new(tab);
-			printf("[%d, %d] %d %d\n", j / (DEFAULT_SIZE), j - (j / (DEFAULT_SIZE)) - (j / (DEFAULT_SIZE) * (DEFAULT_SIZE - 1)),
-			       game_get_square(g, j / (DEFAULT_SIZE), j - (j / (DEFAULT_SIZE)) - (j / (DEFAULT_SIZE) * (DEFAULT_SIZE - 1))), tab[j]);
-			assert(game_get_square(g, j / (DEFAULT_SIZE), j - (j / (DEFAULT_SIZE)) - (j / (DEFAULT_SIZE) * (DEFAULT_SIZE - 1))) == tab[j]);
-			game_delete(g);
+	for (int h = 1; h <= 10; h++) {
+		for (int w = 1; w <= 10; w++) {
+			square* tab = calloc(w * h, sizeof(square));
+			square list[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU, F_ERROR};
+			for (uint i = 0; i < sizeof(list) / sizeof(list[0]); i++) {
+				for (uint j = 0; j < h * w; j++) {
+					tab[j] = list[i];
+					g = game_new_ext(h, w, tab, false);
+					printf("[%d, %d] %d %d\n", j / g->width, j % g->width, game_get_square(g, j / g->width, j % g->width), tab[j]);
+					assert(game_get_square(g, j / g->width, j % g->width) == tab[j]);
+					game_delete(g);
+				}
+			}
+			free(tab);
 		}
 	}
 	return EXIT_SUCCESS;
