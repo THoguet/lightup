@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include "game.h"
+#include "game_private.h"
 
 char charPrintCell(cgame g, uint i, uint j) {
 	square sqState = game_get_state(g, i, j);

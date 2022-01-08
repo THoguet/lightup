@@ -1,6 +1,7 @@
 #include "game_ext.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "game_private.h"
 
 game game_new_ext(uint nb_rows, uint nb_cols, square* squares, bool wrapping) {
 	game g = game_new_empty_ext(nb_rows, nb_cols, wrapping);
@@ -37,7 +38,7 @@ game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping) {
 			exit(EXIT_FAILURE);
 		}
 	}
-	g->hist = history_insert_first(g->hist,F_ERROR,0,0);
+	g->hist = history_insert_first(g->hist, F_ERROR, 0, 0);
 	return g;
 }
 

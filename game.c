@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "game_ext.h"
+#include "game_private.h"
 
 int max(int a, int b) {
 	if (a > b)
@@ -50,7 +51,6 @@ game game_new_empty(void) {
 	g->hist = history_insert_first(g->hist, F_ERROR, 0, 0);
 	return g;
 }
-// TODO
 game game_copy(cgame g1) {
 	game g2 = game_new_empty_ext(g1->height, g1->width, g1->wrapping);
 	for (int i = 0; i < g2->height; i++) {

@@ -4,6 +4,7 @@
 #include "game.h"
 #include "game_aux.h"
 #include "game_ext.h"
+#include "game_private.h"
 
 bool checkerr(cgame g, char taberr[]) {
 	if (taberr == NULL || g == NULL) {
@@ -78,7 +79,7 @@ int main(int argc, char* argv[]) {
 		printf("Entrez une commande (h pour afficher l'aide): ");
 		if (scanf(" %c", &c)) {
 			if (c == 'h') {
-				printhelp();				
+				printhelp();
 			} else if (c == 'r') {
 				game_restart(g);
 				printf("Partie réinitialisé avec succes !\n");

@@ -6,6 +6,7 @@
 #include "game.h"
 #include "game_aux.h"
 #include "game_ext.h"
+#include "game_private.h"
 
 bool test_dummy(void) {
 	return true;
@@ -410,7 +411,7 @@ int main(int argc, char* argv[]) {
 	} else if (strcmp("game_nb_cols", argv[1]) == 0) {
 		success = test_game_nb_cols();
 	} else if (strcmp("game_is_wrapping", argv[1]) == 0) {
-		success = test_game_is_wrapping();						
+		success = test_game_is_wrapping();
 	} else {
 		fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
 		exit(EXIT_FAILURE);

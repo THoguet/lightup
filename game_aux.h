@@ -8,6 +8,7 @@
 #ifndef __GAME_AUX_H__
 #define __GAME_AUX_H__
 #include <stdbool.h>
+
 #include "game.h"
 
 /**

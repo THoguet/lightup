@@ -6,6 +6,7 @@
 #include "game.h"
 #include "game_aux.h"
 #include "game_ext.h"
+#include "game_private.h"
 
 /* ********** DUMMY ********** */
 bool test_dummy() {

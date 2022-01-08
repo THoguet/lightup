@@ -7,11 +7,12 @@
 
 #ifndef __GAME_H__
 #define __GAME_H__
+
 #include <stdbool.h>
+
 /**
  * @brief Standard unsigned integer type.
  **/
-
 typedef unsigned int uint;
 
 /**
@@ -56,15 +57,6 @@ typedef enum {
 
 /** square mask used in square enum */
 #define A_MASK 0xFF
-
-#include "history.h"
-struct game_s {
-	square** tab_cell;
-	bool wrapping;
-	uint height;  // i in general
-	uint width;   // j in general
-	history hist;
-};
 
 /**
  * @brief The structure pointer that stores the game state.
@@ -217,6 +209,8 @@ bool game_is_black(cgame g, uint i, uint j);
  * @pre @p g must be a valid pointer toward a game structure.
  * @pre @p i < game height
  * @pre @p j < game width
+ * @pre The square at position (i,j) must be a black wall (either numbered or
+ * unumbered).
  * @return the back wall number, or -1 if it is unumbered
  **/
 int game_get_black_number(cgame g, uint i, uint j);
