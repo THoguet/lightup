@@ -4,12 +4,6 @@
 #include "game_ext.h"
 #include "game_private.h"
 
-int max(int a, int b) {
-	if (a > b)
-		return a;
-	return b;
-}
-
 game game_new(square* squares) {
 	game g = game_new_empty();
 	for (int i = 0; i < g->height; i++) {

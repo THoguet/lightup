@@ -10,4 +10,6 @@ struct game_s {
 	history hist;
 };
 
+int max(int a, int b);
+
 #endif

@@ -26,7 +26,7 @@ target_link_libraries(game_test_nnunes game history)
 target_link_libraries(history_test game history)
 
 #Libraries
-add_library (game game.c game_aux.c game_ext.c)
+add_library (game game.c game_aux.c game_ext.c game_private.c)
 add_library(history history.c)
 
 #Tests THOGUET
@@ -41,6 +41,8 @@ add_test(test_thoguet_game_is_over ./game_test_thoguet game_is_over)
 add_test(test_thoguet_game_update_flags ./game_test_thoguet game_update_flags)
 add_test(test_thoguet_game_play_move ./game_test_thoguet game_play_move)
 add_test(test_thoguet_game_check_move ./game_test_thoguet game_check_move)
+add_test(test_thoguet_game_new_empty_ext ./game_test_thoguet game_new_empty_ext)
+add_test(test_thoguet_game_new_ext ./game_test_thoguet game_new_ext)
 
 #Tests THPERRIER
 add_test(test_thperrier_dummy ./game_test_thperrier dummy)

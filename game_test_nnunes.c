@@ -363,8 +363,10 @@ bool test_game_has_error(void) {
 bool test_game_nb_rows(void) {
 	game g = game_new_empty();
 	if (game_nb_rows(g) != g->height) {
+		game_delete(g);
 		return false;
 	}
+	game_delete(g);
 	return true;
 }
 
@@ -372,8 +374,10 @@ bool test_game_nb_rows(void) {
 bool test_game_nb_cols(void) {
 	game g = game_new_empty();
 	if (game_nb_cols(g) != g->width) {
+		game_delete(g);
 		return false;
 	}
+	game_delete(g);
 	return true;
 }
 
@@ -381,8 +385,10 @@ bool test_game_nb_cols(void) {
 bool test_game_is_wrapping(void) {
 	game g = game_new_empty();
 	if (game_is_wrapping(g) != g->wrapping) {
+		game_delete(g);
 		return false;
 	}
+	game_delete(g);
 	return true;
 }
 
