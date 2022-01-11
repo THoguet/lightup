@@ -60,8 +60,8 @@ game game_copy(cgame g1) {
 bool game_equal(cgame g1, cgame g2) {
 	if (g1->height != g2->height || g1->width != g2->width || g1->wrapping != g2->wrapping)
 		return false;
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
-		for (int j = 0; j < DEFAULT_SIZE; j++) {
+	for (int i = 0; i < g1->height; i++) {
+		for (int j = 0; j < g1->width; j++) {
 			if (g1->tab_cell[i][j] != g2->tab_cell[i][j]) {
 				return false;
 			}
