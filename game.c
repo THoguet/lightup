@@ -224,7 +224,7 @@ void game_update_flags(game g) {
 				int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
 				for (uint y = 0; y < 7; y = y + 2) {
 					if (/* normal check*/ (j + tab[y + 1] >= 0 && j + tab[y + 1] < g->width && i + tab[y] >= 0 && i + tab[y] < g->height) ||
-					    /*wrapping check*/ (g->wrapping && (((i + g->height + x * tab[y]) != i) && ((j + g->width + x * tab[y + 1]) % g->width) != j))) {
+					    /*wrapping check*/ (g->wrapping && (((i + g->height + 1 * tab[y]) != i) && ((j + g->width + 1 * tab[y + 1]) % g->width) != j))) {
 						if (game_is_lightbulb(g, (i + g->height + tab[y]) % g->height, (j + g->width + tab[y + 1]) % g->width))
 							lb++;
 						else if (!game_is_blank(g, (i + g->height + tab[y]) % g->height, (j + g->width + tab[y + 1]) % g->width) ||
