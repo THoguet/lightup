@@ -198,7 +198,7 @@ void game_update_flags(game g) {
 						if (/* test if both tab are not 0*/ tab[y] != tab[y + 1] &&
 						    (/* normal check */ (j + x * tab[y + 1] >= 0 && j + x * tab[y + 1] < g->width && i + x * tab[y] >= 0 &&
 						                         i + x * tab[y] < g->height) ||
-						     /* wrapping check*/ g->wrapping)) {
+						     /* wrapping check*/ (g->wrapping && (((i + g->height + x * tab[y]) != i) && ((j + g->width + x * tab[y + 1]) % g->width) != j)))) {
 							if (game_is_black(g, ((i + g->height + x * tab[y]) % g->height), ((j + g->width + x * tab[y + 1]) % g->width))) {
 								tab[y] = 0;
 								tab[y + 1] = 0;
