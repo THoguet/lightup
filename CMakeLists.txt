@@ -19,15 +19,14 @@ add_executable(game_test_nnunes game_test_nnunes.c)
 add_executable(history_test history_test.c)
 
 #les dépendances sont calculées automatiquement
-target_link_libraries(game_text game history)
-target_link_libraries(game_test_thoguet game history)
-target_link_libraries(game_test_thperrier game history)
-target_link_libraries(game_test_nnunes game history)
-target_link_libraries(history_test game history)
+target_link_libraries(game_text game)
+target_link_libraries(game_test_thoguet game)
+target_link_libraries(game_test_thperrier game)
+target_link_libraries(game_test_nnunes game)
+target_link_libraries(history_test game)
 
 #Libraries
-add_library (game game.c game_aux.c game_ext.c game_private.c)
-add_library(history history.c)
+add_library (game game.c game_aux.c game_ext.c game_private.c history.c)
 
 #Tests THOGUET
 add_test(test_thoguet_dummy ./game_test_thoguet dummy)
