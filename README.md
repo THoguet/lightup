@@ -6,36 +6,36 @@ Projet Techno
 
 ## game_ext.h
 
-| Fonction                             | REF                                                                          | Assigned to | Notes |        Finished        |
-| ------------------------------------ | ---------------------------------------------------------------------------- | ----------- | ----- | :--------------------: |
-| [game_new_ext](./game_ext.c#L?)              | [game game_new_ext(uint nb_rows, uint nb_cols, square *squares, bool wrapping)](./game_ext.h#L20-30)                            | @thoguet  |       | <ul><li>[ ] </li></ul> |
-| [game_new_empty_ext](./game_ext.c#L?)              | [game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping);](./game_ext.h#L32-41)                            | @thoguet  |       | <ul><li>[ ] </li></ul> |
-| [game_nb_rows](./game_ext.c#L?)              | [uint game_nb_rows(cgame g);](./game_ext.h#L43-59)                            | @nnunes  |       | <ul><li>[X] </li></ul> |
-| [game_nb_cols](./game_ext.c#L?)              | [uint game_nb_cols(cgame g);](./game_ext.h#L51-57)                            | @nnunes  |       | <ul><li>[X] </li></ul> |
-| [game_is_wrapping](./game_ext.c#L?)              | [bool game_is_wrapping(cgame g);](./game_ext.h#L59-64)                            | @nnunes  |       | <ul><li>[X] </li></ul> |
-| [game_undo](./game_ext.c#L?)              | [void game_undo(game g);](./game_ext.h#L66-75)                            | @thperrier  |       | <ul><li>[X] </li></ul> |
-| [game_redo](./game_ext.c#L?)              | [void game_redo(game g);](./game_ext.h#L77-86)                            | @thperrier  |       | <ul><li>[X] </li></ul> |
+| Fonction                              | REF                                                                                                  | Assigned to | Notes |        Finished        |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------- | ----- | :--------------------: |
+| [game_new_ext](./game_ext.c#L?)       | [game game_new_ext(uint nb_rows, uint nb_cols, square *squares, bool wrapping)](./game_ext.h#L20-30) | @thoguet    |       | <ul><li>[X] </li></ul> |
+| [game_new_empty_ext](./game_ext.c#L?) | [game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping);](./game_ext.h#L32-41)           | @thoguet    |       | <ul><li>[X] </li></ul> |
+| [game_nb_rows](./game_ext.c#L?)       | [uint game_nb_rows(cgame g);](./game_ext.h#L43-59)                                                   | @nnunes     |       | <ul><li>[X] </li></ul> |
+| [game_nb_cols](./game_ext.c#L?)       | [uint game_nb_cols(cgame g);](./game_ext.h#L51-57)                                                   | @nnunes     |       | <ul><li>[X] </li></ul> |
+| [game_is_wrapping](./game_ext.c#L?)   | [bool game_is_wrapping(cgame g);](./game_ext.h#L59-64)                                               | @nnunes     |       | <ul><li>[X] </li></ul> |
+| [game_undo](./game_ext.c#L?)          | [void game_undo(game g);](./game_ext.h#L66-75)                                                       | @thperrier  |       | <ul><li>[X] </li></ul> |
+| [game_redo](./game_ext.c#L?)          | [void game_redo(game g);](./game_ext.h#L77-86)                                                       | @thperrier  |       | <ul><li>[X] </li></ul> |
 
 ## game.c
 
-| Fonction                             | REF                                                                          | Assigned to | Notes |        Finished        |
-| ------------------------------------ | ---------------------------------------------------------------------------- | ----------- | ----- | :--------------------: |
-| [game_new](./game.c#L9-17)              | [game game_new(square *squares)](./game.h#L73-81)                            | @thperrier  |       | <ul><li>[x] </li></ul> |
-| [game_new_empty](./game.c#L19-41)        | [game game_new_empty(void)](./game.h#L83-88)                                 | @thperrier  |       | <ul><li>[x] </li></ul> |
-| [game_copy](./game.c#L43-51)             | [game game_copy(cgame g)](./game.h#L90-96)                                   | @thperrier  |       | <ul><li>[x] </li></ul> |
-| [game_equal](./game.c#L53-62)            | [bool game_equal(cgame g1, cgame g2)](./game.h#L98-106)                      | @thperrier  |       | <ul><li>[x] </li></ul> |
-| [game_delete](./game.c#L64-72)           | [void game_delete(game g);](./game.h#L108-113)                               | @thperrier  |       | <ul><li>[x] </li></ul> |
-| [game_set_square](./game.c#L?)       | [void game_set_square(game g, uint i, uint j, square s)](./game.h#L115-128)  | @nnunes     |       | <ul><li>[x] </li></ul> |
-| [game_get_square](./game.c#L78-80)       | [square game_get_square(cgame g, uint i, uint j)](./game.h#L130-140)         | @thoguet    |       | <ul><li>[X] </li></ul> |
-| [game_get_state](./game.c#L?)        | [square game_get_state(cgame g, uint i, uint j)](./game.h#L142-153)          | @nnunes     |       | <ul><li>[x] </li></ul> |
-| [game_get_flags](./game.c#L?)        | [square game_get_flags(cgame g, uint i, uint j)](./game.h#L155-166)          | @nnunes     |       | <ul><li>[x] </li></ul> |
-| [game_is_blank](./game.c#L?)         | [bool game_is_blank(cgame g, uint i, uint j)](./game.h#L168-178)             | @thperrier  |       | <ul><li>[X] </li></ul> |
-| [game_is_lightbulb](./game.c#L?)     | [bool game_is_lightbulb(cgame g, uint i, uint j)](./game.h#L180-190)         | @thperrier  |       | <ul><li>[x] </li></ul> |
-| [game_is_black](./game.c#L98-102)         | [bool game_is_black(cgame g, uint i, uint j)](./game.h#L192-202)             | @thoguet    |       | <ul><li>[X] </li></ul> |
+| Fonction                                   | REF                                                                          | Assigned to | Notes |        Finished        |
+| ------------------------------------------ | ---------------------------------------------------------------------------- | ----------- | ----- | :--------------------: |
+| [game_new](./game.c#L9-17)                 | [game game_new(square *squares)](./game.h#L73-81)                            | @thperrier  |       | <ul><li>[x] </li></ul> |
+| [game_new_empty](./game.c#L19-41)          | [game game_new_empty(void)](./game.h#L83-88)                                 | @thperrier  |       | <ul><li>[x] </li></ul> |
+| [game_copy](./game.c#L43-51)               | [game game_copy(cgame g)](./game.h#L90-96)                                   | @thperrier  |       | <ul><li>[x] </li></ul> |
+| [game_equal](./game.c#L53-62)              | [bool game_equal(cgame g1, cgame g2)](./game.h#L98-106)                      | @thperrier  |       | <ul><li>[x] </li></ul> |
+| [game_delete](./game.c#L64-72)             | [void game_delete(game g);](./game.h#L108-113)                               | @thperrier  |       | <ul><li>[x] </li></ul> |
+| [game_set_square](./game.c#L?)             | [void game_set_square(game g, uint i, uint j, square s)](./game.h#L115-128)  | @nnunes     |       | <ul><li>[x] </li></ul> |
+| [game_get_square](./game.c#L78-80)         | [square game_get_square(cgame g, uint i, uint j)](./game.h#L130-140)         | @thoguet    |       | <ul><li>[X] </li></ul> |
+| [game_get_state](./game.c#L?)              | [square game_get_state(cgame g, uint i, uint j)](./game.h#L142-153)          | @nnunes     |       | <ul><li>[x] </li></ul> |
+| [game_get_flags](./game.c#L?)              | [square game_get_flags(cgame g, uint i, uint j)](./game.h#L155-166)          | @nnunes     |       | <ul><li>[x] </li></ul> |
+| [game_is_blank](./game.c#L?)               | [bool game_is_blank(cgame g, uint i, uint j)](./game.h#L168-178)             | @thperrier  |       | <ul><li>[X] </li></ul> |
+| [game_is_lightbulb](./game.c#L?)           | [bool game_is_lightbulb(cgame g, uint i, uint j)](./game.h#L180-190)         | @thperrier  |       | <ul><li>[x] </li></ul> |
+| [game_is_black](./game.c#L98-102)          | [bool game_is_black(cgame g, uint i, uint j)](./game.h#L192-202)             | @thoguet    |       | <ul><li>[X] </li></ul> |
 | [game_get_black_number](./game.c#L104-108) | [int game_get_black_number(cgame g, uint i, uint j)](./game.h#L204-214)      | @thoguet    |       | <ul><li>[X] </li></ul> |
-| [game_is_marked](./game.c#L?)        | [bool game_is_marked(cgame g, uint i, uint j)](./game.h#L216-226)            | @nnunes     |       | <ul><li>[x] </li></ul> |
-| [game_is_lighted](./game.c#L?)       | [bool game_is_lighted(cgame g, uint i, uint j)](./game.h#L228-238)           | @nnunes     |       | <ul><li>[x] </li></ul> |
-| [game_has_error](./game.c#L?)        | [bool game_has_error(cgame g, uint i, uint j)](./game.h#L240-252)            | @nnunes     |       | <ul><li>[x] </li></ul> |
+| [game_is_marked](./game.c#L?)              | [bool game_is_marked(cgame g, uint i, uint j)](./game.h#L216-226)            | @nnunes     |       | <ul><li>[x] </li></ul> |
+| [game_is_lighted](./game.c#L?)             | [bool game_is_lighted(cgame g, uint i, uint j)](./game.h#L228-238)           | @nnunes     |       | <ul><li>[x] </li></ul> |
+| [game_has_error](./game.c#L?)              | [bool game_has_error(cgame g, uint i, uint j)](./game.h#L240-252)            | @nnunes     |       | <ul><li>[x] </li></ul> |
 | [game_check_move](./game.c#L122-128)       | [bool game_check_move(cgame g, uint i, uint j, square s)](./game.h#L242-269) | @thoguet    |       | <ul><li>[X] </li></ul> |
 | [game_play_move](./game.c#L130-133)        | [void game_play_move(game g, uint i, uint j, square s)](./game.h#L271-284)   | @thoguet    |       | <ul><li>[X] </li></ul> |
 | [game_update_flags](./game.c#L135-234)     | [void game_update_flags(game g)](./game.h#L145-406)                          | @thoguet    |       | <ul><li>[X] </li></ul> |
