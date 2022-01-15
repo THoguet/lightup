@@ -6,34 +6,61 @@
 #include "game_ext.h"
 #include "game_private.h"
 
-bool checkerr(cgame g, char taberr[]) {
-	if (taberr == NULL || g == NULL) {
+#define NBCHARERR 4
+#define CHAR0ASCII 48
+
+/**
+ * @brief Edit the stringError with all errors of g
+ * @param g the game to analyze
+ * @param stringError A pointer toward a string allocated before
+ * @pre @p stringError size must be at least g->height * g->width * NBCHARERR
+ * @return true if there is an error on the game g and the stringError has been modified
+ */
+bool checkerrors(cgame g, char* stringError) {
+	if (stringError == NULL || g == NULL) {
 		return -1;
 	}
-	uint err = 0;
-	taberr[0] = '\0';
+	uint index_taberr = 0;
+	// initialize stringError
+	stringError[0] = '\0';
 	for (int i = 0; i < g->height; i++) {
 		for (int j = 0; j < g->width; j++) {
 			// check each case
 			if (game_has_error(g, i, j)) {
-				// if error append taberr with coo+,
-				taberr[err] = i + 48;
-				err++;
-				taberr[err] = ':';
-				err++;
-				taberr[err] = j + 48;
-				err++;
-				taberr[err] = ' ';
-				err++;
+				// if error append stringError with coordinate of the error,
+				stringError[index_taberr] = i + CHAR0ASCII;
+				stringError[index_taberr] = ':';
+				stringError[index_taberr] = j + CHAR0ASCII;
+				stringError[index_taberr] = ' ';
+				index_taberr = index_taberr + NBCHARERR;
 			}
 		}
 	}
-	// if taberr changes print
-	if (taberr[0] != '\0') {
-		taberr[err] = '\0';
+	// if stringError changed return true
+	if (stringError[0] != '\0') {
+		stringError[index_taberr] = '\0';
 		return true;
 	}
 	return false;
+}
+
+/**
+ * @brief scan the coordinate and check if the move is possible if yes play it
+ * @param g the game to check and play
+ * @param s the square to update
+ */
+void checkPlayMove(game g, square s) {
+	uint i;
+	uint j;
+	if (scanf(" %u %u", &i, &j) == 2) {
+		if (game_check_move(g, i, j, s))
+			game_play_move(g, i, j, s);
+		else
+			printf("Coordonnées invalide.\n");
+		game_print(g);
+		return;
+	}
+	printf("Commande inconnue.\n");
 }
 
 void printhelp(void) {
@@ -43,17 +70,13 @@ void printhelp(void) {
 	printf("q : Quitter la partie (abandon).\n");
 	printf("z : Annulez le coup (undo).\n");
 	printf("y : Annulez l'annulation du coup (redo).\n");
-	printf(
-	    "l <i> <j> : Place une ampoule (*light bulb*) dans la case "
-	    "(<i>,<j>).\n");
-	printf("m <i> <j> : Place une marque (*mark*) dans la case (<i>,<j>).\n");
-	printf(
-	    "b <i> <j> : Place placer une case vide (*blank*) à la position "
-	    "(<i>,<j>).\n");
+	printf("l <i> <j> : Place une ampoule (*) à la position (<i>,<j>).\n");
+	printf("m <i> <j> : Place une marque (-) à la position (<i>,<j>).\n");
+	printf("b <i> <j> : Place une case vide ( ) à la position (<i>,<j>).\n");
 }
 
 void usage(int argc, char* argv[]) {
-	printf("Usage : %s => play the default game\n", argv[0]);
+	printf("Usage : %s => Joue la partie par défaut\n", argv[0]);
 	exit(EXIT_FAILURE);
 }
 
@@ -64,54 +87,56 @@ int main(int argc, char* argv[]) {
 		g = game_default();
 	else
 		usage(argc, argv);
-	// test if game is over
-	uint i;
-	uint j;
-	char taberr[g->height * g->width * 4];
+	// init string for errors
+	char stringError[g->height * g->width * NBCHARERR];
 	char c;
 	// print game
 	game_print(g);
+	// test if game is over
 	while (!game_is_over(g)) {
 		// print errors
-		if (checkerr(g, taberr)) {
-			printf("Il y a un problème case: %s\n", taberr);
-		}
+		if (checkerrors(g, stringError))
+			printf("Il y a un problème case(s): %s .\n", stringError);
 		printf("Entrez une commande (h pour afficher l'aide): ");
+		// scan the first command without args
 		if (scanf(" %c", &c)) {
-			if (c == 'h') {
-				printhelp();
-			} else if (c == 'r') {
-				game_restart(g);
-				printf("Partie réinitialisé avec succes !\n");
-				game_print(g);
-			} else if (c == 'q') {
-				printf("Solution: \n");
-				game sol = game_default_solution();
-				game_print(sol);
-				game_delete(sol);
-				game_delete(g);
-				printf("shame\n");
-				return EXIT_SUCCESS;
-			} else if (c == 'z') {
-				game_undo(g);
-				game_print(g);
-			} else if (c == 'y') {
-				game_redo(g);
-				game_print(g);
-			} else if (c == 'l' || c == 'm' || c == 'b') {
-				if (scanf(" %u %u", &i, &j) == 2) {
-					if (c == 'l' && game_check_move(g, i, j, S_LIGHTBULB))
-						game_play_move(g, i, j, S_LIGHTBULB);
-					else if (c == 'm' && game_check_move(g, i, j, S_MARK))
-						game_play_move(g, i, j, S_MARK);
-					else if (c == 'b' && game_check_move(g, i, j, S_BLANK))
-						game_play_move(g, i, j, S_BLANK);
-					else
-						printf("Erreur: (<i>,<j>) invalide.\n");
+			switch (c) {
+				case 'h':
+					printhelp();
+					break;
+				case 'r':
+					game_restart(g);
+					printf("Partie réinitialisé avec succes !\n");
 					game_print(g);
-				}
-			} else {
-				printf("Commande inconnue.\n");
+					break;
+				case 'q':
+					printf("Solution: \n");
+					game solution = game_default_solution();
+					game_print(solution);
+					game_delete(solution);
+					game_delete(g);
+					printf("shame\n");
+					return EXIT_SUCCESS;
+					break;
+				case 'z':
+					game_undo(g);
+					game_print(g);
+					break;
+				case 'y':
+					game_redo(g);
+					game_print(g);
+					break;
+				case 'l':
+					checkPlayMove(g, S_LIGHTBULB);
+					break;
+				case 'm':
+					checkPlayMove(g, S_MARK);
+					break;
+				case 'b':
+					checkPlayMove(g, S_BLANK);
+					break;
+				default:
+					printf("Commande inconnue.\n");
 			}
 		} else {
 			printf("Commande inconnue.\n");
