@@ -66,14 +66,32 @@ uint history_j(history h) {
 	return h->j;
 }
 
+history history_last(history h) {
+	if (history_is_empty(h))
+		errPointer();
+	if (history_is_empty(history_next(h)))
+		return h;
+	return history_last(history_next(h));
+}
+
+history history_first(history h) {
+	if (history_is_empty(h))
+		errPointer();
+	if (history_is_empty(history_prev(h)))
+		return h;
+	return history_first(history_prev(h));
+}
+
 history history_insert_first(history h, square state, uint i, uint j) {
 	history new = history_alloc();
 	new->state = state;
 	new->i = i;
 	new->j = j;
 	new->next = h;
-	if (!history_is_empty(h))
+	if (!history_is_empty(h)) {
+		h = history_first(h);
 		h->prev = new;
+	}
 	return new;
 }
 
@@ -135,22 +153,6 @@ history history_delete_before(history h, history p) {
 	return h;
 }
 
-history history_last(history h) {
-	if (history_is_empty(h))
-		errPointer();
-	if (history_is_empty(history_next(h)))
-		return h;
-	return history_last(history_next(h));
-}
-
-history history_first(history h) {
-	if (history_is_empty(h))
-		errPointer();
-	if (history_is_empty(history_prev(h)))
-		return h;
-	return history_first(history_prev(h));
-}
-
 history history_delete_first(history h) {
 	if (!history_is_empty(h)) {
 		h = history_first(h);
@@ -191,15 +193,15 @@ void history_delete_entire_history(history h) {
 }
 
 history history_copy(history h) {
-	history tmp = h;
+	history copy_h = h;
 	if (history_is_empty(h)) {
 		return h;
 	}
 	h = history_first(h);
-	uint cpt = 0;
-	while (h != tmp) {
+	uint index_h = 0;
+	while (h != copy_h) {
 		h = history_next(h);
-		cpt++;
+		index_h++;
 	}
 	h = history_first(h);
 	history h2 = history_insert_first(history_create_empty(), h->state, h->i, h->j);
@@ -209,7 +211,7 @@ history history_copy(history h) {
 		h2 = history_next(h2);
 	}
 	h2 = history_first(h2);
-	for (uint i = 0; i < cpt; i++) {
+	for (uint i = 0; i < index_h; i++) {
 		h2 = history_next(h2);
 	}
 	return h2;
