@@ -18,8 +18,7 @@ game game_new_empty(void) {
 	// alloc struct
 	game g = (game)malloc(sizeof(struct game_s));
 	if (g == NULL) {
-		fprintf(stderr, "not enough memory\n");
-		exit(EXIT_FAILURE);
+		memoryError();
 	}
 	// set variable of struct
 	g->wrapping = false;
@@ -29,22 +28,22 @@ game game_new_empty(void) {
 	// alloc the tab with variables set before
 	g->tab_cell = (square**)malloc(sizeof(square*) * g->height);
 	if (g->tab_cell == NULL) {
-		fprintf(stderr, "not enough memory\n");
-		exit(EXIT_FAILURE);
+		memoryError();
 	}
 	for (int i = 0; i < g->height; i++) {
 		g->tab_cell[i] = (square*)malloc(sizeof(square) * g->width);
 		if (g->tab_cell[i] == NULL) {
-			fprintf(stderr, "not enough memory\n");
-			exit(EXIT_FAILURE);
+			memoryError();
 		}
 		for (int j = 0; j < g->width; j++) {
 			g->tab_cell[i][j] = S_BLANK;
 		}
 	}
+	// init history with an cell (if there is only this cell we consider the history as empty)
 	g->hist = history_insert_first(g->hist, F_ERROR, 0, 0);
 	return g;
 }
+
 game game_copy(cgame g1) {
 	game g2 = game_new_empty_ext(g1->height, g1->width, g1->wrapping);
 	for (int i = 0; i < g2->height; i++) {
