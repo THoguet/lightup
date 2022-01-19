@@ -29,10 +29,13 @@ bool checkerrors(cgame g, char* stringError) {
 			if (game_has_error(g, i, j)) {
 				// if error append stringError with coordinate of the error,
 				stringError[index_taberr] = i + CHAR0ASCII;
+				index_taberr++;
 				stringError[index_taberr] = ':';
+				index_taberr++;
 				stringError[index_taberr] = j + CHAR0ASCII;
+				index_taberr++;
 				stringError[index_taberr] = ' ';
-				index_taberr = index_taberr + NBCHARERR;
+				index_taberr++;
 			}
 		}
 	}
@@ -96,7 +99,7 @@ int main(int argc, char* argv[]) {
 	while (!game_is_over(g)) {
 		// print errors
 		if (checkerrors(g, stringError))
-			printf("Il y a un problème case(s): %s .\n", stringError);
+			printf("Il y a un problème case(s): %s\n", stringError);
 		printf("Entrez une commande (h pour afficher l'aide): ");
 		// scan the first command without args
 		if (scanf(" %c", &c)) {
