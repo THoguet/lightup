@@ -26,11 +26,13 @@ game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping) {
 	g->width = nb_cols;
 	g->hist = history_create_empty();
 	// alloc the tab with variables set before
+	// alloc first tab
 	g->tab_cell = (square**)malloc(sizeof(square*) * g->height);
 	if (g->tab_cell == NULL) {
 		fprintf(stderr, "not enough memory\n");
 		exit(EXIT_FAILURE);
 	}
+	// alloc each tab of tab_cell
 	for (int i = 0; i < g->height; i++) {
 		g->tab_cell[i] = (square*)calloc(g->width, sizeof(square));
 		if (g->tab_cell[i] == NULL) {
@@ -38,6 +40,7 @@ game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping) {
 			exit(EXIT_FAILURE);
 		}
 	}
+	// insert f_error on first cell of histo. initalized to avoid bug on first move undo
 	g->hist = history_insert_first(g->hist, F_ERROR, 0, 0);
 	return g;
 }
