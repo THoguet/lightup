@@ -51,6 +51,7 @@ game game_copy(cgame g1) {
 			g2->tab_cell[i][j] = g1->tab_cell[i][j];
 		}
 	}
+	// delete first allocated hist (by game new) of g2
 	history_delete_entire_history(g2->hist);
 	g2->hist = history_copy(g1->hist);
 	return g2;
@@ -70,6 +71,7 @@ bool game_equal(cgame g1, cgame g2) {
 }
 
 void game_delete(game g) {
+	// free each tab of tabcell
 	for (int i = 0; i < g->height; i++) {
 		free(g->tab_cell[i]);
 		g->tab_cell[i] = NULL;
@@ -133,7 +135,7 @@ bool game_is_black(cgame g, uint i, uint j) {
 int game_get_black_number(cgame g, uint i, uint j) {
 	if (game_get_state(g, i, j) == S_BLACKU)
 		return -1;
-	return game_get_state(g, i, j) - 8;
+	return game_get_state(g, i, j) - S_BLACK;
 }
 
 bool game_is_marked(cgame g, uint i, uint j) {
@@ -149,16 +151,19 @@ bool game_has_error(cgame g, uint i, uint j) {
 }
 
 bool game_check_move(cgame g, uint i, uint j, square s) {
-	return !(i >= g->height || j >= g->width || (s != S_BLANK && s != S_MARK && s != S_LIGHTBULB) || game_is_black(g, i, j));
+	return (i < g->height && j < g->width && (s == S_BLANK || s == S_MARK || s == S_LIGHTBULB) && !game_is_black(g, i, j));
 }
 
 void game_play_move(game g, uint i, uint j, square s) {
+	// shouldn't happen because we initalized in game new
 	if (g->hist == NULL) {
 		g->hist = history_create_empty();
 		g->hist = history_insert_first(g->hist, game_get_state(g, i, j), i, j);
 	} else {
-		g->hist = history_next(history_insert_after(g->hist, g->hist, game_get_state(g, i, j), i, j));
+		// to avoid redo after play
 		g->hist = history_delete_all_after(g->hist, g->hist);
+		// get the last element of
+		g->hist = history_next(history_insert_after(g->hist, g->hist, game_get_state(g, i, j), i, j));
 	}
 	game_set_square(g, i, j, s);
 	game_update_flags(g);
@@ -269,5 +274,6 @@ void game_restart(game g) {
 	}
 	game_update_flags(g);
 	history_delete_entire_history(g->hist);
+	// insert f_error on first cell of histo. initalized to avoid bug on first move undo
 	g->hist = history_insert_first(history_create_empty(), F_ERROR, 0, 0);
 }
