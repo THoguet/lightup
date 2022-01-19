@@ -53,10 +53,6 @@ bool test_game_is_black() {
 		return false;
 	}
 	game_set_square(g, 0, 0, S_BLACKU);
-	if (!game_is_black(g, 0, 0)) {
-		game_delete(g);
-		return false;
-	}
 	if (!((game_get_square(g, 0, 0) == S_BLACKU) && game_is_black(g, 0, 0))) {
 		game_delete(g);
 		return false;
@@ -123,24 +119,33 @@ bool test_game_is_black() {
 /* ********** game_is_lightbulb ********** */
 bool test_game_is_lightbulb() {
 	game g = game_new_empty();
-	game_set_square(g, 0, 0, S_LIGHTBULB);
-	if ((game_get_square(g, 0, 0) == S_LIGHTBULB) && game_is_lightbulb(g, 0, 0)) {
+	if (game_is_lightbulb(g, 0, 0)) {
 		game_delete(g);
-		return true;
+		return false;
+	}
+	game_set_square(g, 0, 0, S_LIGHTBULB);
+	if (!((game_get_square(g, 0, 0) == S_LIGHTBULB) && game_is_lightbulb(g, 0, 0))) {
+		game_delete(g);
+		return false;
 	}
 	game_delete(g);
-	return false;
+	return true;
 }
 
 /* ********** game_is_blank ********** */
 bool test_game_is_blank() {
 	game g = game_new_empty();
+	if (!game_is_blank(g, 0, 0)) {
+		game_delete(g);
+		return false;
+	}
+	game_set_square(g, 0, 0, S_BLACK0);
 	if (game_is_blank(g, 0, 0)) {
 		game_delete(g);
-		return true;
+		return false;
 	}
 	game_delete(g);
-	return false;
+	return true;
 }
 
 /* ********** game_delete ********** */
