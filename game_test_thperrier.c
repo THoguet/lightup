@@ -15,31 +15,19 @@ bool test_dummy() {
 
 /* ********** game_get_black_number ********** */
 bool test_game_get_black_number() {
+	square tab_square[] = {S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4};
 	game g = game_new_empty();
-	game_set_square(g, 0, 0, S_BLACK0);
-	if (game_get_black_number(g, 0, 0) != 0) {
-		game_delete(g);
-		return false;
-	}
-	game_set_square(g, 0, 0, S_BLACK1);
-	if (game_get_black_number(g, 0, 0) != 1) {
-		game_delete(g);
-		return false;
-	}
-	game_set_square(g, 0, 0, S_BLACK2);
-	if (game_get_black_number(g, 0, 0) != 2) {
-		game_delete(g);
-		return false;
-	}
-	game_set_square(g, 0, 0, S_BLACK3);
-	if (game_get_black_number(g, 0, 0) != 3) {
-		game_delete(g);
-		return false;
-	}
-	game_set_square(g, 0, 0, S_BLACK4);
-	if (game_get_black_number(g, 0, 0) != 4) {
-		game_delete(g);
-		return false;
+	for (int i = 0; i < DEFAULT_SIZE; i++) {
+		for (int j = 0; j < DEFAULT_SIZE; j++) {
+			// check for each case given in tab_square if the function return the expected result
+			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
+				game_set_square(g, i, j, tab_square[tab_index]);
+				if (game_get_black_number(g, i, j) != tab_index) {
+					game_delete(g);
+					return false;
+				}
+			}
+		}
 	}
 	game_delete(g);
 	return true;
@@ -47,100 +35,71 @@ bool test_game_get_black_number() {
 
 /* ********** game_is_black ********** */
 bool test_game_is_black() {
+	square tab_square[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
 	game g = game_new_empty();
-	if (game_is_black(g, 0, 0)) {
-		game_delete(g);
-		return false;
+	for (int i = 0; i < DEFAULT_SIZE; i++) {
+		for (int j = 0; j < DEFAULT_SIZE; j++) {
+			// check for each case given in tab_square if the function return the expected result
+			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
+				game_set_square(g, i, j, tab_square[tab_index]);
+				if (tab_square[tab_index] <= S_MARK) {
+					if (game_is_black(g, i, j)) {
+						game_delete(g);
+						return false;
+					}
+				} else {
+					if (!((game_get_square(g, i, j) == tab_square[tab_index]) && game_is_black(g, i, j))) {
+						game_delete(g);
+						return false;
+					}
+				}
+			}
+		}
 	}
-	game_set_square(g, 0, 0, S_BLACKU);
-	if (!game_is_black(g, 0, 0)) {
-		game_delete(g);
-		return false;
-	}
-	if (!((game_get_square(g, 0, 0) == S_BLACKU) && game_is_black(g, 0, 0))) {
-		game_delete(g);
-		return false;
-	}
-	game_set_square(g, 0, 0, S_BLACK0);
-	if (!((game_get_square(g, 0, 0) == S_BLACK0) && game_is_black(g, 0, 0))) {
-		game_delete(g);
-		return false;
-	}
-	game_set_square(g, 0, 0, S_BLACK1);
-	if (!((game_get_square(g, 0, 0) == S_BLACK1) && game_is_black(g, 0, 0))) {
-		game_delete(g);
-		return false;
-	}
-	game_set_square(g, 0, 0, S_BLACK2);
-	if (!((game_get_square(g, 0, 0) == S_BLACK2) && game_is_black(g, 0, 0))) {
-		game_delete(g);
-		return false;
-	}
-	game_set_square(g, 0, 0, S_BLACK3);
-	if (!((game_get_square(g, 0, 0) == S_BLACK3) && game_is_black(g, 0, 0))) {
-		game_delete(g);
-		return false;
-	}
-	game_set_square(g, 0, 0, S_BLACK4);
-	if (!((game_get_square(g, 0, 0) == S_BLACK4) && game_is_black(g, 0, 0))) {
-		game_delete(g);
-		return false;
-	}
-	game_set_square(g, 0, 0, S_MARK);
-	if ((game_get_square(g, 0, 0) == S_MARK) && game_is_black(g, 0, 0)) {
-		game_delete(g);
-		return false;
-	}
-	game_set_square(g, 0, 0, S_MARK);
-	if ((game_get_square(g, 0, 0) == S_MARK) && game_is_black(g, 0, 0)) {
-		game_delete(g);
-		return false;
-	}
+
+	game_delete(g);
+	return true;
+}
+// changer l'intérieur de la boucle
+/* ********** game_is_lightbulb ********** */
+bool test_game_is_lightbulb() {
+	square tab_square[] = {S_BLANK, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
+	game g = game_new_empty();
 	game_set_square(g, 0, 0, S_LIGHTBULB);
-	if ((game_get_square(g, 0, 0) == S_LIGHTBULB) && game_is_black(g, 0, 0)) {
+	if (!((game_get_square(g, 0, 0) == S_LIGHTBULB) && game_is_lightbulb(g, 0, 0))) {
 		game_delete(g);
 		return false;
 	}
-	game_set_square(g, 0, 0, S_LIGHTBULB);
-	if ((game_get_square(g, 0, 0) == S_LIGHTBULB) && game_is_black(g, 0, 0)) {
-		game_delete(g);
-		return false;
-	}
-	game_set_square(g, 0, 0, F_ERROR);
-	if ((game_get_square(g, 0, 0) == F_ERROR) && game_is_black(g, 0, 0)) {
-		game_delete(g);
-		return false;
-	}
-	game_set_square(g, 0, 0, F_LIGHTED);
-	if ((game_get_square(g, 0, 0) == F_LIGHTED) && game_is_black(g, 0, 0)) {
-		game_delete(g);
-		return false;
+	for (int i = 0; i < DEFAULT_SIZE; i++) {
+		for (int j = 0; j < DEFAULT_SIZE; j++) {
+			// check for each case given in tab_square if the function return the expected result
+			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
+				game_set_square(g, i, j, tab_square[tab_index]);
+				if (game_get_black_number(g, i, j) != tab_index) {
+					game_delete(g);
+					return false;
+				}
+			}
+		}
 	}
 	game_delete(g);
 	return true;
 }
 
-/* ********** game_is_lightbulb ********** */
-bool test_game_is_lightbulb() {
-	game g = game_new_empty();
-	game_set_square(g, 0, 0, S_LIGHTBULB);
-	if ((game_get_square(g, 0, 0) == S_LIGHTBULB) && game_is_lightbulb(g, 0, 0)) {
-		game_delete(g);
-		return true;
-	}
-	game_delete(g);
-	return false;
-}
-
 /* ********** game_is_blank ********** */
 bool test_game_is_blank() {
 	game g = game_new_empty();
+	if (!game_is_blank(g, 0, 0)) {
+		game_delete(g);
+		return false;
+	}
+	game_set_square(g, 0, 0, S_BLACK0);
 	if (game_is_blank(g, 0, 0)) {
 		game_delete(g);
-		return true;
+		return false;
 	}
 	game_delete(g);
-	return false;
+	return true;
 }
 
 /* ********** game_delete ********** */
