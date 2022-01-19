@@ -188,27 +188,32 @@ void game_update_flags(game g) {
 	for (int i = 0; i < g->height; i++) {
 		for (int j = 0; j < g->width; j++) {
 			if (game_get_state(g, i, j) == S_LIGHTBULB) {
-				// add FLIGHTED to the current lightbulb
+				// add F_LIGHTED to the current lightbulb
 				addF_LIGHTED(g, i, j);
-				// add FLIGHTED on the 4 directions, when a wall is hit stop this direction, when another lightbulb is hit put the initial lighbulb on error
+				// add F_LIGHTED on the 4 directions, when reaching a wall by following a direction, remove it from tab, when reaching another lightbulb, put a
+				// F_ERROR on the initial lightbulb
+				//  tab[] = { i, j, i, j, i,  j, i, j}
 				int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
-				for (int x = 1; x < max(g->width, g->height); x++) {
-					for (uint y = 0; y < 7 /*tab size*/; y = y + 2) {
-						if (/* test if both tab are not 0*/ tab[y] != tab[y + 1] &&
-						    (/* normal check */ (j + x * tab[y + 1] >= 0 && j + x * tab[y + 1] < g->width && i + x * tab[y] >= 0 &&
-						                         i + x * tab[y] < g->height) ||
+				for (int gap_position = 1; gap_position < max(g->width, g->height); gap_position++) {
+					for (uint index_tab = 0; index_tab < sizeof(tab) / sizeof(tab[0]) - 1; index_tab += 2) {
+						if (/* test if both tab are not 0*/ tab[index_tab] != tab[index_tab + 1] &&
+						    (/* normal check */ (j + gap_position * tab[index_tab + 1] >= 0 && j + gap_position * tab[index_tab + 1] < g->width &&
+						                         i + gap_position * tab[index_tab] >= 0 && i + gap_position * tab[index_tab] < g->height) ||
 						     /* wrapping check*/ (g->wrapping &&
-						                          /*not the same case*/ !((((i + g->height + x * tab[y]) % g->height) == i) &&
-						                                                  (((j + g->width + x * tab[y + 1]) % g->width) == j))))) {
-							if (game_is_black(g, ((i + g->height + x * tab[y]) % g->height), ((j + g->width + x * tab[y + 1]) % g->width))) {
-								tab[y] = 0;
-								tab[y + 1] = 0;
+						                          /*not the same case*/ !(((i + g->height + gap_position * tab[index_tab]) % g->height == i) &&
+						                                                  ((j + g->width + gap_position * tab[index_tab + 1]) % g->width == j))))) {
+							if (game_is_black(g, ((i + g->height + gap_position * tab[index_tab]) % g->height),
+							                  ((j + g->width + gap_position * tab[index_tab + 1]) % g->width))) {
+								tab[index_tab] = 0;
+								tab[index_tab + 1] = 0;
 							} else {
 								// if we found another lightbulb on the line
-								if (game_get_state(g, ((i + g->height + x * tab[y]) % g->height), ((j + g->width + x * tab[y + 1]) % g->width)) == S_LIGHTBULB)
+								if (game_get_state(g, ((i + g->height + gap_position * tab[index_tab]) % g->height),
+								                   ((j + g->width + gap_position * tab[index_tab + 1]) % g->width)) == S_LIGHTBULB)
 									// update initial lightbulb on F_ERROR
 									game_set_square(g, i, j, (S_LIGHTBULB | F_LIGHTED | F_ERROR));
-								addF_LIGHTED(g, ((i + g->height + x * tab[y]) % g->height), ((j + g->width + x * tab[y + 1]) % g->width));
+								addF_LIGHTED(g, ((i + g->height + gap_position * tab[index_tab]) % g->height),
+								             ((j + g->width + gap_position * tab[index_tab + 1]) % g->width));
 							}
 						}
 					}
