@@ -60,7 +60,7 @@ bool test_game_is_black() {
 	game_delete(g);
 	return true;
 }
-// changer l'intérieur de la boucle
+
 /* ********** game_is_lightbulb ********** */
 bool test_game_is_lightbulb() {
 	square tab_square[] = {S_BLANK, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
@@ -75,7 +75,7 @@ bool test_game_is_lightbulb() {
 			// check for each case given in tab_square if the function return the expected result
 			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
 				game_set_square(g, i, j, tab_square[tab_index]);
-				if (game_get_black_number(g, i, j) != tab_index) {
+				if (game_is_lightbulb(g, 0, 0)) {
 					game_delete(g);
 					return false;
 				}
