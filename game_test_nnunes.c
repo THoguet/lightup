@@ -83,10 +83,17 @@ bool test_game_get_flags(void) {
 /* ************** game_is_marked ************** */
 bool test_game_is_marked(void) {
 	game g = game_new_empty();
-	game_set_square(g, 0, 0, S_MARK);
-	if ((game_get_square(g, 0, 0) == S_MARK) && game_is_marked(g, 0, 0)) {
-		game_delete(g);
-		return true;
+	square list_flag[] = {S_BLANK, F_ERROR, F_LIGHTED, (F_ERROR | F_LIGHTED)};
+	for (uint i = 0; i < DEFAULT_SIZE; i++) {
+		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+			for (uint flag_index = 0; flag_index < sizeof(list_flag) / sizeof(list_flag[0]); flag_index++) {
+				game_set_square(g, i, j, (S_MARK | list_flag[flag_index]));
+				if ((game_get_state(g, i, j) == S_MARK) && game_is_marked(g, i, j)) {
+					game_delete(g);
+					return true;
+				}
+			}
+		}
 	}
 	game_delete(g);
 	return false;
@@ -95,15 +102,17 @@ bool test_game_is_marked(void) {
 /* ************** game_is_lighted ************** */
 bool test_game_is_lighted(void) {
 	game g = game_new_empty();
-	game_set_square(g, 0, 0, S_BLANK | F_LIGHTED);
-	if ((game_get_square(g, 0, 0) == F_LIGHTED) && game_is_lighted(g, 0, 0)) {
-		game_delete(g);
-		return true;
-	}
-	game_set_square(g, 0, 0, S_BLANK | F_LIGHTED | F_ERROR);
-	if ((game_get_flags(g, 0, 0) == (F_LIGHTED | F_ERROR)) && game_is_lighted(g, 0, 0)) {
-		game_delete(g);
-		return true;
+	square list_flag[] = {F_LIGHTED, (F_ERROR | F_LIGHTED)};
+	for (uint i = 0; i < DEFAULT_SIZE; i++) {
+		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+			for (uint flag_index = 0; flag_index < sizeof(list_flag) / sizeof(list_flag[0]); flag_index++) {
+				game_set_square(g, i, j, (S_BLANK | list_flag[flag_index]));
+				if ((game_get_flags(g, i, j) == list_flag[flag_index]) && game_is_lighted(g, i, j)) {
+					game_delete(g);
+					return true;
+				}
+			}
+		}
 	}
 	game_delete(g);
 	return false;
@@ -112,15 +121,17 @@ bool test_game_is_lighted(void) {
 /* ************** game_has_error ************** */
 bool test_game_has_error(void) {
 	game g = game_new_empty();
-	game_set_square(g, 0, 0, S_LIGHTBULB | F_ERROR);
-	if ((game_get_flags(g, 0, 0) == F_ERROR) && game_has_error(g, 0, 0)) {
-		game_delete(g);
-		return true;
-	}
-	game_set_square(g, 0, 0, S_LIGHTBULB | F_LIGHTED | F_ERROR);
-	if ((game_get_flags(g, 0, 0) == (F_LIGHTED | F_ERROR)) && game_has_error(g, 0, 0)) {
-		game_delete(g);
-		return true;
+	square list_flag[] = {F_ERROR, (F_ERROR | F_LIGHTED)};
+	for (uint i = 0; i < DEFAULT_SIZE; i++) {
+		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+			for (uint flag_index = 0; flag_index < sizeof(list_flag) / sizeof(list_flag[0]); flag_index++) {
+				game_set_square(g, i, j, (S_BLANK | list_flag[flag_index]));
+				if ((game_get_flags(g, i, j) == list_flag[flag_index]) && game_has_error(g, i, j)) {
+					game_delete(g);
+					return true;
+				}
+			}
+		}
 	}
 	game_delete(g);
 	return false;
