@@ -229,9 +229,17 @@ bool test_game_default_solution(void) {
 
 /* **** game_update_flags **** */
 
+/**
+ * @brief check if the case i j have his flags well updated
+ *
+ * @param g the game to test
+ * @param i the i coordiante of the case to test
+ * @param j the j coordiante of the case to test
+ * @param wall if there is a wall before
+ * @return 0 if the case is well updated ; -1 else
+ */
 int checklightbulb(game g, uint i, uint j, bool wall) {
 	square flags = game_get_flags(g, i, j);
-	// square state = game_get_state(g,i,j);
 	// test if the current case is a lightbulb and if it has been well updated
 	// if true we can break the loop because every others cases wont be lighted
 	// by the bulb we are testing
@@ -250,6 +258,7 @@ int checklightbulb(game g, uint i, uint j, bool wall) {
 		}
 
 	} else {
+		// test if all case are not lighted or lighted by another lightbulb
 		if (/*test if the current case is lighted*/ flags == F_LIGHTED) {
 			int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
 			for (uint y = 0; y < 7 /*tab size*/; y = y + 2) {
@@ -273,6 +282,13 @@ int checklightbulb(game g, uint i, uint j, bool wall) {
 	return 1;
 }
 
+/**
+ * @brief check if the all flags are correctly updated
+ *
+ * @param g the game to test
+ * @return true if all flags are corrects
+ * @return false if one flags isn't correct
+ */
 bool check_update(game g) {
 	for (uint i = 0; i < g->height; i++) {
 		for (uint j = 0; j < g->width; j++) {
@@ -282,18 +298,20 @@ bool check_update(game g) {
 					return false;
 				}
 				int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
-				for (uint y = 0; y < 7 /*tab size*/; y = y + 2) {
+				for (uint tab_index = 0; tab_index < sizeof(tab) / sizeof(tab[0]); tab_index = tab_index + 2) {
 					bool wall = false;
-					for (int x = 1; x < max(g->width, g->height); x++) {
-						if (/* test if both tab are not 0*/ tab[y] != tab[y + 1] &&
-						    (/* normal check */ (j + x * tab[y + 1] >= 0 && j + x * tab[y + 1] < g->width && i + x * tab[y] >= 0 &&
-						                         i + x * tab[y] < g->height) ||
+					for (int gap_distance = 1; gap_distance < max(g->width, g->height); gap_distance++) {
+						if (/* test if both tab are not 0*/ tab[tab_index] != tab[tab_index + 1] &&
+						    (/* normal check */ (j + gap_distance * tab[tab_index + 1] >= 0 && j + gap_distance * tab[tab_index + 1] < g->width &&
+						                         i + gap_distance * tab[tab_index] >= 0 && i + gap_distance * tab[tab_index] < g->height) ||
 						     /* wrapping check*/ g->wrapping)) {
-							if (/*test if current case is a wall*/ game_is_black(g, ((i + g->height + x * tab[y]) % g->height),
-							                                                     ((j + g->width + x * tab[y + 1]) % g->width))) {
+							// test if current case is a wall
+							if (game_is_black(g, ((i + g->height + gap_distance * tab[tab_index]) % g->height),
+							                  ((j + g->width + gap_distance * tab[tab_index + 1]) % g->width))) {
 								wall = true;
 							} else {
-								int tmp = checklightbulb(g, ((i + g->height + x * tab[y]) % g->height), ((j + g->width + x * tab[y + 1]) % g->width), wall);
+								int tmp = checklightbulb(g, ((i + g->height + gap_distance * tab[tab_index]) % g->height),
+								                         ((j + g->width + gap_distance * tab[tab_index + 1]) % g->width), wall);
 								if (tmp == -1) {
 									break;
 								}
@@ -343,7 +361,15 @@ bool check_update(game g) {
 	return true;
 }
 
-// a > 2 = temps d'exec > 3 min et exponentiel
+/**
+ * @brief tests if the update_flags works well and update each case of g with every square with a deepness of a.
+ *
+ * @param g the game to test
+ * @param a the deepness of test (a > 2 : execution time > 3 minutes and exponential)
+ * @param deldup List of each case already tested (to avoid duplicates)
+ * @return true if update flags works fine in every tested cases
+ * @return false if there is a update_flags error.
+ */
 bool brutforce(game g, int a, bool* deldup) {
 	bool* delDupNext = (bool*)calloc(g->height * g->width, sizeof(bool));
 	if (delDupNext == NULL) {
@@ -380,6 +406,11 @@ bool brutforce(game g, int a, bool* deldup) {
 	return true;
 }
 
+/**
+ * @brief randomise a game g 100% random => not 100% resolvable
+ *
+ * @param g the game to randomise
+ */
 void randomise(game g) {
 	time_t t;
 	srand((unsigned)time(&t));
@@ -394,9 +425,10 @@ void randomise(game g) {
 }
 
 bool test_game_update_flags(void) {
+	// test game between 1 and 6 (we can change 6)
 	for (uint h = 1; h <= 6; h++) {
 		for (uint w = 1; w <= 6; w++) {
-			for (int wrap = 0; wrap < 2; wrap++) {
+			for (int wrap = 0; wrap != 1; wrap++) {
 				game g = game_new_empty_ext(h, w, wrap);
 				assert(g);
 				randomise(g);
