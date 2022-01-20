@@ -9,7 +9,11 @@
 #include "game_ext.h"
 #include "game_private.h"
 
-typedef unsigned int uint;
+int max(int a, int b) {
+	if (a > b)
+		return a;
+	return b;
+}
 
 /* ********** DUMMY ********** */
 bool test_dummy(void) {
@@ -178,7 +182,6 @@ bool test_game_get_square(void) {
 
 bool test_game_default(void) {
 	game g = game_default();
-	// a verif aps sur
 	assert(g);
 	// clang-format off
 	square tab[49] = 
@@ -234,7 +237,6 @@ int checklightbulb(game g, uint i, uint j, bool wall) {
 	// by the bulb we are testing
 	if (game_is_lightbulb(g, i, j)) {
 		if (/*test if this lightbulb is well updated*/ flags == S_BLANK || flags == F_ERROR) {
-			// printf("156\n");
 			return 0;
 		}
 		return -1;
@@ -244,7 +246,6 @@ int checklightbulb(game g, uint i, uint j, bool wall) {
 	if (!wall) {
 		// test if the current case is not lighted
 		if (flags != F_LIGHTED) {
-			// printf("170\n");
 			return 0;
 		}
 
@@ -278,7 +279,6 @@ bool check_update(game g) {
 			if (game_is_lightbulb(g, i, j)) {
 				square flags = game_get_flags(g, i, j);
 				if (/*test if this lightbulb is well updated*/ flags == S_BLANK || flags == F_ERROR) {
-					// printf("196\n");
 					return false;
 				}
 				int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
@@ -334,10 +334,6 @@ bool check_update(game g) {
 						res = !res;
 					}
 					if (!res) {
-						// printf("386\n");
-						// printf("lb:%d notempty:%d i:%d j:%d state : %d,
-						// flags:
-						// %d\n",lb,notempty,i,j,game_get_state(g,i,j),game_get_flags(g,i,j));
 						return res;
 					}
 				}
@@ -347,9 +343,8 @@ bool check_update(game g) {
 	return true;
 }
 
-// a > 2 = temps d'exec > 3 min et expo
+// a > 2 = temps d'exec > 3 min et exponentiel
 bool brutforce(game g, int a, bool* deldup) {
-	// char c;
 	bool* delDupNext = (bool*)calloc(g->height * g->width, sizeof(bool));
 	if (delDupNext == NULL) {
 		fprintf(stderr, "Not enought memory\n");
@@ -358,20 +353,14 @@ bool brutforce(game g, int a, bool* deldup) {
 	square list[] = {S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU, S_BLANK};
 	for (uint i = 0; i < g->height; i++) {
 		for (uint j = 0; j < g->width; j++) {
-			// printf("state: %d i:%d j:%d\n",game_get_state(g,i,j),i,j);
 			if (deldup == NULL || !(deldup[i * g->width + j])) {
 				if (game_get_state(g, i, j) == S_BLANK) {
 					if (delDupNext != NULL && a > 0)
 						delDupNext[i * g->width + j] = true;
 					for (uint k = 0; k < 9; k++) {
 						game_set_square(g, i, j, list[k]);
-						// if (k == 0){
-						// 	game_print(g);
-						// 	scanf("%c",&c);
-						// }
 						if (a > 0) {
 							if (!brutforce(g, a - 1, delDupNext)) {
-								// printf("341\n");
 								free(delDupNext);
 								return false;
 							}
@@ -379,8 +368,6 @@ bool brutforce(game g, int a, bool* deldup) {
 						game_update_flags(g);
 						if (!check_update(g)) {
 							game_print(g);
-							// printf("i:%d j:%d state : %d, flags:
-							// %d\n",i,j,game_get_state(g,i,j),game_get_flags(g,i,j));
 							free(delDupNext);
 							return false;
 						}
