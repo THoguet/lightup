@@ -64,20 +64,17 @@ bool test_game_get_state(void) {
 /* ************** game_get_flags ************** */
 bool test_game_get_flags(void) {
 	game g = game_new_empty();
-	game_set_square(g, 0, 0, S_BLANK | F_LIGHTED);
-	if (game_get_flags(g, 0, 0) != F_LIGHTED) {
-		game_delete(g);
-		return false;
-	}
-	game_set_square(g, 0, 0, S_BLANK | F_ERROR);
-	if (game_get_flags(g, 0, 0) != F_ERROR) {
-		game_delete(g);
-		return false;
-	}
-	game_set_square(g, 0, 0, S_BLANK | F_ERROR | F_LIGHTED);
-	if (game_get_flags(g, 0, 0) != (F_ERROR | F_LIGHTED)) {
-		game_delete(g);
-		return false;
+	square list_flag[] = {F_ERROR, F_LIGHTED, (F_ERROR | F_LIGHTED)};
+	for (uint i = 0; i < DEFAULT_SIZE; i++) {
+		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+			for (uint flag_index = 0; flag_index < sizeof(list_flag) / sizeof(list_flag[0]); flag_index++) {
+				game_set_square(g, i, j, (S_BLANK | list_flag[flag_index]));
+				if (game_get_flags(g, i, j) != list_flag[flag_index]) {
+					game_delete(g);
+					return false;
+				}
+			}
+		}
 	}
 	game_delete(g);
 	return true;
