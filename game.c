@@ -199,7 +199,7 @@ void update_flags_lightbulb(game g, uint i, uint j) {
 	for (int gap_position = 1; gap_position < max(game_nb_cols(g), game_nb_rows(g)); gap_position++) {
 		// index_tab => pair = i
 		// index_tab => odd = j
-		for (uint index_tab = 0; index_tab < sizeof(tab) / sizeof(tab[0]) - 1; index_tab += 2) {
+		for (uint index_tab = 0; index_tab < sizeof(tab) / sizeof(tab[0]); index_tab += 2) {
 			// big if to check if INORMAL and JNORMAL are correct or if wrapping is true and IWRAPPING and JWRAPPING are not the initial case
 			if (/* test if both tab are not 0*/ tab[index_tab] != tab[index_tab + 1] &&
 			    (/* normal check */ (JNORMAL >= 0 && JNORMAL < game_nb_cols(g) && INORMAL >= 0 && INORMAL < game_nb_rows(g)) ||
@@ -223,7 +223,7 @@ void update_flags_walls(game g, uint i, uint j) {
 	int lightbulb = 0;
 	int not_empty = 0;
 	int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
-	for (uint index_tab = 0; index_tab < (sizeof(tab) / sizeof(tab[0])); index_tab = index_tab + 2) {
+	for (uint index_tab = 0; index_tab < (sizeof(tab) / sizeof(tab[0])); index_tab += 2) {
 		uint gap_position = 1;
 		if (/* normal check*/ (JNORMAL >= 0 && JNORMAL < game_nb_cols(g) && INORMAL >= 0 && INORMAL < game_nb_rows(g)) ||
 		    /*wrapping check*/ (game_is_wrapping(g) &&
