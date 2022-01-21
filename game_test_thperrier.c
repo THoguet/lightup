@@ -6,7 +6,6 @@
 #include "game.h"
 #include "game_aux.h"
 #include "game_ext.h"
-#include "game_private.h"
 
 /* ********** DUMMY ********** */
 bool test_dummy() {
@@ -120,8 +119,8 @@ bool test_game_equal() {
 	bool equal = true;
 	uint index_tab = 0;
 	game g1 = game_new_empty();
-	for (int i = 0; i < g1->height; i++) {
-		for (int j = 0; j < g1->width; j++) {
+	for (int i = 0; i < game_nb_rows(g1); i++) {
+		for (int j = 0; j < game_nb_cols(g1); j++) {
 			// check if index_tab reach end of tab
 			if (index_tab == sizeof(tab_square) / sizeof(tab_square[0])) {
 				index_tab = 0;
@@ -131,8 +130,8 @@ bool test_game_equal() {
 		}
 	}
 	game g2 = game_copy(g1);
-	for (int i = 0; i < g1->height; i++) {
-		for (int j = 0; j < g1->width; j++) {
+	for (int i = 0; i < game_nb_rows(g1); i++) {
+		for (int j = 0; j < game_nb_cols(g1); j++) {
 			if (game_get_square(g1, i, j) != game_get_square(g2, i, j)) {
 				equal = false;
 			}
@@ -164,8 +163,8 @@ bool test_game_copy() {
 	square tab_square[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
 	uint index_tab = 0;
 	game g1 = game_new_empty();
-	for (int i = 0; i < g1->height; i++) {
-		for (int j = 0; j < g1->width; j++) {
+	for (int i = 0; i < game_nb_rows(g1); i++) {
+		for (int j = 0; j < game_nb_cols(g1); j++) {
 			// check if index_tab reach end of tab
 			if (index_tab == sizeof(tab_square) / sizeof(tab_square[0])) {
 				index_tab = 0;

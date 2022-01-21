@@ -4,7 +4,6 @@
 #include "game.h"
 #include "game_aux.h"
 #include "game_ext.h"
-#include "game_private.h"
 
 #define NBCHARERR 4
 #define CHAR0ASCII 48

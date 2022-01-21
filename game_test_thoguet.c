@@ -7,7 +7,11 @@
 #include "game.h"
 #include "game_aux.h"
 #include "game_ext.h"
-#include "game_private.h"
+
+#define JWRAPPING (j + game_nb_cols(g) + gap_position * tab[index_tab + 1]) % game_nb_cols(g)
+#define IWRAPPING (i + game_nb_rows(g) + gap_position * tab[index_tab]) % game_nb_rows(g)
+#define JNORMAL j + gap_position* tab[index_tab + 1]
+#define INORMAL i + gap_position* tab[index_tab]
 
 int max(int a, int b) {
 	if (a > b)
