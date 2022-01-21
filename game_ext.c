@@ -5,9 +5,9 @@
 
 game game_new_ext(uint nb_rows, uint nb_cols, square* squares, bool wrapping) {
 	game g = game_new_empty_ext(nb_rows, nb_cols, wrapping);
-	for (int i = 0; i < g->height; i++) {
-		for (int j = 0; j < g->width; j++) {
-			g->tab_cell[i][j] = squares[g->width * i + j];
+	for (int i = 0; i < game_nb_rows(g); i++) {
+		for (int j = 0; j < game_nb_cols(g); j++) {
+			g->tab_cell[i][j] = squares[game_nb_cols(g) * i + j];
 		}
 	}
 	return g;
@@ -27,14 +27,14 @@ game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping) {
 	g->hist = history_create_empty();
 	// alloc the tab with variables set before
 	// alloc first tab
-	g->tab_cell = (square**)malloc(sizeof(square*) * g->height);
+	g->tab_cell = (square**)malloc(sizeof(square*) * game_nb_rows(g));
 	if (g->tab_cell == NULL) {
 		fprintf(stderr, "not enough memory\n");
 		exit(EXIT_FAILURE);
 	}
 	// alloc each tab of tab_cell
-	for (int i = 0; i < g->height; i++) {
-		g->tab_cell[i] = (square*)calloc(g->width, sizeof(square));
+	for (int i = 0; i < game_nb_rows(g); i++) {
+		g->tab_cell[i] = (square*)calloc(game_nb_cols(g), sizeof(square));
 		if (g->tab_cell[i] == NULL) {
 			fprintf(stderr, "not enough memory\n");
 			exit(EXIT_FAILURE);

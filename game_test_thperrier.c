@@ -17,8 +17,8 @@ bool test_dummy() {
 bool test_game_get_black_number() {
 	square tab_square[] = {S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4};
 	game g = game_new_empty();
-	for (int i = 0; i < g->height; i++) {
-		for (int j = 0; j < g->width; j++) {
+	for (int i = 0; i < game_nb_rows(g); i++) {
+		for (int j = 0; j < game_nb_cols(g); j++) {
 			// check for each case given in tab_square if the function return the expected result
 			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
 				game_set_square(g, i, j, tab_square[tab_index]);
@@ -37,8 +37,8 @@ bool test_game_get_black_number() {
 bool test_game_is_black() {
 	square tab_square[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
 	game g = game_new_empty();
-	for (int i = 0; i < g->height; i++) {
-		for (int j = 0; j < g->width; j++) {
+	for (int i = 0; i < game_nb_rows(g); i++) {
+		for (int j = 0; j < game_nb_cols(g); j++) {
 			// check for each case given in tab_square if the function return the expected result
 			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
 				game_set_square(g, i, j, tab_square[tab_index]);
@@ -70,8 +70,8 @@ bool test_game_is_lightbulb() {
 		game_delete(g);
 		return false;
 	}
-	for (int i = 0; i < g->height; i++) {
-		for (int j = 0; j < g->width; j++) {
+	for (int i = 0; i < game_nb_rows(g); i++) {
+		for (int j = 0; j < game_nb_cols(g); j++) {
 			// check for each case given in tab_square if the function return the expected result
 			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
 				game_set_square(g, i, j, tab_square[tab_index]);
@@ -90,8 +90,8 @@ bool test_game_is_lightbulb() {
 bool test_game_is_blank() {
 	square tab_square[] = {S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
 	game g = game_new_empty();
-	for (int i = 0; i < g->height; i++) {
-		for (int j = 0; j < g->width; j++) {
+	for (int i = 0; i < game_nb_rows(g); i++) {
+		for (int j = 0; j < game_nb_cols(g); j++) {
 			// check for each case given in tab_square if the function return the expected result
 			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
 				game_set_square(g, i, j, tab_square[tab_index]);
@@ -147,8 +147,8 @@ bool test_game_equal() {
 /* ********** game_new_empty ********** */
 bool test_game_new_empty() {
 	game g = game_new_empty();
-	for (int i = 0; i < g->height; i++) {
-		for (int j = 0; j < g->width; j++) {
+	for (int i = 0; i < game_nb_rows(g); i++) {
+		for (int j = 0; j < game_nb_cols(g); j++) {
 			if (game_get_square(g, i, j) != S_BLANK) {
 				game_delete(g);
 				return false;

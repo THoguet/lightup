@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include "game.h"
+#include "game_ext.h"
 #include "game_private.h"
 
 char charPrintCell(cgame g, uint i, uint j) {
@@ -16,23 +17,23 @@ void game_print(cgame g) {
 	if (g != NULL) {
 		uint i;
 		printf("   0");
-		for (i = 1; i < g->width; i++) {
+		for (i = 1; i < game_nb_cols(g); i++) {
 			printf("%u", i);
 		}
 		printf("\n   -");
-		for (i = 1; i < g->width; i++) {
+		for (i = 1; i < game_nb_cols(g); i++) {
 			printf("-");
 		}
 		printf("\n");
-		for (i = 0; i < g->height; i++) {
+		for (i = 0; i < game_nb_rows(g); i++) {
 			printf("%u |", i);
-			for (uint j = 0; j < g->width; j++) {
+			for (uint j = 0; j < game_nb_cols(g); j++) {
 				printf("%c", charPrintCell(g, i, j));
 			}
 			printf("|\n");
 		}
 		printf("   -");
-		for (i = 1; i < g->width; i++) {
+		for (i = 1; i < game_nb_cols(g); i++) {
 			printf("-");
 		}
 		printf("\n");

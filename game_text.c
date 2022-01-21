@@ -13,7 +13,7 @@
  * @brief Edit the stringError with all errors of g
  * @param g the game to analyze
  * @param stringError A pointer toward a string allocated before
- * @pre @p stringError size must be at least g->height * g->width * NBCHARERR
+ * @pre @p stringError size must be at least height * width * NBCHARERR
  * @return true if there is an error on the game g and the stringError has been modified
  */
 bool checkerrors(cgame g, char* stringError) {
@@ -23,8 +23,8 @@ bool checkerrors(cgame g, char* stringError) {
 	uint index_taberr = 0;
 	// initialize stringError
 	stringError[0] = '\0';
-	for (int i = 0; i < g->height; i++) {
-		for (int j = 0; j < g->width; j++) {
+	for (int i = 0; i < game_nb_rows(g); i++) {
+		for (int j = 0; j < game_nb_cols(g); j++) {
 			// check each case
 			if (game_has_error(g, i, j)) {
 				// if error append stringError with coordinate of the error,
@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
 	else
 		usage(argc, argv);
 	// init string for errors
-	char stringError[g->height * g->width * NBCHARERR];
+	char stringError[game_nb_rows(g) * game_nb_cols(g) * NBCHARERR];
 	char c;
 	// print game
 	game_print(g);
