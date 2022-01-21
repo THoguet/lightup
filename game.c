@@ -4,11 +4,17 @@
 #include "game_ext.h"
 #include "game_private.h"
 
+// JWRAPPING and IWRAPPING have a "+ game_nb_xxxx(g)" to avoid falling in negative when we are at 0 for exemple
+#define JWRAPPING (j + game_nb_cols(g) + gap_position * tab[index_tab + 1]) % game_nb_cols(g)
+#define IWRAPPING (i + game_nb_rows(g) + gap_position * tab[index_tab]) % game_nb_rows(g)
+#define JNORMAL j + gap_position* tab[index_tab + 1]
+#define INORMAL i + gap_position* tab[index_tab]
+
 game game_new(square* squares) {
 	game g = game_new_empty();
-	for (int i = 0; i < g->height; i++) {
-		for (int j = 0; j < g->width; j++) {
-			g->tab_cell[i][j] = squares[g->width * i + j];
+	for (int i = 0; i < game_nb_rows(g); i++) {
+		for (int j = 0; j < game_nb_cols(g); j++) {
+			g->tab_cell[i][j] = squares[game_nb_cols(g) * i + j];
 		}
 	}
 	return g;
@@ -26,16 +32,16 @@ game game_new_empty(void) {
 	g->width = DEFAULT_SIZE;
 	g->hist = history_create_empty();
 	// alloc the tab with variables set before
-	g->tab_cell = (square**)malloc(sizeof(square*) * g->height);
+	g->tab_cell = (square**)malloc(sizeof(square*) * game_nb_rows(g));
 	if (g->tab_cell == NULL) {
 		memoryError();
 	}
-	for (int i = 0; i < g->height; i++) {
-		g->tab_cell[i] = (square*)malloc(sizeof(square) * g->width);
+	for (int i = 0; i < game_nb_rows(g); i++) {
+		g->tab_cell[i] = (square*)malloc(sizeof(square) * game_nb_cols(g));
 		if (g->tab_cell[i] == NULL) {
 			memoryError();
 		}
-		for (int j = 0; j < g->width; j++) {
+		for (int j = 0; j < game_nb_cols(g); j++) {
 			g->tab_cell[i][j] = S_BLANK;
 		}
 	}
@@ -72,7 +78,7 @@ bool game_equal(cgame g1, cgame g2) {
 
 void game_delete(game g) {
 	// free each tab of tabcell
-	for (int i = 0; i < g->height; i++) {
+	for (int i = 0; i < game_nb_rows(g); i++) {
 		free(g->tab_cell[i]);
 		g->tab_cell[i] = NULL;
 	}
@@ -109,7 +115,7 @@ square game_get_flags(cgame g, uint i, uint j) {
 	square temp = g->tab_cell[i][j];
 	square list_flag[] = {(F_ERROR | F_LIGHTED), F_ERROR, F_LIGHTED};
 	for (uint flag_index = 0; flag_index < sizeof(list_flag) / sizeof(list_flag[0]); flag_index++) {
-		if(temp >= list_flag[flag_index]) {
+		if (temp >= list_flag[flag_index]) {
 			return list_flag[flag_index];
 		}
 	}
@@ -147,7 +153,7 @@ bool game_has_error(cgame g, uint i, uint j) {
 }
 
 bool game_check_move(cgame g, uint i, uint j, square s) {
-	return (i < g->height && j < g->width && (s == S_BLANK || s == S_MARK || s == S_LIGHTBULB) && !game_is_black(g, i, j));
+	return (i < game_nb_rows(g) && j < game_nb_cols(g) && (s == S_BLANK || s == S_MARK || s == S_LIGHTBULB) && !game_is_black(g, i, j));
 }
 
 void game_play_move(game g, uint i, uint j, square s) {
@@ -158,7 +164,7 @@ void game_play_move(game g, uint i, uint j, square s) {
 	} else {
 		// to avoid redo after play
 		g->hist = history_delete_all_after(g->hist, g->hist);
-		// get the last element of
+		// add new played element to hist and get the last element of hist
 		g->hist = history_next(history_insert_after(g->hist, g->hist, game_get_state(g, i, j), i, j));
 	}
 	game_set_square(g, i, j, s);
@@ -167,8 +173,8 @@ void game_play_move(game g, uint i, uint j, square s) {
 
 void delete_flags(game g) {
 	// delete prev flags
-	for (uint i = 0; i < g->height; i++) {
-		for (uint j = 0; j < g->width; j++) {
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
 			game_set_square(g, i, j, game_get_state(g, i, j));
 		}
 	}
@@ -183,86 +189,85 @@ void addF_LIGHTED(game g, uint i, uint j) {
 	}
 }
 
-void game_update_flags(game g) {
-	delete_flags(g);
-	// update flags lighted and lightbulb error
-	for (int i = 0; i < g->height; i++) {
-		for (int j = 0; j < g->width; j++) {
-			if (game_get_state(g, i, j) == S_LIGHTBULB) {
-				// add F_LIGHTED to the current lightbulb
-				addF_LIGHTED(g, i, j);
-				// add F_LIGHTED on the 4 directions, when reaching a wall by following a direction, remove it from tab, when reaching another lightbulb, put a
-				// F_ERROR on the initial lightbulb
-				//  tab[] = { i, j, i, j, i,  j, i, j}
-				// index_tab => pair = i
-				// index_tab => odd = j
-				int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
-				for (int gap_position = 1; gap_position < max(g->width, g->height); gap_position++) {
-					for (uint index_tab = 0; index_tab < sizeof(tab) / sizeof(tab[0]) - 1; index_tab += 2) {
-						// (j + gap_position * tab[index_tab + 1]) == j
-						// (i + gap_position * tab[index_tab]) == i
-						if (/* test if both tab are not 0*/ tab[index_tab] != tab[index_tab + 1] &&
-						    (/* normal check */ (j + gap_position * tab[index_tab + 1] >= 0 && j + gap_position * tab[index_tab + 1] < g->width &&
-						                         i + gap_position * tab[index_tab] >= 0 && i + gap_position * tab[index_tab] < g->height) ||
-						     /* wrapping check*/ (g->wrapping &&
-						                          /*not the same case*/ !(((i + g->height + gap_position * tab[index_tab]) % g->height == i) &&
-						                                                  ((j + g->width + gap_position * tab[index_tab + 1]) % g->width == j))))) {
-							if (game_is_black(g, ((i + g->height + gap_position * tab[index_tab]) % g->height),
-							                  ((j + g->width + gap_position * tab[index_tab + 1]) % g->width))) {
-								tab[index_tab] = 0;
-								tab[index_tab + 1] = 0;
-							} else {
-								// if we found another lightbulb on the line
-								if (game_get_state(g, ((i + g->height + gap_position * tab[index_tab]) % g->height),
-								                   ((j + g->width + gap_position * tab[index_tab + 1]) % g->width)) == S_LIGHTBULB)
-									// update initial lightbulb on F_ERROR
-									game_set_square(g, i, j, (S_LIGHTBULB | F_LIGHTED | F_ERROR));
-								addF_LIGHTED(g, ((i + g->height + gap_position * tab[index_tab]) % g->height),
-								             ((j + g->width + gap_position * tab[index_tab + 1]) % g->width));
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	// update flags wall (need to wait all FLIGHTED being updated)
-	for (int i = 0; i < g->height; i++) {
-		for (int j = 0; j < g->width; j++) {
-			if (game_is_black(g, i, j) && game_get_black_number(g, i, j) >= 0) {
-				int lightbulb = 0;
-				int notempty = 0;
-				int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
-				for (uint tab_index = 0; tab_index < (sizeof(tab) / sizeof(tab[0])); tab_index = tab_index + 2) {
-					if (/* normal check*/ (j + tab[tab_index + 1] >= 0 && j + tab[tab_index + 1] < g->width && i + tab[tab_index] >= 0 &&
-					                       i + tab[tab_index] < g->height) ||
-					    /*wrapping check*/ (g->wrapping &&
-					                        /*not the same case*/ !((((i + g->height + tab[tab_index]) % g->height) == i) &&
-					                                                (((j + g->width + tab[tab_index + 1]) % g->width) == j)))) {
-						if (game_is_lightbulb(g, (i + g->height + tab[tab_index]) % g->height, (j + g->width + tab[tab_index + 1]) % g->width))
-							lightbulb++;
-						else if (!game_is_blank(g, (i + g->height + tab[tab_index]) % g->height, (j + g->width + tab[tab_index + 1]) % g->width) ||
-						         game_is_lighted(g, (i + g->height + tab[tab_index]) % g->height, (j + g->width + tab[tab_index + 1]) % g->width))
-							notempty++;
-					} else {
-						notempty++;
-					}
-				}
-				if (lightbulb > game_get_black_number(g, i, j)) {
-					game_set_square(g, i, j, (game_get_state(g, i, j) | F_ERROR));
-				}
-				// look if there is enough empty cell around the wall (4 directions)
-				else if (notempty > abs(game_get_black_number(g, i, j) - 4)) {
-					game_set_square(g, i, j, (game_get_state(g, i, j) | F_ERROR));
+void update_flags_lightbulb(game g, uint i, uint j) {
+	// add F_LIGHTED to the current lightbulb
+	addF_LIGHTED(g, i, j);
+	// add F_LIGHTED on the 4 directions, when reaching a wall by following a direction, remove it from tab, when reaching another lightbulb, put a
+	// F_ERROR on the initial lightbulb
+	//  tab[] = { i, j, i, j, i,  j, i, j}
+	int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
+	for (int gap_position = 1; gap_position < max(game_nb_cols(g), game_nb_rows(g)); gap_position++) {
+		// index_tab => pair = i
+		// index_tab => odd = j
+		for (uint index_tab = 0; index_tab < sizeof(tab) / sizeof(tab[0]) - 1; index_tab += 2) {
+			// big if to check if INORMAL and JNORMAL are correct or if wrapping is true and IWRAPPING and JWRAPPING are not the initial case
+			if (/* test if both tab are not 0*/ tab[index_tab] != tab[index_tab + 1] &&
+			    (/* normal check */ (JNORMAL >= 0 && JNORMAL < game_nb_cols(g) && INORMAL >= 0 && INORMAL < game_nb_rows(g)) ||
+			     /* wrapping check + not the inital case*/ (game_is_wrapping(g) && !(IWRAPPING == i && JWRAPPING == j)))) {
+				if (game_is_black(g, IWRAPPING, JWRAPPING)) {
+					tab[index_tab] = 0;
+					tab[index_tab + 1] = 0;
+				} else {
+					// if we found another lightbulb on the line
+					if (game_is_lightbulb(g, IWRAPPING, JWRAPPING))
+						// update initial lightbulb on F_ERROR
+						game_set_square(g, i, j, (S_LIGHTBULB | F_LIGHTED | F_ERROR));
+					addF_LIGHTED(g, IWRAPPING, JWRAPPING);
 				}
 			}
 		}
 	}
 }
 
+void update_flags_walls(game g, uint i, uint j) {
+	int lightbulb = 0;
+	int not_empty = 0;
+	int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
+	for (uint index_tab = 0; index_tab < (sizeof(tab) / sizeof(tab[0])); index_tab = index_tab + 2) {
+		uint gap_position = 1;
+		if (/* normal check*/ (JNORMAL >= 0 && JNORMAL < game_nb_cols(g) && INORMAL >= 0 && INORMAL < game_nb_rows(g)) ||
+		    /*wrapping check*/ (game_is_wrapping(g) &&
+		                        /*not the same case*/ !(IWRAPPING == i && JWRAPPING == j))) {
+			if (game_is_lightbulb(g, IWRAPPING, JWRAPPING))
+				lightbulb++;
+			else if (!game_is_blank(g, IWRAPPING, JWRAPPING) || game_is_lighted(g, IWRAPPING, JWRAPPING))
+				not_empty++;
+		} else {
+			not_empty++;
+		}
+	}
+	if (lightbulb > game_get_black_number(g, i, j)) {
+		game_set_square(g, i, j, (game_get_state(g, i, j) | F_ERROR));
+	}
+	// look if there is enough empty cell around the wall (4 directions)
+	else if (not_empty > abs(game_get_black_number(g, i, j) - 4)) {
+		game_set_square(g, i, j, (game_get_state(g, i, j) | F_ERROR));
+	}
+}
+
+void game_update_flags(game g) {
+	delete_flags(g);
+	// update flags lighted and lightbulb error
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
+			if (game_is_lightbulb(g, i, j)) {
+				update_flags_lightbulb(g, i, j);
+			}
+		}
+	}
+	// update flags wall (need to wait all FLIGHTED being updated)
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
+			if (game_is_black(g, i, j) && game_get_black_number(g, i, j) >= 0) {
+				update_flags_walls(g, i, j);
+			}
+		}
+	}
+}
+
 bool game_is_over(cgame g) {
-	for (uint i = 0; i < g->height; i++) {
-		for (uint j = 0; j < g->width; j++) {
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
 			if ((game_get_state(g, i, j) == S_BLANK && game_get_flags(g, i, j) == S_BLANK) || game_get_flags(g, i, j) == F_ERROR ||
 			    game_get_flags(g, i, j) == (F_LIGHTED | F_ERROR))
 				return false;
@@ -272,9 +277,9 @@ bool game_is_over(cgame g) {
 }
 
 void game_restart(game g) {
-	for (uint i = 0; i < g->height; i++) {
-		for (uint j = 0; j < g->width; j++) {
-			if (game_get_state(g, i, j) == S_MARK || game_get_state(g, i, j) == S_LIGHTBULB)
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
+			if (game_get_state(g, i, j) == S_MARK || game_is_lightbulb(g, i, j))
 				game_set_square(g, i, j, S_BLANK);
 		}
 	}
