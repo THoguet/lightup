@@ -17,8 +17,8 @@ bool test_dummy() {
 bool test_game_get_black_number() {
 	square tab_square[] = {S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4};
 	game g = game_new_empty();
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
-		for (int j = 0; j < DEFAULT_SIZE; j++) {
+	for (int i = 0; i < g->height; i++) {
+		for (int j = 0; j < g->height; j++) {
 			// check for each case given in tab_square if the function return the expected result
 			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
 				game_set_square(g, i, j, tab_square[tab_index]);
@@ -37,8 +37,8 @@ bool test_game_get_black_number() {
 bool test_game_is_black() {
 	square tab_square[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
 	game g = game_new_empty();
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
-		for (int j = 0; j < DEFAULT_SIZE; j++) {
+	for (int i = 0; i < g->height; i++) {
+		for (int j = 0; j < g->height; j++) {
 			// check for each case given in tab_square if the function return the expected result
 			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
 				game_set_square(g, i, j, tab_square[tab_index]);
@@ -70,8 +70,8 @@ bool test_game_is_lightbulb() {
 		game_delete(g);
 		return false;
 	}
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
-		for (int j = 0; j < DEFAULT_SIZE; j++) {
+	for (int i = 0; i < g->height; i++) {
+		for (int j = 0; j < g->height; j++) {
 			// check for each case given in tab_square if the function return the expected result
 			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
 				game_set_square(g, i, j, tab_square[tab_index]);
@@ -90,8 +90,8 @@ bool test_game_is_lightbulb() {
 bool test_game_is_blank() {
 	square tab_square[] = {S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
 	game g = game_new_empty();
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
-		for (int j = 0; j < DEFAULT_SIZE; j++) {
+	for (int i = 0; i < g->height; i++) {
+		for (int j = 0; j < g->height; j++) {
 			// check for each case given in tab_square if the function return the expected result
 			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
 				game_set_square(g, i, j, tab_square[tab_index]);
@@ -120,8 +120,8 @@ bool test_game_equal() {
 	bool equal = true;
 	uint index_tab = 0;
 	game g1 = game_new_empty();
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
-		for (int j = 0; j < DEFAULT_SIZE; j++) {
+	for (int i = 0; i < g1->height; i++) {
+		for (int j = 0; j < g1->height; j++) {
 			// check if index_tab reach end of tab
 			if (index_tab == sizeof(tab_square) / sizeof(tab_square[0])) {
 				index_tab = 0;
@@ -131,8 +131,8 @@ bool test_game_equal() {
 		}
 	}
 	game g2 = game_copy(g1);
-	for (int i = 0; i < DEFAULT_SIZE; i++) {
-		for (int j = 0; j < DEFAULT_SIZE; j++) {
+	for (int i = 0; i < g1->height; i++) {
+		for (int j = 0; j < g1->height; j++) {
 			if (game_get_square(g1, i, j) != game_get_square(g2, i, j)) {
 				equal = false;
 			}
@@ -158,21 +158,23 @@ bool test_game_new_empty() {
 	game_delete(g);
 	return true;
 }
-
+// faire une boucle pour play_move
 /* ********** game_copy ********** */
 bool test_game_copy() {
+	square tab_square[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
+	uint index_tab = 0;
 	game g1 = game_new_empty();
 	for (int i = 0; i < g1->height; i++) {
-		game_play_move(g1, i, 0, S_LIGHTBULB);
-		game_play_move(g1, i, 1, S_MARK);
-		game_play_move(g1, i, 2, S_BLACKU);
-		game_play_move(g1, i, 3, S_BLACK0);
-		game_play_move(g1, i, 4, S_BLACK1);
-		game_play_move(g1, i, 5, F_LIGHTED);
-		game_play_move(g1, i, 6, F_ERROR);
+		for (int j = 0; j < g1->height; j++) {
+			// check if index_tab reach end of tab
+			if (index_tab == sizeof(tab_square) / sizeof(tab_square[0])) {
+				index_tab = 0;
+			}
+			game_set_square(g1, i, j, tab_square[index_tab]);
+			index_tab++;
+		}
 	}
 	game g2 = game_copy(g1);
-	assert(g2);
 	if (!game_equal(g1, g2)) {
 		game_delete(g1);
 		game_delete(g2);
