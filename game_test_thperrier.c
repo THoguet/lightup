@@ -158,7 +158,7 @@ bool test_game_new_empty() {
 	game_delete(g);
 	return true;
 }
-// faire une boucle pour play_move
+
 /* ********** game_copy ********** */
 bool test_game_copy() {
 	square tab_square[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
@@ -175,27 +175,14 @@ bool test_game_copy() {
 		}
 	}
 	game g2 = game_copy(g1);
+	// check if g2 is a correct copy of g1
 	if (!game_equal(g1, g2)) {
 		game_delete(g1);
 		game_delete(g2);
 		return false;
 	}
-	for (int i = 0; i < g2->height; i++) {
-		for (int j = 0; j < g2->width; j++) {
-			game_set_square(g2, i, j, S_BLACK3);
-		}
-	}
-	game g3 = game_copy(g2);
-	assert(g3);
-	if (!game_equal(g2, g3)) {
-		game_delete(g1);
-		game_delete(g2);
-		game_delete(g3);
-		return false;
-	}
 	game_delete(g1);
 	game_delete(g2);
-	game_delete(g3);
 	return true;
 }
 
