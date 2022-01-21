@@ -18,7 +18,7 @@ bool test_game_get_black_number() {
 	square tab_square[] = {S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4};
 	game g = game_new_empty();
 	for (int i = 0; i < g->height; i++) {
-		for (int j = 0; j < g->height; j++) {
+		for (int j = 0; j < g->width; j++) {
 			// check for each case given in tab_square if the function return the expected result
 			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
 				game_set_square(g, i, j, tab_square[tab_index]);
@@ -38,7 +38,7 @@ bool test_game_is_black() {
 	square tab_square[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
 	game g = game_new_empty();
 	for (int i = 0; i < g->height; i++) {
-		for (int j = 0; j < g->height; j++) {
+		for (int j = 0; j < g->width; j++) {
 			// check for each case given in tab_square if the function return the expected result
 			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
 				game_set_square(g, i, j, tab_square[tab_index]);
@@ -71,7 +71,7 @@ bool test_game_is_lightbulb() {
 		return false;
 	}
 	for (int i = 0; i < g->height; i++) {
-		for (int j = 0; j < g->height; j++) {
+		for (int j = 0; j < g->width; j++) {
 			// check for each case given in tab_square if the function return the expected result
 			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
 				game_set_square(g, i, j, tab_square[tab_index]);
@@ -91,7 +91,7 @@ bool test_game_is_blank() {
 	square tab_square[] = {S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
 	game g = game_new_empty();
 	for (int i = 0; i < g->height; i++) {
-		for (int j = 0; j < g->height; j++) {
+		for (int j = 0; j < g->width; j++) {
 			// check for each case given in tab_square if the function return the expected result
 			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
 				game_set_square(g, i, j, tab_square[tab_index]);
@@ -121,7 +121,7 @@ bool test_game_equal() {
 	uint index_tab = 0;
 	game g1 = game_new_empty();
 	for (int i = 0; i < g1->height; i++) {
-		for (int j = 0; j < g1->height; j++) {
+		for (int j = 0; j < g1->width; j++) {
 			// check if index_tab reach end of tab
 			if (index_tab == sizeof(tab_square) / sizeof(tab_square[0])) {
 				index_tab = 0;
@@ -132,7 +132,7 @@ bool test_game_equal() {
 	}
 	game g2 = game_copy(g1);
 	for (int i = 0; i < g1->height; i++) {
-		for (int j = 0; j < g1->height; j++) {
+		for (int j = 0; j < g1->width; j++) {
 			if (game_get_square(g1, i, j) != game_get_square(g2, i, j)) {
 				equal = false;
 			}
@@ -165,7 +165,7 @@ bool test_game_copy() {
 	uint index_tab = 0;
 	game g1 = game_new_empty();
 	for (int i = 0; i < g1->height; i++) {
-		for (int j = 0; j < g1->height; j++) {
+		for (int j = 0; j < g1->width; j++) {
 			// check if index_tab reach end of tab
 			if (index_tab == sizeof(tab_square) / sizeof(tab_square[0])) {
 				index_tab = 0;
