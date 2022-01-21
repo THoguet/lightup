@@ -95,27 +95,23 @@ square game_get_square(cgame g, uint i, uint j) {
 }
 
 square game_get_state(cgame g, uint i, uint j) {
-	square tmp = g->tab_cell[i][j];
-	if (tmp >= F_ERROR) {
-		tmp -= F_ERROR;
+	square temp = g->tab_cell[i][j];
+	square list_flag[] = {F_ERROR, F_LIGHTED};
+	for (uint flag_index = 0; flag_index < sizeof(list_flag) / sizeof(list_flag[0]); flag_index++) {
+		if (temp >= list_flag[flag_index]) {
+			temp -= list_flag[flag_index];
+		}
 	}
-	if (tmp >= F_LIGHTED) {
-		tmp -= F_LIGHTED;
-	}
-	return tmp;
+	return temp;
 }
 
 square game_get_flags(cgame g, uint i, uint j) {
 	square temp = g->tab_cell[i][j];
-	if (temp >= F_ERROR) {
-		temp -= F_ERROR;
-		if (temp >= F_LIGHTED) {
-			return (F_ERROR | F_LIGHTED);
+	square list_flag[] = {(F_ERROR | F_LIGHTED), F_ERROR, F_LIGHTED};
+	for (uint flag_index = 0; flag_index < sizeof(list_flag) / sizeof(list_flag[0]); flag_index++) {
+		if(temp >= list_flag[flag_index]) {
+			return list_flag[flag_index];
 		}
-		return (F_ERROR);
-	}
-	if (temp >= F_LIGHTED) {
-		return (F_LIGHTED);
 	}
 	return (S_BLANK);
 }
