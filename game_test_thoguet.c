@@ -43,7 +43,7 @@ bool test_game_new_ext(void) {
 		for (int w = 1; w <= 10; w++) {
 			square tab[h * w];
 			for (uint i = 0; i < sizeof(list) / sizeof(list[0]); i++) {
-								for (uint j = 0; j < h * w; j++) {
+				for (uint j = 0; j < h * w; j++) {
 					tab[j] = list[i];
 				}
 				for (int wrap = 0; wrap < 2; wrap++) {
@@ -92,16 +92,24 @@ bool test_game_restart(void) {
 	game_set_square(g1, 1, 5, S_BLACK4);
 	game_set_square(g, 3, 2, S_BLACK3);
 	game_set_square(g1, 3, 2, S_BLACK3);
-	game_set_square(g, 0, 1, S_LIGHTBULB);
-	game_set_square(g1, 0, 1, S_LIGHTBULB);
+	game_play_move(g, 0, 1, S_LIGHTBULB);
+	game_play_move(g1, 0, 1, S_LIGHTBULB);
 	game_play_move(g, 2, 0, S_MARK);
 	game_play_move(g1, 2, 0, S_MARK);
+	game_play_move(g, 1, 1, S_LIGHTBULB);
+	game_play_move(g1, 1, 1, S_LIGHTBULB);
+	game_play_move(g, 1, 1, S_MARK);
+	game_play_move(g1, 1, 1, S_MARK);
+	game_undo(g);
+	game_undo(g1);
 	assert(!game_equal(g, g1));
 	game_restart(g1);
 	game_restart(g);
 	assert(game_equal(g, g1));
-	assert(g1->hist->next == NULL && g->hist->prev == NULL && g1->hist->state == F_ERROR);
-	assert(g->hist->next == NULL && g->hist->prev == NULL && g->hist->state == F_ERROR);
+	game_redo(g);
+	assert(game_equal(g, g1));
+	game_undo(g);
+	assert(game_equal(g, g1));
 	game_delete(g);
 	game_delete(g1);
 	return EXIT_SUCCESS;
@@ -425,7 +433,7 @@ void randomise(game g) {
 }
 
 bool test_game_update_flags(void) {
-	// test game between 1 and 6 (we can change 6)
+	// test game of size between 1 and 6 (we can change 6)
 	for (uint h = 1; h <= 6; h++) {
 		for (uint w = 1; w <= 6; w++) {
 			for (int wrap = 0; wrap != 1; wrap++) {
