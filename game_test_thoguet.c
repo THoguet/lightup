@@ -42,15 +42,13 @@ bool test_game_new_ext(void) {
 	for (int h = 1; h <= 10; h++) {
 		for (int w = 1; w <= 10; w++) {
 			square tab[h * w];
-			game g;
 			for (uint i = 0; i < sizeof(list) / sizeof(list[0]); i++) {
-				g = NULL;
-				for (uint j = 0; j < h * w; j++) {
+								for (uint j = 0; j < h * w; j++) {
 					tab[j] = list[i];
 				}
 				for (int wrap = 0; wrap < 2; wrap++) {
 					printf("%d\n", i);
-					g = game_new_ext(h, w, tab, wrap);
+					game g = game_new_ext(h, w, tab, wrap);
 					assert(g);
 					for (uint i2 = 0; i2 < game_nb_rows(g); i2++) {
 						for (uint j = 0; j < game_nb_cols(g); j++) {
@@ -59,6 +57,7 @@ bool test_game_new_ext(void) {
 						}
 					}
 					game_delete(g);
+					g = NULL;
 				}
 			}
 		}
@@ -112,15 +111,13 @@ bool test_game_restart(void) {
 
 bool test_game_new(void) {
 	square tab[DEFAULT_SIZE * DEFAULT_SIZE];
-	game g;
 	square list[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU, F_ERROR};
 	for (uint i = 0; i < sizeof(list) / sizeof(list[0]); i++) {
-		g = NULL;
 		for (uint j = 0; j < DEFAULT_SIZE * DEFAULT_SIZE; j++) {
 			tab[j] = list[i];
 		}
 		printf("%d\n", i);
-		g = game_new(tab);
+		game g = game_new(tab);
 		for (uint i2 = 0; i2 < DEFAULT_SIZE; i2++) {
 			for (uint j = 0; j < DEFAULT_SIZE; j++) {
 				printf("list :%d, get square :%d\n", list[i], game_get_square(g, i2, j));
@@ -129,6 +126,7 @@ bool test_game_new(void) {
 		}
 		assert(g);
 		game_delete(g);
+		g = NULL;
 	}
 	return EXIT_SUCCESS;
 }
@@ -159,7 +157,6 @@ bool test_game_print(void) {
 /* ******* game_get_square ******* */
 
 bool test_game_get_square(void) {
-	game g;
 	for (int h = 1; h <= 10; h++) {
 		for (int w = 1; w <= 10; w++) {
 			square tab[w * h];
@@ -167,7 +164,7 @@ bool test_game_get_square(void) {
 			for (uint i = 0; i < sizeof(list) / sizeof(list[0]); i++) {
 				for (uint j = 0; j < h * w; j++) {
 					tab[j] = list[i];
-					g = game_new_ext(h, w, tab, false);
+					game g = game_new_ext(h, w, tab, false);
 					printf("[%d, %d] %d %d\n", j / game_nb_cols(g), j % game_nb_cols(g), game_get_square(g, j / game_nb_cols(g), j % game_nb_cols(g)), tab[j]);
 					assert(game_get_square(g, j / game_nb_cols(g), j % game_nb_cols(g)) == tab[j]);
 					game_delete(g);
