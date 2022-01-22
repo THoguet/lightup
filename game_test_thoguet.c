@@ -265,32 +265,89 @@ int checklightbulb(game g, uint i, uint j, bool wall) {
 		if (flags != F_LIGHTED) {
 			return 0;
 		}
-
-	} else {
-		// test if all case are not lighted or lighted by another lightbulb
-		if (/*test if the current case is lighted*/ flags == F_LIGHTED) {
-			int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
-			for (uint y = 0; y < 7 /*tab size*/; y = y + 2) {
-				for (int x = 1; x < max(game_nb_cols(g), game_nb_rows(g)); x++) {
-					if (/* test if both tab are not 0*/ tab[y] != tab[y + 1] &&
-					    (/* normal check */ (j + x * tab[y + 1] >= 0 && j + x * tab[y + 1] < game_nb_cols(g) && i + x * tab[y] >= 0 &&
-					                         i + x * tab[y] < game_nb_rows(g)) ||
-					     /* wrapping check*/ game_is_wrapping(g))) {
-						flags = game_get_square(g, ((i + game_nb_rows(g) + x * tab[y]) % game_nb_rows(g)),
-						                        ((j + game_nb_cols(g) + x * tab[y + 1]) % game_nb_cols(g)));
-						if (flags == (S_LIGHTBULB | F_LIGHTED) || flags == (S_LIGHTBULB | F_LIGHTED | F_ERROR)) {
-							return -1;
-						}
-						if (flags != F_LIGHTED && flags != (F_LIGHTED | S_MARK)) {
-							break;
-						}
+		return 1;
+	}
+	// test if all case are not lighted or lighted by another lightbulb
+	if (/*test if the current case is lighted*/ flags == F_LIGHTED) {
+		int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
+		for (uint index_tab = 0; index_tab < 7 /*tab size*/; index_tab = index_tab + 2) {
+			for (int gap_position = 1; gap_position < max(game_nb_cols(g), game_nb_rows(g)); gap_position++) {
+				if (/* test if both tab are not 0*/ tab[index_tab] != tab[index_tab + 1] &&
+				        (/* normal check */ JWRAPPING >= 0 && JWRAPPING < game_nb_cols(g) && IWRAPPING >= 0 && IWRAPPING < game_nb_rows(g)) ||
+				    /* wrapping check*/ game_is_wrapping(g)) {
+					flags = game_get_square(g, IWRAPPING, JWRAPPING);
+					if (flags == (S_LIGHTBULB | F_LIGHTED) || flags == (S_LIGHTBULB | F_LIGHTED | F_ERROR)) {
+						return -1;
+					}
+					if (flags != F_LIGHTED && flags != (F_LIGHTED | S_MARK)) {
+						break;
 					}
 				}
 			}
-			return 0;
 		}
+		return 0;
 	}
 	return 1;
+}
+
+int test_update_flags_lightbulb(game g, uint i, uint j) {
+	square flags = game_get_flags(g, i, j);
+	if (/*test if this lightbulb is well updated*/ flags == S_BLANK || flags == F_ERROR) {
+		return false;
+	}
+	int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
+	for (uint index_tab = 0; index_tab < sizeof(tab) / sizeof(tab[0]); index_tab += 2) {
+		bool wall = false;
+		for (int gap_position = 1; gap_position < max(game_nb_cols(g), game_nb_rows(g)); gap_position++) {
+			if (/* test if both tab are not 0*/ tab[index_tab] != tab[index_tab + 1] &&
+			    (/* normal check */ (JNORMAL >= 0 && JNORMAL < game_nb_cols(g) && INORMAL >= 0 && INORMAL < game_nb_rows(g)) ||
+			     /* wrapping check*/ game_is_wrapping(g))) {
+				// test if current case is a wall
+				if (game_is_black(g, IWRAPPING, JWRAPPING)) {
+					wall = true;
+				} else {
+					int tmp = checklightbulb(g, IWRAPPING, JWRAPPING, wall);
+					if (tmp == -1) {
+						break;
+					}
+					if (!tmp)
+						return tmp;
+				}
+			}
+		}
+	}
+	return true;
+}
+
+bool test_update_flags_walls(game g, uint i, uint j) {
+	// lookup for lightbulb and emptycells
+	int lb = 0;
+	int notempty = 0;
+	int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
+	bool res = true;
+	int gap_position = 1;
+	for (uint index_tab = 0; index_tab < sizeof(tab) / sizeof(tab[0]); index_tab += 2) {
+		if (/* normal check*/ (JNORMAL >= 0 && JNORMAL < game_nb_cols(g) && INORMAL >= 0 && INORMAL < game_nb_rows(g)) ||
+		    /*wrapping check*/ game_is_wrapping(g)) {
+			if (game_is_lightbulb(g, IWRAPPING, JWRAPPING))
+				lb++;
+			else if (!game_is_blank(g, IWRAPPING, JWRAPPING) || game_is_lighted(g, IWRAPPING, JWRAPPING))
+				notempty++;
+		} else {
+			notempty++;
+		}
+	}
+	if (lb > game_get_black_number(g, i, j)) {
+		res = false;
+	}
+	// look if there is enough empty cell around the wall
+	else if (notempty > abs(game_get_black_number(g, i, j) - 4)) {
+		res = false;
+	}
+	if (game_get_flags(g, i, j) == F_ERROR) {
+		res = !res;
+	}
+	return res;
 }
 
 /**
@@ -304,67 +361,14 @@ bool check_update(game g) {
 	for (uint i = 0; i < game_nb_rows(g); i++) {
 		for (uint j = 0; j < game_nb_cols(g); j++) {
 			if (game_is_lightbulb(g, i, j)) {
-				square flags = game_get_flags(g, i, j);
-				if (/*test if this lightbulb is well updated*/ flags == S_BLANK || flags == F_ERROR) {
+				if (!test_update_flags_lightbulb(g, i, j)) {
 					return false;
 				}
-				int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
-				for (uint tab_index = 0; tab_index < sizeof(tab) / sizeof(tab[0]); tab_index = tab_index + 2) {
-					bool wall = false;
-					for (int gap_distance = 1; gap_distance < max(game_nb_cols(g), game_nb_rows(g)); gap_distance++) {
-						if (/* test if both tab are not 0*/ tab[tab_index] != tab[tab_index + 1] &&
-						    (/* normal check */ (j + gap_distance * tab[tab_index + 1] >= 0 && j + gap_distance * tab[tab_index + 1] < game_nb_cols(g) &&
-						                         i + gap_distance * tab[tab_index] >= 0 && i + gap_distance * tab[tab_index] < game_nb_rows(g)) ||
-						     /* wrapping check*/ game_is_wrapping(g))) {
-							// test if current case is a wall
-							if (game_is_black(g, ((i + game_nb_rows(g) + gap_distance * tab[tab_index]) % game_nb_rows(g)),
-							                  ((j + game_nb_cols(g) + gap_distance * tab[tab_index + 1]) % game_nb_cols(g)))) {
-								wall = true;
-							} else {
-								int tmp = checklightbulb(g, ((i + game_nb_rows(g) + gap_distance * tab[tab_index]) % game_nb_rows(g)),
-								                         ((j + game_nb_cols(g) + gap_distance * tab[tab_index + 1]) % game_nb_cols(g)), wall);
-								if (tmp == -1) {
-									break;
-								}
-								if (!tmp) {
-									return tmp;
-								}
-							}
-						}
-					}
-				}
-			} else if (/*test if current case is a wall*/ game_is_black(g, i, j)) {
+				// test if current case is a wall
+			} else if (game_is_black(g, i, j)) {
 				if (game_get_black_number(g, i, j) != -1) {
-					// lookup for lightbulb and emptycells
-					int lb = 0;
-					int notempty = 0;
-					int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
-					bool res = true;
-					for (uint y = 0; y < 7; y = y + 2) {
-						if (/* normal check*/ (j + tab[y + 1] >= 0 && j + tab[y + 1] < game_nb_cols(g) && i + tab[y] >= 0 && i + tab[y] < game_nb_rows(g)) ||
-						    /*wrapping check*/ game_is_wrapping(g)) {
-							if (game_is_lightbulb(g, (i + game_nb_rows(g) + tab[y]) % game_nb_rows(g), (j + game_nb_cols(g) + tab[y + 1]) % game_nb_cols(g)))
-								lb++;
-							else if (!game_is_blank(g, (i + game_nb_rows(g) + tab[y]) % game_nb_rows(g),
-							                        (j + game_nb_cols(g) + tab[y + 1]) % game_nb_cols(g)) ||
-							         game_is_lighted(g, (i + game_nb_rows(g) + tab[y]) % game_nb_rows(g), (j + game_nb_cols(g) + tab[y + 1]) % game_nb_cols(g)))
-								notempty++;
-						} else {
-							notempty++;
-						}
-					}
-					if (lb > game_get_black_number(g, i, j)) {
-						res = false;
-					}
-					// look if there is enough empty cell around the wall
-					else if (notempty > abs(game_get_black_number(g, i, j) - 4)) {
-						res = false;
-					}
-					if (game_get_flags(g, i, j) == F_ERROR) {
-						res = !res;
-					}
-					if (!res) {
-						return res;
+					if (!test_update_flags_walls(g, i, j)) {
+						return false;
 					}
 				}
 			}
