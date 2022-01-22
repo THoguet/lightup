@@ -239,13 +239,13 @@ bool test_game_default_solution(void) {
 /* **** game_update_flags **** */
 
 /**
- * @brief check if the case i j have his flags well updated
+ * @brief check if the case (i,j) have its flags well updated
  *
  * @param g the game to test
  * @param i the i coordiante of the case to test
  * @param j the j coordiante of the case to test
  * @param wall if there is a wall before
- * @return 0 if the case is well updated ; -1 else
+ * @return 1 if the case is well updated ; 0 if there is an error on the update ; -1 if the case is irrelevant
  */
 int checklightbulb(game g, uint i, uint j, bool wall) {
 	square flags = game_get_flags(g, i, j);
@@ -268,7 +268,7 @@ int checklightbulb(game g, uint i, uint j, bool wall) {
 		return 1;
 	}
 	// test if all case are not lighted or lighted by another lightbulb
-	if (/*test if the current case is lighted*/ flags == F_LIGHTED) {
+	if (flags == F_LIGHTED) {
 		int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
 		for (uint index_tab = 0; index_tab < 7 /*tab size*/; index_tab = index_tab + 2) {
 			for (int gap_position = 1; gap_position < max(game_nb_cols(g), game_nb_rows(g)); gap_position++) {
