@@ -273,8 +273,8 @@ int checklightbulb(game g, uint i, uint j, bool wall) {
 		for (uint index_tab = 0; index_tab < 7 /*tab size*/; index_tab = index_tab + 2) {
 			for (int gap_position = 1; gap_position < max(game_nb_cols(g), game_nb_rows(g)); gap_position++) {
 				if (/* test if both tab are not 0*/ tab[index_tab] != tab[index_tab + 1] &&
-				    (/* normal check */ (JWRAPPING >= 0 && JWRAPPING < game_nb_cols(g) && IWRAPPING >= 0 && IWRAPPING < game_nb_rows(g)) ||
-				     /* wrapping check*/ game_is_wrapping(g))) {
+				    (/* normal check */ (JNORMAL >= 0 && JNORMAL < game_nb_cols(g) && INORMAL >= 0 && INORMAL < game_nb_rows(g)) ||
+				     /* wrapping check + not the inital case*/ (game_is_wrapping(g) && !(IWRAPPING == i && JWRAPPING == j)))) {
 					flags = game_get_square(g, IWRAPPING, JWRAPPING);
 					if (flags == (S_LIGHTBULB | F_LIGHTED) || flags == (S_LIGHTBULB | F_LIGHTED | F_ERROR)) {
 						return -1;
@@ -301,7 +301,7 @@ int test_update_flags_lightbulb(game g, uint i, uint j) {
 		for (int gap_position = 1; gap_position < max(game_nb_cols(g), game_nb_rows(g)); gap_position++) {
 			if (/* test if both tab are not 0*/ tab[index_tab] != tab[index_tab + 1] &&
 			    (/* normal check */ (JNORMAL >= 0 && JNORMAL < game_nb_cols(g) && INORMAL >= 0 && INORMAL < game_nb_rows(g)) ||
-			     /* wrapping check*/ game_is_wrapping(g))) {
+			     /* wrapping check + not the inital case*/ (game_is_wrapping(g) && !(IWRAPPING == i && JWRAPPING == j)))) {
 				// test if current case is a wall
 				if (game_is_black(g, IWRAPPING, JWRAPPING)) {
 					wall = true;
@@ -328,7 +328,8 @@ bool test_update_flags_walls(game g, uint i, uint j) {
 	int gap_position = 1;
 	for (uint index_tab = 0; index_tab < sizeof(tab) / sizeof(tab[0]); index_tab += 2) {
 		if (/* normal check*/ (JNORMAL >= 0 && JNORMAL < game_nb_cols(g) && INORMAL >= 0 && INORMAL < game_nb_rows(g)) ||
-		    /*wrapping check*/ game_is_wrapping(g)) {
+		    /*wrapping check*/ (game_is_wrapping(g) &&
+		                        /*not the same case*/ !(IWRAPPING == i && JWRAPPING == j))) {
 			if (game_is_lightbulb(g, IWRAPPING, JWRAPPING))
 				lb++;
 			else if (!game_is_blank(g, IWRAPPING, JWRAPPING) || game_is_lighted(g, IWRAPPING, JWRAPPING))
