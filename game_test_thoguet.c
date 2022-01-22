@@ -273,8 +273,8 @@ int checklightbulb(game g, uint i, uint j, bool wall) {
 		for (uint index_tab = 0; index_tab < 7 /*tab size*/; index_tab = index_tab + 2) {
 			for (int gap_position = 1; gap_position < max(game_nb_cols(g), game_nb_rows(g)); gap_position++) {
 				if (/* test if both tab are not 0*/ tab[index_tab] != tab[index_tab + 1] &&
-				        (/* normal check */ JWRAPPING >= 0 && JWRAPPING < game_nb_cols(g) && IWRAPPING >= 0 && IWRAPPING < game_nb_rows(g)) ||
-				    /* wrapping check*/ game_is_wrapping(g)) {
+				    (/* normal check */ (JWRAPPING >= 0 && JWRAPPING < game_nb_cols(g) && IWRAPPING >= 0 && IWRAPPING < game_nb_rows(g)) ||
+				     /* wrapping check*/ game_is_wrapping(g))) {
 					flags = game_get_square(g, IWRAPPING, JWRAPPING);
 					if (flags == (S_LIGHTBULB | F_LIGHTED) || flags == (S_LIGHTBULB | F_LIGHTED | F_ERROR)) {
 						return -1;
