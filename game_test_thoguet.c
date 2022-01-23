@@ -102,24 +102,21 @@ bool test_game_is_over(void) {
  *
  * @return EXIT_SUCCESS if there is no error
  */
-
-void apply_square(game g, uint i, uint j, square s, void (*apply)(game, uint, uint, square)) {
-	apply(g, i, j, s);
-}
-
 bool test_game_restart(void) {
 	game game_def = game_default();
 	game game_def_solution = game_default_solution();
-	square list[] = LIST_OF_SQUARE;
-	for (uint index_list = 0; index_list < sizeof(list) / sizeof(list[0]); index_list++) {
-		if (index_list <= USABLE_SQUARE) {
-			apply_square(game_def, 0, 0, list[index_list], &game_play_move);
-			apply_square(game_def_solution, 0, 0, list[index_list], &game_play_move);
-		} else {
-			apply_square(game_def, 0, 0, list[index_list], &game_set_square);
-			apply_square(game_def_solution, 0, 0, list[index_list], &game_set_square);
-		}
-	}
+	game_set_square(game_def, 1, 5, S_BLACK4);
+	game_set_square(game_def_solution, 1, 5, S_BLACK4);
+	game_set_square(game_def, 3, 2, S_BLACK3);
+	game_set_square(game_def_solution, 3, 2, S_BLACK3);
+	game_play_move(game_def, 0, 1, S_LIGHTBULB);
+	game_play_move(game_def_solution, 0, 1, S_LIGHTBULB);
+	game_play_move(game_def, 2, 0, S_MARK);
+	game_play_move(game_def_solution, 2, 0, S_MARK);
+	game_play_move(game_def, 1, 1, S_LIGHTBULB);
+	game_play_move(game_def_solution, 1, 1, S_LIGHTBULB);
+	game_play_move(game_def, 1, 1, S_MARK);
+	game_play_move(game_def_solution, 1, 1, S_MARK);
 	game_undo(game_def);
 	game_undo(game_def_solution);
 	assert(!game_equal(game_def, game_def_solution));
