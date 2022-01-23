@@ -136,7 +136,7 @@ bool test_game_equal() {
 	}
 	game g2 = game_copy(g1);
 	// check if the two games have the same height, width, and if the two have the wrapping option or not  
-	if (!(game_nb_rows(g1) == game_nb_rows(g2)) || !(game_nb_cols(g1) == game_nb_cols(g2)) || !(game_is_wrapping(g1) == game_is_wrapping(g2))){
+	if (game_nb_rows(g1) != game_nb_rows(g2) || game_nb_cols(g1) != game_nb_cols(g2) || game_is_wrapping(g1) != game_is_wrapping(g2)){
 		equal = false;
 	} 
 	// check if each square is the same on each game
