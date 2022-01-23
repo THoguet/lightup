@@ -134,6 +134,7 @@ bool test_game_equal() {
 	uint index_tab = 0;
 	for (int wrap_index = 0; wrap_index < sizeof(wrap) / sizeof(wrap[0]); wrap_index += 2) {
 		game g1 = game_new_empty_ext(DEFAULT_SIZE, DEFAULT_SIZE, wrap[wrap_index]);
+		game g2 = game_new_empty_ext(DEFAULT_SIZE, DEFAULT_SIZE, wrap[wrap_index + 1]);
 		for (int i = 0; i < game_nb_rows(g1); i++) {
 			for (int j = 0; j < game_nb_cols(g1); j++) {
 				// check if index_tab reach end of tab
@@ -141,10 +142,10 @@ bool test_game_equal() {
 					index_tab = 0;
 				}
 				game_set_square(g1, i, j, tab_square[index_tab]);
+				game_set_square(g2, i, j, tab_square[index_tab]);
 				index_tab++;
 			}
 		}
-		game g2 = game_new_empty_ext(DEFAULT_SIZE, DEFAULT_SIZE, wrap[wrap_index + 1]);
 		// check if the two games have the same height, width, and if the two have the wrapping option or not
 		if (game_nb_rows(g1) != game_nb_rows(g2) || game_nb_cols(g1) != game_nb_cols(g2) || game_is_wrapping(g1) != game_is_wrapping(g2)) {
 			equal = false;
