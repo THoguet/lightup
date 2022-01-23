@@ -89,6 +89,11 @@ bool test_game_is_lightbulb() {
 bool test_game_is_blank() {
 	square tab_square[] = {S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
 	game g = game_new_empty();
+	game_set_square(g, 0, 0, S_BLANK);
+	if (!((game_get_square(g, 0, 0) == S_BLANK) && game_is_blank(g, 0, 0))) {
+		game_delete(g);
+		return false;
+	}
 	for (int i = 0; i < game_nb_rows(g); i++) {
 		for (int j = 0; j < game_nb_cols(g); j++) {
 			// check for each case given in tab_square if the function return the expected result
@@ -130,6 +135,9 @@ bool test_game_equal() {
 		}
 	}
 	game g2 = game_copy(g1);
+	if (!(game_nb_rows(g1) == game_nb_rows(g2)) || !(game_nb_cols(g1) == game_nb_cols(g2)) || !(game_is_wrapping(g1) == game_is_wrapping(g2))){
+		equal = false;
+	}
 	for (int i = 0; i < game_nb_rows(g1); i++) {
 		for (int j = 0; j < game_nb_cols(g1); j++) {
 			if (game_get_square(g1, i, j) != game_get_square(g2, i, j)) {
