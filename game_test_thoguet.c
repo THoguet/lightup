@@ -8,11 +8,6 @@
 #include "game_aux.h"
 #include "game_ext.h"
 
-#define JWRAPPING (j + game_nb_cols(g) + gap_position * tab[index_tab + 1]) % game_nb_cols(g)
-#define IWRAPPING (i + game_nb_rows(g) + gap_position * tab[index_tab]) % game_nb_rows(g)
-#define JNORMAL j + gap_position* tab[index_tab + 1]
-#define INORMAL i + gap_position* tab[index_tab]
-
 int max(int a, int b) {
 	if (a > b)
 		return a;
@@ -237,226 +232,139 @@ bool test_game_default_solution(void) {
 }
 
 /* **** game_update_flags **** */
-
 /**
- * @brief check if the case (i,j) have its flags well updated
+ * @brief count the number of F_ERROR on the entire game g
  *
- * @param g the game to test
- * @param i the i coordiante of the case to test
- * @param j the j coordiante of the case to test
- * @param wall if there is a wall before
- * @return 1 if the case is well updated ; 0 if there is an error on the update ; -1 if the case is irrelevant
+ * @param g the game to analyze
+ * @return uint the number of F_ERROR on the game g
  */
-int checklightbulb(game g, uint i, uint j, bool wall) {
-	square flags = game_get_flags(g, i, j);
-	// test if the current case is a lightbulb and if it has been well updated
-	// if true we can break the loop because every others cases wont be lighted
-	// by the bulb we are testing
-	if (game_is_lightbulb(g, i, j)) {
-		if (/*test if this lightbulb is well updated*/ flags == S_BLANK || flags == F_ERROR) {
-			return 0;
-		}
-		return -1;
-	}
-	// if no wall(s) before test if the light of the lightbulb has been well
-	// updated
-	if (!wall) {
-		// test if the current case is not lighted
-		if (flags != F_LIGHTED) {
-			return 0;
-		}
-		return 1;
-	}
-	// test if all case are not lighted or lighted by another lightbulb
-	if (flags == F_LIGHTED) {
-		int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
-		for (uint index_tab = 0; index_tab < 7 /*tab size*/; index_tab = index_tab + 2) {
-			for (int gap_position = 1; gap_position < max(game_nb_cols(g), game_nb_rows(g)); gap_position++) {
-				if (/* test if both tab are not 0*/ tab[index_tab] != tab[index_tab + 1] &&
-				    (/* normal check */ (JNORMAL >= 0 && JNORMAL < game_nb_cols(g) && INORMAL >= 0 && INORMAL < game_nb_rows(g)) ||
-				     /* wrapping check + not the inital case*/ (game_is_wrapping(g) && !(IWRAPPING == i && JWRAPPING == j)))) {
-					flags = game_get_square(g, IWRAPPING, JWRAPPING);
-					if (flags == (S_LIGHTBULB | F_LIGHTED) || flags == (S_LIGHTBULB | F_LIGHTED | F_ERROR)) {
-						return -1;
-					}
-					if (flags != F_LIGHTED && flags != (F_LIGHTED | S_MARK)) {
-						break;
-					}
-				}
-			}
-		}
-		return 0;
-	}
-	return 1;
-}
-
-int test_update_flags_lightbulb(game g, uint i, uint j) {
-	square flags = game_get_flags(g, i, j);
-	if (/*test if this lightbulb is well updated*/ flags == S_BLANK || flags == F_ERROR) {
-		return false;
-	}
-	int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
-	for (uint index_tab = 0; index_tab < sizeof(tab) / sizeof(tab[0]); index_tab += 2) {
-		bool wall = false;
-		for (int gap_position = 1; gap_position < max(game_nb_cols(g), game_nb_rows(g)); gap_position++) {
-			if (/* test if both tab are not 0*/ tab[index_tab] != tab[index_tab + 1] &&
-			    (/* normal check */ (JNORMAL >= 0 && JNORMAL < game_nb_cols(g) && INORMAL >= 0 && INORMAL < game_nb_rows(g)) ||
-			     /* wrapping check + not the inital case*/ (game_is_wrapping(g) && !(IWRAPPING == i && JWRAPPING == j)))) {
-				// test if current case is a wall
-				if (game_is_black(g, IWRAPPING, JWRAPPING)) {
-					wall = true;
-				} else {
-					int tmp = checklightbulb(g, IWRAPPING, JWRAPPING, wall);
-					if (tmp == -1) {
-						break;
-					}
-					if (!tmp)
-						return tmp;
-				}
-			}
-		}
-	}
-	return true;
-}
-
-bool test_update_flags_walls(game g, uint i, uint j) {
-	// lookup for lightbulb and emptycells
-	int lb = 0;
-	int notempty = 0;
-	int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
-	bool res = true;
-	int gap_position = 1;
-	for (uint index_tab = 0; index_tab < sizeof(tab) / sizeof(tab[0]); index_tab += 2) {
-		if (/* normal check*/ (JNORMAL >= 0 && JNORMAL < game_nb_cols(g) && INORMAL >= 0 && INORMAL < game_nb_rows(g)) ||
-		    /*wrapping check*/ (game_is_wrapping(g) &&
-		                        /*not the same case*/ !(IWRAPPING == i && JWRAPPING == j))) {
-			if (game_is_lightbulb(g, IWRAPPING, JWRAPPING))
-				lb++;
-			else if (!game_is_blank(g, IWRAPPING, JWRAPPING) || game_is_lighted(g, IWRAPPING, JWRAPPING))
-				notempty++;
-		} else {
-			notempty++;
-		}
-	}
-	if (lb > game_get_black_number(g, i, j)) {
-		res = false;
-	}
-	// look if there is enough empty cell around the wall
-	else if (notempty > abs(game_get_black_number(g, i, j) - 4)) {
-		res = false;
-	}
-	if (game_get_flags(g, i, j) == F_ERROR) {
-		res = !res;
-	}
-	return res;
-}
-
-/**
- * @brief check if the all flags are correctly updated
- *
- * @param g the game to test
- * @return true if all flags are corrects
- * @return false if one flags isn't correct
- */
-bool check_update(game g) {
+uint counterF_ERROR(game g) {
+	uint cpt = 0;
 	for (uint i = 0; i < game_nb_rows(g); i++) {
 		for (uint j = 0; j < game_nb_cols(g); j++) {
-			if (game_is_lightbulb(g, i, j)) {
-				if (!test_update_flags_lightbulb(g, i, j)) {
-					return false;
-				}
-				// test if current case is a wall
-			} else if (game_is_black(g, i, j)) {
-				if (game_get_black_number(g, i, j) != -1) {
-					if (!test_update_flags_walls(g, i, j)) {
-						return false;
-					}
-				}
-			}
+			if (game_has_error(g, i, j))
+				cpt++;
 		}
 	}
-	return true;
+	return cpt;
 }
+/*
+Tests without the wrapping option
 
-/**
- * @brief tests if the update_flags works well and update each case of g with every square with a deepness of a.
- *
- * @param g the game to test
- * @param a the deepness of test (a > 2 : execution time > 3 minutes and exponential)
- * @param deldup List of each case already tested (to avoid duplicates)
- * @return true if update flags works fine in every tested cases
- * @return false if there is a update_flags error.
- */
-bool brutforce(game g, int a, bool* deldup) {
-	bool* delDupNext = (bool*)calloc(game_nb_rows(g) * game_nb_cols(g), sizeof(bool));
-	if (delDupNext == NULL) {
-		fprintf(stderr, "Not enought memory\n");
-		exit(EXIT_FAILURE);
-	}
-	square list[] = {S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU, S_BLANK};
-	for (uint i = 0; i < game_nb_rows(g); i++) {
-		for (uint j = 0; j < game_nb_cols(g); j++) {
-			if (deldup == NULL || !(deldup[i * game_nb_cols(g) + j])) {
-				if (game_get_state(g, i, j) == S_BLANK) {
-					if (delDupNext != NULL && a > 0)
-						delDupNext[i * game_nb_cols(g) + j] = true;
-					for (uint k = 0; k < 9; k++) {
-						game_set_square(g, i, j, list[k]);
-						if (a > 0) {
-							if (!brutforce(g, a - 1, delDupNext)) {
-								free(delDupNext);
-								return false;
-							}
-						}
-						game_update_flags(g);
-						if (!check_update(g)) {
-							game_print(g);
-							free(delDupNext);
-							return false;
-						}
-					}
-				}
-			}
-		}
-	}
-	free(delDupNext);
-	return true;
-}
+test on a 2x2 game without *wrapping*
+test on a 3x3 game without *wrapping*
+test on a 5x3 game without *wrapping*
+test flags *error* on specifics cases
 
-/**
- * @brief randomise a game g 100% random => not 100% resolvable
- *
- * @param g the game to randomise
- */
-void randomise(game g) {
-	time_t t;
-	srand((unsigned)time(&t));
-	assert(g);
-	square list[] = {S_LIGHTBULB, S_MARK,  S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU,
-	                 S_BLANK,     S_BLANK, S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK};
-	for (uint h = 0; h < game_nb_rows(g); h++) {
-		for (uint w = 0; w < game_nb_cols(g); w++) {
-			game_set_square(g, h, w, list[rand() % 16]);
-		}
-	}
-}
+On the 2x2, 3x3 and 5x3 tests, we play these move to win and we test if the grid is correct
 
+   01              012              012
+   --              ---              ---
+0 |2*|          0 |.w0|          0 |*..|
+1 |*.|          1 |*1w|          1 |w*1|
+   --           2 |..*|          2 |*2.|
+  (2x2)            ---           3 |..*|
+                  (3x3)          4 |.*.|
+                                    ---
+                                   (5x3)
+
+Tests of the wrapping option
+
+test on a 2x2 game with option *wrapping* (cas limite)
+test on a 3x3 game with option *wrapping*
+test on a 5x3 game with option *wrapping*
+test of the flags *error* in the specifics cases of the option *wrapping*
+
+On the 2x2, 3x3 and 5x3 tests, we play these move to win and we test if the grid is correct
+
+   01              012              012
+   --              ---              ---
+0 |4*|          0 |*w2|          0 |...|
+1 |*.|          1 |.ww|          1 |w*1|
+   --           2 |..*|          2 |*2.|
+  (2x2)            ---           3 |..*|
+                  (3x3)          4 |...|
+                                    ---
+                                   (5x3)
+*/
 bool test_game_update_flags(void) {
-	// test game of size between 1 and 6 (we can change 6)
-	for (uint h = 1; h <= 6; h++) {
-		for (uint w = 1; w <= 6; w++) {
-			for (int wrap = 0; wrap != 1; wrap++) {
-				game g = game_new_empty_ext(h, w, wrap);
-				assert(g);
-				randomise(g);
-				if (!brutforce(g, 1, NULL)) {
-					game_delete(g);
-					return EXIT_FAILURE;
-				}
-				game_delete(g);
-			}
-		}
-	}
+	square test2x2w[4] = {S_BLACK4, S_BLANK, S_BLANK, S_BLANK};
+	square test3x3w[9] = {S_BLANK, S_BLACKU, S_BLACK2, S_BLANK, S_BLACKU, S_BLACKU, S_BLANK, S_BLANK, S_BLANK};
+	square test5x3[15] = {S_BLANK, S_BLANK, S_BLANK, S_BLACKU, S_BLANK, S_BLACK1, S_BLANK, S_BLACK2,
+	                      S_BLANK, S_BLANK, S_BLANK, S_BLANK,  S_BLANK, S_BLANK,  S_BLANK};
+	square test2x2[4] = {S_BLACK2, S_BLANK, S_BLANK, S_BLANK};
+	square test3x3[9] = {S_BLANK, S_BLACKU, S_BLACK0, S_BLANK, S_BLACK1, S_BLACKU, S_BLANK, S_BLANK, S_BLANK};
+	// avec wrapping
+	game g2x2w = game_new_ext(2, 2, test2x2w, true);
+	game g3x3w = game_new_ext(3, 3, test3x3w, true);
+	game g5x3w = game_new_ext(5, 3, test5x3, true);
+	game_play_move(g2x2w, 0, 1, S_LIGHTBULB);
+	game_play_move(g2x2w, 1, 0, S_LIGHTBULB);
+	assert(game_is_over(g2x2w));
+	game_play_move(g3x3w, 0, 0, S_LIGHTBULB);
+	game_play_move(g3x3w, 2, 2, S_LIGHTBULB);
+	assert(game_is_over(g3x3w));
+	game_play_move(g5x3w, 1, 1, S_LIGHTBULB);
+	game_play_move(g5x3w, 2, 0, S_LIGHTBULB);
+	game_play_move(g5x3w, 3, 2, S_LIGHTBULB);
+	assert(game_is_over(g5x3w));
+	game_restart(g2x2w);
+	game_restart(g5x3w);
+	game_play_move(g2x2w, 0, 1, S_MARK);
+	assert(!game_is_over(g2x2w));
+	assert(game_has_error(g2x2w, 0, 0));
+	assert(counterF_ERROR(g2x2w) == 1);
+	game_play_move(g5x3w, 0, 2, S_LIGHTBULB);
+	game_play_move(g5x3w, 2, 2, S_LIGHTBULB);
+	game_play_move(g5x3w, 1, 1, S_LIGHTBULB);
+	game_play_move(g5x3w, 2, 0, S_LIGHTBULB);
+	assert(!game_is_over(g5x3w));
+	assert(game_has_error(g5x3w, 0, 2));
+	assert(game_has_error(g5x3w, 1, 2));
+	assert(game_has_error(g5x3w, 2, 2));
+	assert(game_has_error(g5x3w, 2, 0));
+	assert(game_has_error(g5x3w, 2, 1));
+	assert(counterF_ERROR(g5x3w) == 5);
+	game_delete(g2x2w);
+	game_delete(g3x3w);
+	game_delete(g5x3w);
+	// sans wrapping
+	game g2x2 = game_new_ext(2, 2, test2x2, false);
+	game g3x3 = game_new_ext(3, 3, test3x3, false);
+	game g5x3 = game_new_ext(5, 3, test5x3, false);
+	game_play_move(g2x2, 0, 1, S_LIGHTBULB);
+	game_play_move(g2x2, 1, 0, S_LIGHTBULB);
+	assert(game_is_over(g2x2));
+	game_play_move(g3x3, 1, 0, S_LIGHTBULB);
+	game_play_move(g3x3, 2, 2, S_LIGHTBULB);
+	assert(game_is_over(g3x3));
+	game_play_move(g5x3, 0, 0, S_LIGHTBULB);
+	game_play_move(g5x3, 1, 1, S_LIGHTBULB);
+	game_play_move(g5x3, 2, 0, S_LIGHTBULB);
+	game_play_move(g5x3, 3, 2, S_LIGHTBULB);
+	game_play_move(g5x3, 4, 1, S_LIGHTBULB);
+	assert(game_is_over(g5x3));
+	game_restart(g2x2);
+	game_restart(g5x3);
+	game_play_move(g2x2, 1, 0, S_MARK);
+	assert(!game_is_over(g2x2));
+	assert(game_has_error(g2x2, 0, 0));
+	assert(counterF_ERROR(g2x2) == 1);
+	game_play_move(g5x3, 0, 2, S_LIGHTBULB);
+	game_play_move(g5x3, 1, 1, S_LIGHTBULB);
+	game_play_move(g5x3, 2, 0, S_LIGHTBULB);
+	game_play_move(g5x3, 2, 2, S_LIGHTBULB);
+	game_play_move(g5x3, 3, 2, S_LIGHTBULB);
+	game_play_move(g5x3, 4, 1, S_LIGHTBULB);
+	assert(!game_is_over(g5x3));
+	assert(game_has_error(g5x3, 1, 2));
+	assert(game_has_error(g5x3, 2, 1));
+	assert(game_has_error(g5x3, 2, 2));
+	assert(game_has_error(g5x3, 3, 2));
+	assert(counterF_ERROR(g5x3) == 4);
+	game_delete(g5x3);
+	game_delete(g3x3);
+	game_delete(g2x2);
 	return EXIT_SUCCESS;
 }
 
@@ -492,25 +400,25 @@ bool test_game_play_move(void) {
 
 bool test_game_check_move(void) {
 	game g = game_new_empty();
-	assert(!game_check_move(g, 10, 10, S_BLANK));
-	assert(!game_check_move(g, 10, 10, S_BLACK0));
-	assert(!game_check_move(g, 0, 0, S_BLACK0));
-	assert(!game_check_move(g, 0, 0, S_BLACK1));
-	assert(!game_check_move(g, 0, 0, S_BLACK2));
-	assert(!game_check_move(g, 0, 0, S_BLACK3));
-	assert(!game_check_move(g, 0, 0, S_BLACK4));
-	assert(!game_check_move(g, 0, 0, S_BLACKU));
-	assert(!game_check_move(g, 0, 0, F_LIGHTED));
-	assert(!game_check_move(g, 0, 0, F_ERROR));
+	square list[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU, F_ERROR, F_LIGHTED};
+	// test if we can place something else than S_BLANK, S_LIGHTBULB, S_MARK + if we can place something over the limits
+	for (uint i = 0; i < 20; i++) {
+		for (uint j = 0; j < 20; j++) {
+			for (uint index_list = 0; index_list < sizeof(list) / sizeof(list[0]); index_list++) {
+				if (i >= game_nb_rows(g) || j >= game_nb_cols(g) || index_list > 2)
+					assert(!game_check_move(g, i, j, list[index_list]));
+				else
+					assert(game_check_move(g, i, j, list[index_list]));
+			}
+		}
+	}
+	// test if we can place something on a wall
 	for (uint i = 0; i < S_BLACKU - S_BLACK0; i++) {
-		game_set_square(g, 0, 0, S_BLACK0 + i);
+		game_set_square(g, 0, 0, S_BLACK + i);
 		assert(!game_check_move(g, 0, 0, S_BLANK));
 		assert(!game_check_move(g, 0, 0, S_MARK));
 		assert(!game_check_move(g, 0, 0, S_LIGHTBULB));
 	}
-	assert(game_check_move(g, 1, 0, S_BLANK));
-	assert(game_check_move(g, 1, 0, S_MARK));
-	assert(game_check_move(g, 1, 0, S_LIGHTBULB));
 	game_delete(g);
 	return EXIT_SUCCESS;
 }
