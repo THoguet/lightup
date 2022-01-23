@@ -178,26 +178,28 @@ bool test_game_new_empty() {
 bool test_game_copy() {
 	square tab_square[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
 	uint index_tab = 0;
-	game g1 = game_new_empty();
-	for (int i = 0; i < game_nb_rows(g1); i++) {
-		for (int j = 0; j < game_nb_cols(g1); j++) {
-			// check if index_tab reach end of tab
-			if (index_tab == sizeof(tab_square) / sizeof(tab_square[0])) {
-				index_tab = 0;
+	for(int wrap = 0; wrap < 2 /*we only need to test two versions (with and without wrapping)*/; wrap++){
+		game g1 = game_new_empty_ext(DEFAULT_SIZE, DEFAULT_SIZE, wrap);
+		for (int i = 0; i < game_nb_rows(g1); i++) {
+			for (int j = 0; j < game_nb_cols(g1); j++) {
+				// check if index_tab reach end of tab
+				if (index_tab == sizeof(tab_square) / sizeof(tab_square[0])) {
+					index_tab = 0;
+				}
+				game_set_square(g1, i, j, tab_square[index_tab]);
+				index_tab++;
 			}
-			game_set_square(g1, i, j, tab_square[index_tab]);
-			index_tab++;
 		}
-	}
-	game g2 = game_copy(g1);
-	// check if g2 is a correct copy of g1
-	if (!game_equal(g1, g2)) {
+		game g2 = game_copy(g1);
+		// check if g2 is a correct copy of g1
+		if (!game_equal(g1, g2)) {
+			game_delete(g1);
+			game_delete(g2);
+			return false;
+		}
 		game_delete(g1);
 		game_delete(g2);
-		return false;
 	}
-	game_delete(g1);
-	game_delete(g2);
 	return true;
 }
 
