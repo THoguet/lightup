@@ -162,12 +162,21 @@ bool test_game_nb_cols(void) {
 /* ************** game_is_wrapping ************** */
 bool test_game_is_wrapping(void) {
 	game g = game_new_empty();
-	if (game_is_wrapping(g) != g->wrapping) {
-		game_delete(g);
-		return false;
-	}
+	game_set_square(g, 0, 0, S_LIGHTBULB);
+	game_set_square(g, 1, 0, S_BLACK);
+	game_set_square(g, 0, 1, S_BLACK);
+	for (uint i = 0; i < DEFAULT_SIZE; i++) {
+		if (!(game_is_lighted(g, 0, i) && game_is_wrapping(g))) {
+			game_delete(g);
+			return true;
+		}	
+		if (!(game_is_lighted(g, i, 0) && game_is_wrapping(g))) {
+			game_delete(g);
+			return true;
+		}			
 	game_delete(g);
-	return true;
+	return false;
+	}
 }
 
 int main(int argc, char* argv[]) {
