@@ -9,8 +9,9 @@
 #include "game_ext.h"
 
 #define SIZE_LIMIT_GAME 10
-// put usable square at the start of the list
-#define LIST_OF_SQUARE square list[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU, F_LIGHTED, F_ERROR};
+// put usable square at the start of the list and S_BLANK at the first element
+#define LIST_OF_SQUARE \
+	{ S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU, F_LIGHTED, F_ERROR }
 #define USABLE_SQUARE 2
 
 /* ********** DUMMY ********** */
@@ -45,7 +46,7 @@ bool test_game_new_empty_ext(void) {
  * @return EXIT_SUCCESS if every game has been created well and well filled
  */
 bool test_game_new_ext(void) {
-	LIST_OF_SQUARE;
+	square list[] = LIST_OF_SQUARE;
 	for (uint height = 1; height <= SIZE_LIMIT_GAME; height++) {
 		for (uint width = 1; width <= SIZE_LIMIT_GAME; width++) {
 			square tab[height * width];
@@ -71,6 +72,7 @@ bool test_game_new_ext(void) {
 	}
 	return EXIT_SUCCESS;
 }
+
 /* ******* game_is_over ******* */
 /**
  * @brief test if game_is_over return true with default_solution, false with one flag F_ERROR, false with one S_BLANK and false with game_default
@@ -100,21 +102,24 @@ bool test_game_is_over(void) {
  *
  * @return EXIT_SUCCESS if there is no error
  */
+
+void apply_square(game g, uint i, uint j, square s, void (*apply)(game, uint, uint, square)) {
+	apply(g, i, j, s);
+}
+
 bool test_game_restart(void) {
 	game game_def = game_default();
 	game game_def_solution = game_default_solution();
-	game_set_square(game_def, 1, 5, S_BLACK4);
-	game_set_square(game_def_solution, 1, 5, S_BLACK4);
-	game_set_square(game_def, 3, 2, S_BLACK3);
-	game_set_square(game_def_solution, 3, 2, S_BLACK3);
-	game_play_move(game_def, 0, 1, S_LIGHTBULB);
-	game_play_move(game_def_solution, 0, 1, S_LIGHTBULB);
-	game_play_move(game_def, 2, 0, S_MARK);
-	game_play_move(game_def_solution, 2, 0, S_MARK);
-	game_play_move(game_def, 1, 1, S_LIGHTBULB);
-	game_play_move(game_def_solution, 1, 1, S_LIGHTBULB);
-	game_play_move(game_def, 1, 1, S_MARK);
-	game_play_move(game_def_solution, 1, 1, S_MARK);
+	square list[] = LIST_OF_SQUARE;
+	for (uint index_list = 0; index_list < sizeof(list) / sizeof(list[0]); index_list++) {
+		if (index_list <= USABLE_SQUARE) {
+			apply_square(game_def, 0, 0, list[index_list], &game_play_move);
+			apply_square(game_def_solution, 0, 0, list[index_list], &game_play_move);
+		} else {
+			apply_square(game_def, 0, 0, list[index_list], &game_set_square);
+			apply_square(game_def_solution, 0, 0, list[index_list], &game_set_square);
+		}
+	}
 	game_undo(game_def);
 	game_undo(game_def_solution);
 	assert(!game_equal(game_def, game_def_solution));
@@ -138,7 +143,7 @@ bool test_game_restart(void) {
  */
 bool test_game_new(void) {
 	square tab[DEFAULT_SIZE * DEFAULT_SIZE];
-	LIST_OF_SQUARE;
+	square list[] = LIST_OF_SQUARE;
 	for (uint index_list = 0; index_list < sizeof(list) / sizeof(list[0]); index_list++) {
 		for (uint index_tab = 0; index_tab < DEFAULT_SIZE * DEFAULT_SIZE; index_tab++) {
 			tab[index_tab] = list[index_list];
@@ -168,7 +173,7 @@ bool test_game_print(void) {
 	for (int height = 1; height <= SIZE_LIMIT_GAME; height++) {
 		for (int width = 1; width <= SIZE_LIMIT_GAME; width++) {
 			square tab[width * height];
-			LIST_OF_SQUARE;
+			square list[] = LIST_OF_SQUARE;
 			game g;
 			for (uint index_list = 0; index_list < sizeof(list) / sizeof(list[0]); index_list++) {
 				for (uint index_tab = 0; index_tab < width * height; index_tab++) {
@@ -195,7 +200,7 @@ bool test_game_get_square(void) {
 	for (int height = 1; height <= SIZE_LIMIT_GAME; height++) {
 		for (int width = 1; width <= SIZE_LIMIT_GAME; width++) {
 			square tab[width * height];
-			LIST_OF_SQUARE;
+			square list[] = LIST_OF_SQUARE;
 			for (uint index_list = 0; index_list < sizeof(list) / sizeof(list[0]); index_list++) {
 				for (uint index_tab = 0; index_tab < height * width; index_tab++) {
 					tab[index_tab] = list[index_list];
@@ -414,32 +419,16 @@ bool test_game_update_flags(void) {
 bool test_game_play_move(void) {
 	game game_play = game_new_empty();
 	game game_set = game_new_empty();
-	// S_LIGHTBULB
-	game_play_move(game_play, 0, 0, S_LIGHTBULB);
-	assert(!game_equal(game_play, game_set));
-	game_set_square(game_set, 0, 0, S_LIGHTBULB);
-	assert(!game_equal(game_play, game_set));
-	game_update_flags(game_set);
-	assert(game_equal(game_play, game_set));
-	// S_BLANK
-	game_play_move(game_play, 0, 3, S_BLANK);
-	assert(game_equal(game_play, game_set));
-	game_set_square(game_set, 0, 3, S_BLANK);
-	assert(!game_equal(game_play, game_set));
-	game_update_flags(game_set);
-	assert(game_equal(game_play, game_set));
-	// S_MARK
-	game_play_move(game_play, 3, 0, S_MARK);
-	assert(!game_equal(game_play, game_set));
-	game_set_square(game_set, 3, 0, S_MARK);
-	assert(!game_equal(game_play, game_set));
-	game_update_flags(game_set);
-	assert(game_equal(game_play, game_set));
+	square list[] = LIST_OF_SQUARE;
+	for (uint index_list = 0; index_list <= USABLE_SQUARE; index_list++) {
+		game_play_move(game_play, 0, 0, list[index_list]);
+		game_set_square(game_set, 0, 0, list[index_list]);
+		game_update_flags(game_set);
+		assert(game_equal(game_play, game_set));
+	}
 	// undo / redo
 	game_undo(game_play);
-	assert(!game_equal(game_play, game_set));
-	game_set_square(game_set, 3, 0, S_BLANK);
-	assert(!game_equal(game_play, game_set));
+	game_set_square(game_set, 0, 0, list[USABLE_SQUARE - 1]);  // take the before last usable element of list
 	game_update_flags(game_set);
 	assert(game_equal(game_play, game_set));
 	// delete
@@ -457,7 +446,7 @@ bool test_game_play_move(void) {
 bool test_game_check_move(void) {
 	game g = game_new_empty();
 	// put usable square at the start of the list
-	LIST_OF_SQUARE;
+	square list[] = LIST_OF_SQUARE;
 	// test limits
 	for (uint i = 0; i < SIZE_LIMIT_GAME + 10; i++) {
 		for (uint j = 0; j < SIZE_LIMIT_GAME + 10; j++) {
@@ -472,7 +461,7 @@ bool test_game_check_move(void) {
 	// test if we can place something on a wall
 	for (uint i = 0; i < S_BLACKU - S_BLACK0; i++) {
 		game_set_square(g, 0, 0, S_BLACK + i);
-		for (uint index_list = 0; index_list < USABLE_SQUARE; index_list++) {
+		for (uint index_list = 0; index_list <= USABLE_SQUARE; index_list++) {
 			assert(!game_check_move(g, 0, 0, list[index_list]));
 		}
 	}
