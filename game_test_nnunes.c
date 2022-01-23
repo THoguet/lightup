@@ -140,10 +140,10 @@ bool test_game_has_error(void) {
 /* ************** game_nb_rows ************** */
 bool test_game_nb_rows(void) {
 	game g = game_new_empty();
-	if (game_get_square(g, game_nb_rows(g) -1, 0) == S_BLANK) {
+	if (game_get_square(g, game_nb_rows(g) - 1, 0) == S_BLANK) {
 		game_delete(g);
 		return true;
-	}	
+	}
 	game_delete(g);
 	return false;
 }
@@ -159,7 +159,6 @@ bool test_game_nb_cols(void) {
 	return false;
 }
 
-
 /* ************** game_is_wrapping ************** */
 bool test_game_is_wrapping(void) {
 	game g = game_new_empty();
@@ -170,12 +169,12 @@ bool test_game_is_wrapping(void) {
 		if (!(game_is_lighted(g, 0, i) && game_is_wrapping(g))) {
 			game_delete(g);
 			return true;
-		}	
+		}
 		if (!(game_is_lighted(g, i, 0) && game_is_wrapping(g))) {
 			game_delete(g);
 			return true;
 		}
-	}				
+	}
 	game_delete(g);
 	return false;
 }
