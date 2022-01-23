@@ -42,7 +42,7 @@ bool test_game_get_black_number() {
 
 /* ********** game_is_black ********** */
 bool test_game_is_black() {
-	square tab_square[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
+	square tab_square[] = TAB_SQUARE;
 	game g = game_new_empty();
 	for (int i = 0; i < game_nb_rows(g); i++) {
 		for (int j = 0; j < game_nb_cols(g); j++) {
