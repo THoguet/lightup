@@ -7,6 +7,9 @@
 #include "game_aux.h"
 #include "game_ext.h"
 
+#define TAB_SQUARE \
+	{ S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU }
+
 /* ********** DUMMY ********** */
 bool test_dummy() {
 	return true;
@@ -14,14 +17,19 @@ bool test_dummy() {
 
 /* ********** game_get_black_number ********** */
 bool test_game_get_black_number() {
-	square tab_square[] = {S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4};
+	square tab_square[] = TAB_SQUARE;
 	game g = game_new_empty();
 	for (int i = 0; i < game_nb_rows(g); i++) {
 		for (int j = 0; j < game_nb_cols(g); j++) {
 			// check for each case given in tab_square if the function return the expected result
 			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
 				game_set_square(g, i, j, tab_square[tab_index]);
-				if (game_get_black_number(g, i, j) != tab_index) {
+				if (tab_square[tab_index] == S_BLACKU) {
+					if (game_get_black_number(g, i, j) != -1) {
+						game_delete(g);
+						return false;
+					}
+				} else if (tab_square[tab_index] > S_MARK && game_get_black_number(g, i, j) != tab_square[tab_index] - S_BLACK) {
 					game_delete(g);
 					return false;
 				}
@@ -121,10 +129,11 @@ bool test_game_delete() {
 /* ********** game_equal ********** */
 bool test_game_equal() {
 	square tab_square[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
+	bool wrap[] = {false, false, true, false, false, true, true, true};
 	bool equal = true;
 	uint index_tab = 0;
-	for(int wrap = 0; wrap < 2 /*we only need to test two versions (with and without wrapping)*/; wrap++){
-		game g1 = game_new_empty_ext(DEFAULT_SIZE, DEFAULT_SIZE, wrap);
+	for (int wrap_index = 0; wrap_index < sizeof(wrap) / sizeof(wrap[0]); wrap_index += 2) {
+		game g1 = game_new_empty_ext(DEFAULT_SIZE, DEFAULT_SIZE, wrap[wrap_index]);
 		for (int i = 0; i < game_nb_rows(g1); i++) {
 			for (int j = 0; j < game_nb_cols(g1); j++) {
 				// check if index_tab reach end of tab
@@ -135,11 +144,11 @@ bool test_game_equal() {
 				index_tab++;
 			}
 		}
-		game g2 = game_copy(g1);
-		// check if the two games have the same height, width, and if the two have the wrapping option or not  
-		if (game_nb_rows(g1) != game_nb_rows(g2) || game_nb_cols(g1) != game_nb_cols(g2) || game_is_wrapping(g1) != game_is_wrapping(g2)){
+		game g2 = game_new_empty_ext(DEFAULT_SIZE, DEFAULT_SIZE, wrap[wrap_index + 1]);
+		// check if the two games have the same height, width, and if the two have the wrapping option or not
+		if (game_nb_rows(g1) != game_nb_rows(g2) || game_nb_cols(g1) != game_nb_cols(g2) || game_is_wrapping(g1) != game_is_wrapping(g2)) {
 			equal = false;
-		} 
+		}
 		// check if each square is the same on each game
 		else {
 			for (int i = 0; i < game_nb_rows(g1); i++) {
@@ -150,10 +159,10 @@ bool test_game_equal() {
 				}
 			}
 		}
-	// check if game_equal return the expected result 
-	equal = (equal == game_equal(g1, g2));
-	game_delete(g1);
-	game_delete(g2);
+		// check if game_equal return the expected result
+		equal = (equal == game_equal(g1, g2));
+		game_delete(g1);
+		game_delete(g2);
 	}
 	return equal;
 }
@@ -178,7 +187,7 @@ bool test_game_new_empty() {
 bool test_game_copy() {
 	square tab_square[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
 	uint index_tab = 0;
-	for(int wrap = 0; wrap < 2 /*we only need to test two versions (with and without wrapping)*/; wrap++){
+	for (int wrap = 0; wrap < 2 /*we only need to test two versions (with and without wrapping)*/; wrap++) {
 		game g1 = game_new_empty_ext(DEFAULT_SIZE, DEFAULT_SIZE, wrap);
 		for (int i = 0; i < game_nb_rows(g1); i++) {
 			for (int j = 0; j < game_nb_cols(g1); j++) {
