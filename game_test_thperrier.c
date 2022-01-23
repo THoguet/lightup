@@ -189,7 +189,8 @@ bool test_game_copy() {
 bool test_game_undo() {
 	game g1 = game_new_empty();
 	game g2 = game_copy(g1);
-	game_undo(g1);
+	// check if you can undo without playing a move
+	game_undo(g2);
 	if (!game_equal(g1, g2)) {
 		game_delete(g1);
 		game_delete(g2);
@@ -198,8 +199,9 @@ bool test_game_undo() {
 	game_play_move(g1, 0, 0, S_LIGHTBULB);
 	game_play_move(g1, 1, 1, S_MARK);
 	game g3 = game_copy(g1);
-	game_play_move(g3, 1, 1, S_BLANK);
-	game_undo(g1);
+	// check if the function undo correctly
+	game_play_move(g3, 2, 2, S_LIGHTBULB);
+	game_undo(g3);
 	if (!game_equal(g1, g3)) {
 		game_delete(g1);
 		game_delete(g2);
@@ -218,6 +220,7 @@ bool test_game_redo() {
 	game_play_move(g1, 0, 0, S_LIGHTBULB);
 	game_play_move(g1, 1, 1, S_MARK);
 	game g2 = game_copy(g1);
+	// check if you can redo a non existant move
 	game_undo(g1);
 	game_redo(g1);
 	game_redo(g1);
@@ -228,6 +231,8 @@ bool test_game_redo() {
 	}
 	game_play_move(g1, 2, 2, S_LIGHTBULB);
 	game_play_move(g2, 2, 2, S_LIGHTBULB);
+	// check if the function redo correctly
+	game_undo(g1);
 	game_redo(g1);
 	if (!game_equal(g1, g2)) {
 		game_delete(g1);
