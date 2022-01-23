@@ -140,7 +140,7 @@ bool test_game_has_error(void) {
 /* ************** game_nb_rows ************** */
 bool test_game_nb_rows(void) {
 	game g = game_new_empty();
-	if (game_nb_rows(g) != g->height) {
+	if (game_nb_rows(g) != DEFAULT_SIZE) {
 		game_delete(g);
 		return false;
 	}
@@ -151,7 +151,7 @@ bool test_game_nb_rows(void) {
 /* ************** game_nb_cols ************** */
 bool test_game_nb_cols(void) {
 	game g = game_new_empty();
-	if (game_nb_cols(g) != g->width) {
+	if (game_nb_cols(g) != DEFAULT_SIZE) {
 		game_delete(g);
 		return false;
 	}
