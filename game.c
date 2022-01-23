@@ -90,7 +90,6 @@ void game_delete(game g) {
 	g->hist = NULL;
 	free(g);
 	g = NULL;
-	return;
 }
 
 void game_set_square(game g, uint i, uint j, square s) {
