@@ -162,6 +162,10 @@ bool test_game_equal() {
 		}
 		// check if game_equal return the expected result
 		equal = (equal == game_equal(g1, g2));
+		game_set_square(g1, 0, 0, S_LIGHTBULB);
+		game_update_flags(g1);
+		game_update_flags(g2);
+		assert(!game_equal(g1, g2));
 		game_delete(g1);
 		game_delete(g2);
 	}
