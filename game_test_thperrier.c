@@ -70,19 +70,19 @@ bool test_game_is_black() {
 
 /* ********** game_is_lightbulb ********** */
 bool test_game_is_lightbulb() {
-	square tab_square[] = {S_BLANK, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
+	square tab_square[] = TAB_SQUARE;
 	game g = game_new_empty();
-	game_set_square(g, 0, 0, S_LIGHTBULB);
-	if (!((game_get_square(g, 0, 0) == S_LIGHTBULB) && game_is_lightbulb(g, 0, 0))) {
-		game_delete(g);
-		return false;
-	}
 	for (int i = 0; i < game_nb_rows(g); i++) {
 		for (int j = 0; j < game_nb_cols(g); j++) {
 			// check for each case given in tab_square if the function return the expected result
 			for (int tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
 				game_set_square(g, i, j, tab_square[tab_index]);
-				if (game_is_lightbulb(g, 0, 0)) {
+				if (tab_square[tab_index] == S_LIGHTBULB) {
+					if (!game_is_lightbulb(g, i, j)) {
+						game_delete(g);
+						return false;
+					}
+				} else if (game_is_lightbulb(g, 0, 0)) {
 					game_delete(g);
 					return false;
 				}
