@@ -58,6 +58,7 @@ bool game_is_wrapping(cgame g) {
 }
 
 void game_undo(game g) {
+	// check if g->hist is not empty or if it is possible to undo
 	if (g->hist == NULL || history_is_empty(history_prev(g->hist))) {
 		printf("you are at your first move\n");
 	} else {
@@ -70,6 +71,7 @@ void game_undo(game g) {
 }
 
 void game_redo(game g) {
+	// check if g->hist is not empty or if it is possible to redo
 	if (g->hist == NULL || history_next(g->hist) == NULL) {
 		printf("you are at your last move\n");
 	} else {
