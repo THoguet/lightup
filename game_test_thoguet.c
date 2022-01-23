@@ -8,11 +8,6 @@
 #include "game_aux.h"
 #include "game_ext.h"
 
-#define JWRAPPING (j + game_nb_cols(g) + gap_position * tab[index_tab + 1]) % game_nb_cols(g)
-#define IWRAPPING (i + game_nb_rows(g) + gap_position * tab[index_tab]) % game_nb_rows(g)
-#define JNORMAL j + gap_position* tab[index_tab + 1]
-#define INORMAL i + gap_position* tab[index_tab]
-
 int max(int a, int b) {
 	if (a > b)
 		return a;
@@ -253,15 +248,15 @@ uint counterF_ERROR(game g) {
 	}
 	return cpt;
 }
-/*Tests de sans l'option wrapping
+/*
+Tests without the wrapping option
 
-test d'un jeu 2x2 sans l'option *wrapping* (cas limite)
-test d'un jeu 3x3 sans l'option *wrapping*
-test d'un jeu 5x3 sans l'option *wrapping*
-test du flag *error* dans des cas spécifique à l'option *wrapping*
+test on a 2x2 game without *wrapping*
+test on a 3x3 game without *wrapping*
+test on a 5x3 game without *wrapping*
+test flags *error* on specifics cases
 
-Dans les tests 2x2, 3x3 et 5x3, on joue les coups ci-dessous pour gagner le jeu
-et on vérifie que la grille est correcte.
+On the 2x2, 3x3 and 5x3 tests, we play these move to win and we test if the grid is correct
 
    01              012              012
    --              ---              ---
@@ -273,15 +268,14 @@ et on vérifie que la grille est correcte.
                                     ---
                                    (5x3)
 
-Tests de l'option wrapping
+Tests of the wrapping option
 
-test d'un jeu 2x2 avec l'option *wrapping* (cas limite)
-test d'un jeu 3x3 avec l'option *wrapping*
-test d'un jeu 5x3 avec l'option *wrapping*
-test du flag *error* dans des cas spécifique à l'option *wrapping*
+test on a 2x2 game with option *wrapping* (cas limite)
+test on a 3x3 game with option *wrapping*
+test on a 5x3 game with option *wrapping*
+test of the flags *error* in the specifics cases of the option *wrapping*
 
-Dans les tests 2x2, 3x3 et 5x3, on joue les coups ci-dessous pour gagner le jeu
-et on vérifie que la grille est correcte.
+On the 2x2, 3x3 and 5x3 tests, we play these move to win and we test if the grid is correct
 
    01              012              012
    --              ---              ---
@@ -406,25 +400,25 @@ bool test_game_play_move(void) {
 
 bool test_game_check_move(void) {
 	game g = game_new_empty();
-	assert(!game_check_move(g, 10, 10, S_BLANK));
-	assert(!game_check_move(g, 10, 10, S_BLACK0));
-	assert(!game_check_move(g, 0, 0, S_BLACK0));
-	assert(!game_check_move(g, 0, 0, S_BLACK1));
-	assert(!game_check_move(g, 0, 0, S_BLACK2));
-	assert(!game_check_move(g, 0, 0, S_BLACK3));
-	assert(!game_check_move(g, 0, 0, S_BLACK4));
-	assert(!game_check_move(g, 0, 0, S_BLACKU));
-	assert(!game_check_move(g, 0, 0, F_LIGHTED));
-	assert(!game_check_move(g, 0, 0, F_ERROR));
+	square list[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU, F_ERROR, F_LIGHTED};
+	// test if we can place something else than S_BLANK, S_LIGHTBULB, S_MARK + if we can place something over the limits
+	for (uint i = 0; i < 20; i++) {
+		for (uint j = 0; j < 20; j++) {
+			for (uint index_list = 0; index_list < sizeof(list) / sizeof(list[0]); index_list++) {
+				if (i >= game_nb_rows(g) || j >= game_nb_cols(g) || index_list > 2)
+					assert(!game_check_move(g, i, j, list[index_list]));
+				else
+					assert(game_check_move(g, i, j, list[index_list]));
+			}
+		}
+	}
+	// test if we can place something on a wall
 	for (uint i = 0; i < S_BLACKU - S_BLACK0; i++) {
-		game_set_square(g, 0, 0, S_BLACK0 + i);
+		game_set_square(g, 0, 0, S_BLACK + i);
 		assert(!game_check_move(g, 0, 0, S_BLANK));
 		assert(!game_check_move(g, 0, 0, S_MARK));
 		assert(!game_check_move(g, 0, 0, S_LIGHTBULB));
 	}
-	assert(game_check_move(g, 1, 0, S_BLANK));
-	assert(game_check_move(g, 1, 0, S_MARK));
-	assert(game_check_move(g, 1, 0, S_LIGHTBULB));
 	game_delete(g);
 	return EXIT_SUCCESS;
 }
