@@ -241,7 +241,7 @@ void update_flags_walls(game g, uint i, uint j) {
 	if (lightbulb > game_get_black_number(g, i, j)) {
 		game_set_square(g, i, j, (game_get_state(g, i, j) | F_ERROR));
 	}
-	// look if there is enough empty cell around the wall (4 directions)
+	// look if there is enough empty cell around the wall (4 for the four directions)
 	else if (not_empty > abs(game_get_black_number(g, i, j) - 4)) {
 		game_set_square(g, i, j, (game_get_state(g, i, j) | F_ERROR));
 	}
