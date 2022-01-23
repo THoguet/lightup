@@ -135,16 +135,21 @@ bool test_game_equal() {
 		}
 	}
 	game g2 = game_copy(g1);
+	// check if the two games have the same height, width, and if the two have the wrapping option or not  
 	if (!(game_nb_rows(g1) == game_nb_rows(g2)) || !(game_nb_cols(g1) == game_nb_cols(g2)) || !(game_is_wrapping(g1) == game_is_wrapping(g2))){
 		equal = false;
-	}
-	for (int i = 0; i < game_nb_rows(g1); i++) {
-		for (int j = 0; j < game_nb_cols(g1); j++) {
-			if (game_get_square(g1, i, j) != game_get_square(g2, i, j)) {
-				equal = false;
+	} 
+	// check if each square is the same on each game
+	else {
+		for (int i = 0; i < game_nb_rows(g1); i++) {
+			for (int j = 0; j < game_nb_cols(g1); j++) {
+				if (game_get_square(g1, i, j) != game_get_square(g2, i, j)) {
+					equal = false;
+				}
 			}
 		}
 	}
+	// check if game_equal return the expected result 
 	equal = (equal == game_equal(g1, g2));
 	game_delete(g1);
 	game_delete(g2);
@@ -154,6 +159,7 @@ bool test_game_equal() {
 /* ********** game_new_empty ********** */
 bool test_game_new_empty() {
 	game g = game_new_empty();
+	// check if each square is a S_BLANK
 	for (int i = 0; i < game_nb_rows(g); i++) {
 		for (int j = 0; j < game_nb_cols(g); j++) {
 			if (game_get_square(g, i, j) != S_BLANK) {
