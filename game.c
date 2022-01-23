@@ -45,7 +45,7 @@ game game_new_empty(void) {
 			g->tab_cell[i][j] = S_BLANK;
 		}
 	}
-	// init history with an cell (if there is only this cell we consider the history as empty)
+	// init history with a cell to avoid falling off of g->hist (if there is only this cell we consider the history as empty)
 	g->hist = history_insert_first(g->hist, F_ERROR, 0, 0);
 	return g;
 }
@@ -64,8 +64,10 @@ game game_copy(cgame g1) {
 }
 
 bool game_equal(cgame g1, cgame g2) {
+	// check if the two games have the same options
 	if (g1->height != g2->height || g1->width != g2->width || g1->wrapping != g2->wrapping)
 		return false;
+	// check each cell and seek any difference between g1 and g2
 	for (int i = 0; i < g1->height; i++) {
 		for (int j = 0; j < g1->width; j++) {
 			if (g1->tab_cell[i][j] != g2->tab_cell[i][j]) {
@@ -77,7 +79,7 @@ bool game_equal(cgame g1, cgame g2) {
 }
 
 void game_delete(game g) {
-	// free each tab of tabcell
+	// free each tab of tab_cell
 	for (int i = 0; i < game_nb_rows(g); i++) {
 		free(g->tab_cell[i]);
 		g->tab_cell[i] = NULL;
