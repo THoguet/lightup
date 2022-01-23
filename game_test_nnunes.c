@@ -140,24 +140,25 @@ bool test_game_has_error(void) {
 /* ************** game_nb_rows ************** */
 bool test_game_nb_rows(void) {
 	game g = game_new_empty();
-	if (game_nb_rows(g) != DEFAULT_SIZE) {
+	if (game_get_square(g, game_nb_rows(g) -1, 0) == S_BLANK) {
 		game_delete(g);
-		return false;
-	}
+		return true;
+	}	
 	game_delete(g);
-	return true;
+	return false;
 }
 
 /* ************** game_nb_cols ************** */
 bool test_game_nb_cols(void) {
 	game g = game_new_empty();
-	if (game_nb_cols(g) != DEFAULT_SIZE) {
+	if (game_get_square(g, 0, game_nb_cols(g) - 1) == S_BLANK) {
 		game_delete(g);
-		return false;
+		return true;
 	}
 	game_delete(g);
-	return true;
+	return false;
 }
+
 
 /* ************** game_is_wrapping ************** */
 bool test_game_is_wrapping(void) {
@@ -173,10 +174,10 @@ bool test_game_is_wrapping(void) {
 		if (!(game_is_lighted(g, i, 0) && game_is_wrapping(g))) {
 			game_delete(g);
 			return true;
-		}			
+		}
+	}				
 	game_delete(g);
 	return false;
-	}
 }
 
 int main(int argc, char* argv[]) {
