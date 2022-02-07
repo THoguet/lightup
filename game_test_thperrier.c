@@ -127,49 +127,61 @@ bool test_game_delete() {
 }
 
 /* ********** game_equal ********** */
-bool test_game_equal() {
-	square tab_square[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
-	bool wrap[] = {false, false, true, false, false, true, true, true};
-	bool equal = true;
-	uint index_tab = 0;
-	for (int wrap_index = 0; wrap_index < sizeof(wrap) / sizeof(wrap[0]); wrap_index += 2) {
-		game g1 = game_new_empty_ext(DEFAULT_SIZE, DEFAULT_SIZE, wrap[wrap_index]);
-		game g2 = game_new_empty_ext(DEFAULT_SIZE, DEFAULT_SIZE, wrap[wrap_index + 1]);
-		for (int i = 0; i < game_nb_rows(g1); i++) {
-			for (int j = 0; j < game_nb_cols(g1); j++) {
-				// check if index_tab reach end of tab
-				if (index_tab == sizeof(tab_square) / sizeof(tab_square[0])) {
-					index_tab = 0;
-				}
-				game_set_square(g1, i, j, tab_square[index_tab]);
-				game_set_square(g2, i, j, tab_square[index_tab]);
-				index_tab++;
-			}
-		}
-		// check if the two games have the same height, width, and if the two have the wrapping option or not
-		if (game_nb_rows(g1) != game_nb_rows(g2) || game_nb_cols(g1) != game_nb_cols(g2) || game_is_wrapping(g1) != game_is_wrapping(g2)) {
-			equal = false;
-		}
-		// check if each square is the same on each game
-		else {
-			for (int i = 0; i < game_nb_rows(g1); i++) {
-				for (int j = 0; j < game_nb_cols(g1); j++) {
-					if (game_get_square(g1, i, j) != game_get_square(g2, i, j)) {
-						equal = false;
-					}
-				}
-			}
-		}
-		// check if game_equal return the expected result
-		equal = (equal == game_equal(g1, g2));
-		game_set_square(g1, 0, 0, S_LIGHTBULB);
-		game_update_flags(g1);
-		game_update_flags(g2);
-		assert(!game_equal(g1, g2));
-		game_delete(g1);
-		game_delete(g2);
-	}
-	return equal;
+
+int test_equal_ext(void) {
+	square ext_3x10_squares[] = {
+	    S_BLANK,  S_BLANK,  S_BLANK, S_BLACK1, S_BLANK,  /* row 0 */
+	    S_BLANK,  S_BLANK,  S_BLANK, S_BLACK1, S_BLACKU, /* row 0 */
+	    S_BLACK1, S_BLANK,  S_BLANK, S_BLANK,  S_BLANK,  /* row 1 */
+	    S_BLANK,  S_BLANK,  S_BLANK, S_BLANK,  S_BLACK1, /* row 1 */
+	    S_BLACKU, S_BLACK0, S_BLANK, S_BLANK,  S_BLANK,  /* row 2 */
+	    S_BLANK,  S_BLACK0, S_BLANK, S_BLANK,  S_BLANK,  /* row 2 */
+	};
+	game g1 = game_new_ext(3, 10, ext_3x10_squares, false);
+	game g2 = game_new_ext(3, 10, ext_3x10_squares, false);
+	game g3 = game_new_ext(3, 10, ext_3x10_squares, true);
+
+	// same game
+	bool test1 = (game_equal(g1, g2) == true);
+
+	// set a single different square
+	game_set_square(g2, 2, 9, S_LIGHTBULB);
+	bool test2 = (game_equal(g1, g2) == false);
+
+	// different options
+	bool test3 = (game_equal(g1, g3) == false);
+
+	game_delete(g1);
+	game_delete(g2);
+	game_delete(g3);
+
+	if (test1 && test2 && test3)
+		return true;
+	return false;
+}
+
+int test_equal(void) {
+	game g1 = game_default();
+	game g2 = game_default();
+	game g3 = game_default();
+	game g4 = game_default();
+
+	bool test1 = (game_equal(g1, g2) == true);
+
+	game_play_move(g3, 0, 0, S_LIGHTBULB);
+	bool test2 = (game_equal(g1, g3) == false);
+
+	game_set_square(g4, 0, 0, F_LIGHTED);
+	bool test3 = (game_equal(g1, g4) == false);
+
+	game_delete(g1);
+	game_delete(g2);
+	game_delete(g3);
+	game_delete(g4);
+
+	if (test1 && test2 && test3)
+		return true;
+	return false;
 }
 
 /* ********** game_new_empty ********** */
@@ -293,7 +305,7 @@ int main(int argc, char* argv[]) {
 	} else if (strcmp("game_copy", argv[1]) == 0) {
 		success = test_game_copy();
 	} else if (strcmp("game_equal", argv[1]) == 0) {
-		success = test_game_equal();
+		success = test_equal_ext() && test_equal();
 	} else if (strcmp("game_delete", argv[1]) == 0) {
 		success = test_game_delete();
 	} else if (strcmp("game_is_blank", argv[1]) == 0) {
