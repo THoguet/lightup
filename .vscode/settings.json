@@ -1,8 +1,10 @@
 {
 	"files.associations": {
 		"game_ext.h": "c",
+		"game_aux.h": "c",
 		"game.h": "c",
-		"game_private.h": "c"
+		"game_private.h": "c",
+		"history.h": "c"
 	},
 	"editor.formatOnSave": true,
 	"C_Cpp.clang_format_path": "/usr/bin/clang-format"
