@@ -18,16 +18,16 @@ game game_load(char* filename) {
  * @param j the j coordinate
  * @return char the corresponding char
  */
-char get_char_from_state(game g, uint i, uint j) {
+char get_char_from_state(cgame g, uint i, uint j) {
 	// char tab[index] => index in enum square
 	char tab[] = {'b', '*', '-', '?', '?', '?', '?', '?', '0', '1', '2', '3', '4', 'w'};
 	return tab[game_get_state(g, i, j)];
 }
 
 void game_save(cgame g, char* filename) {
-	checkPointer(filename);
-	checkPointer(g);
-	FILE* f = fopen(filename, 'w');
+	checkPointer((void*)filename);
+	checkPointer((void*)g);
+	FILE* f = fopen(filename, "w");
 	if (f == NULL) {
 		fprintf(stderr, "Couldn't open file %s.\n", filename);
 		exit(EXIT_FAILURE);

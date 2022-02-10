@@ -26,7 +26,7 @@ target_link_libraries(game_test_nnunes game)
 #target_link_libraries(history_test game)
 
 #Libraries
-add_library (game game.c game_aux.c game_ext.c game_private.c history.c game_tools.c)
+add_library (game game.c game_aux.c game_ext.c game_private.c history.c game_tools.c game_examples.c)
 
 #Tests THOGUET
 add_test(test_thoguet_dummy ./game_test_thoguet dummy)
