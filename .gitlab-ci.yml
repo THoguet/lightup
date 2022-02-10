@@ -4,8 +4,7 @@ stages:          # List of stages for jobs, and their order of execution
 
 build-job:       # This job runs in the build stage, which runs first.
   tags:
-    - Quirrell
-    - Boursouflet
+    - shell
   stage: build
   script:
     - mkdir build
@@ -19,8 +18,7 @@ build-job:       # This job runs in the build stage, which runs first.
 
 make-test:   # This job runs in the test stage.
   tags:
-    - Quirrell
-    - Boursouflet
+    - shell
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
     - cd build
