@@ -6,7 +6,9 @@
 #include <time.h>
 #include "game.h"
 #include "game_aux.h"
+#include "game_examples.h"
 #include "game_ext.h"
+#include "game_tools.h"
 
 #define SIZE_LIMIT_GAME 10
 // put usable square at the start of the list and S_BLANK at the first element
@@ -327,23 +329,17 @@ On the 2x2, 3x3 and 5x3 tests, we play these move to win and we test if the grid
                                    (5x3)
 */
 bool test_game_update_flags(void) {
-	square test2x2w[4] = {S_BLACK4, S_BLANK, S_BLANK, S_BLANK};
-	square test3x3w[9] = {S_BLANK, S_BLACKU, S_BLACK2, S_BLANK, S_BLACKU, S_BLACKU, S_BLANK, S_BLANK, S_BLANK};
-	square test2x2[4] = {S_BLACK2, S_BLANK, S_BLANK, S_BLANK};
-	square test3x3[9] = {S_BLANK, S_BLACKU, S_BLACK0, S_BLANK, S_BLACK1, S_BLACKU, S_BLANK, S_BLANK, S_BLANK};
-	square test5x3[15] = {S_BLANK, S_BLANK, S_BLANK, S_BLACKU, S_BLANK, S_BLACK1, S_BLANK, S_BLACK2,
-	                      S_BLANK, S_BLANK, S_BLANK, S_BLANK,  S_BLANK, S_BLANK,  S_BLANK};
 	// with wrapping
-	game g2x2w = game_new_ext(2, 2, test2x2w, true);
+	game g2x2w = game_new_ext(2, 2, ext_2x2w_squares, true);
 	game_play_move(g2x2w, 0, 1, S_LIGHTBULB);
 	game_play_move(g2x2w, 1, 0, S_LIGHTBULB);
 	assert(game_is_over(g2x2w));
-	game g3x3w = game_new_ext(3, 3, test3x3w, true);
+	game g3x3w = game_new_ext(3, 3, ext_3x3w_squares, true);
 	game_play_move(g3x3w, 0, 0, S_LIGHTBULB);
 	game_play_move(g3x3w, 2, 2, S_LIGHTBULB);
 	assert(game_is_over(g3x3w));
 	game_delete(g3x3w);
-	game g5x3w = game_new_ext(5, 3, test5x3, true);
+	game g5x3w = game_new_ext(5, 3, ext_5x3w_squares, true);
 	game_play_move(g5x3w, 1, 1, S_LIGHTBULB);
 	game_play_move(g5x3w, 2, 0, S_LIGHTBULB);
 	game_play_move(g5x3w, 3, 2, S_LIGHTBULB);
@@ -368,16 +364,16 @@ bool test_game_update_flags(void) {
 	assert(counterF_ERROR(g5x3w) == 5);
 	game_delete(g5x3w);
 	// without wrapping
-	game g2x2 = game_new_ext(2, 2, test2x2, false);
+	game g2x2 = game_new_ext(2, 2, ext_2x2w_squares, false);
 	game_play_move(g2x2, 0, 1, S_LIGHTBULB);
 	game_play_move(g2x2, 1, 0, S_LIGHTBULB);
 	assert(game_is_over(g2x2));
-	game g3x3 = game_new_ext(3, 3, test3x3, false);
+	game g3x3 = game_new_ext(3, 3, ext_3x3w_squares, false);
 	game_play_move(g3x3, 1, 0, S_LIGHTBULB);
 	game_play_move(g3x3, 2, 2, S_LIGHTBULB);
 	assert(game_is_over(g3x3));
 	game_delete(g3x3);
-	game g5x3 = game_new_ext(5, 3, test5x3, false);
+	game g5x3 = game_new_ext(5, 3, ext_5x3w_squares, false);
 	game_play_move(g5x3, 0, 0, S_LIGHTBULB);
 	game_play_move(g5x3, 1, 1, S_LIGHTBULB);
 	game_play_move(g5x3, 2, 0, S_LIGHTBULB);
@@ -463,6 +459,72 @@ bool test_game_check_move(void) {
 		}
 	}
 	game_delete(g);
+	return EXIT_SUCCESS;
+}
+
+/* ***** game_save ***** */
+bool test_game_save(void) {
+	game g4x4w = game_new_ext(4, 4, ext_4x4_squares, true);
+	game_save(g4x4w, "g4x4w.txt");
+	game g4x4w_from_file = game_load("g4x4w.txt");
+	assert(game_equal(g4x4w, g4x4w_from_file));
+	game_delete(g4x4w);
+	game_delete(g4x4w_from_file);
+	game g4x4 = game_new_ext(4, 4, ext_4x4_squares, false);
+	game_save(g4x4, "g4x4.txt");
+	game g4x4_from_file = game_load("g4x4.txt");
+	assert(game_equal(g4x4, g4x4_from_file));
+	game_delete(g4x4);
+	game_delete(g4x4_from_file);
+	game g3x10w = game_new_ext(3, 10, ext_3x10_squares, true);
+	game_save(g3x10w, "g3x10w.txt");
+	game g3x10w_from_file = game_load("g3x10w.txt");
+	assert(game_equal(g3x10w, g3x10w_from_file));
+	game_delete(g3x10w);
+	game_delete(g3x10w_from_file);
+	game g3x10 = game_new_ext(3, 10, ext_3x10_squares, false);
+	game_save(g3x10, "g3x10.txt");
+	game g3x10_from_file = game_load("g3x10.txt");
+	assert(game_equal(g3x10, g3x10_from_file));
+	game_delete(g3x10);
+	game_delete(g3x10_from_file);
+	game g5x1w = game_new_ext(5, 1, ext_5x1_squares, true);
+	game_save(g5x1w, "g5x1w.txt");
+	game g5x1w_from_file = game_load("g5x1w.txt");
+	assert(game_equal(g5x1w, g5x1w_from_file));
+	game_delete(g5x1w);
+	game_delete(g5x1w_from_file);
+	game g5x1 = game_new_ext(5, 1, ext_5x1_squares, false);
+	game_save(g5x1, "g5x1.txt");
+	game g5x1_from_file = game_load("g5x1.txt");
+	assert(game_equal(g5x1, g5x1_from_file));
+	game_delete(g5x1);
+	game_delete(g5x1_from_file);
+	game g2x2w = game_new_ext(5, 1, ext_2x2w_squares, true);
+	game_save(g2x2w, "g2x2w.txt");
+	game g2x2w_from_file = game_load("g2x2w.txt");
+	assert(game_equal(g2x2w, g2x2w_from_file));
+	game_delete(g2x2w);
+	game_delete(g2x2w_from_file);
+	game g2x2 = game_new_ext(5, 1, ext_2x2w_squares, false);
+	game_save(g2x2, "g2x2.txt");
+	game g2x2_from_file = game_load("g2x2.txt");
+	assert(game_equal(g2x2, g2x2_from_file));
+	game_delete(g2x2);
+	game_delete(g2x2_from_file);
+	game g3x3w = game_new_ext(3, 3, ext_3x3w_squares, true);
+	game_save(g3x3w, "g3x3w.txt");
+	game g3x3w_from_file = game_load("g3x3w.txt");
+	assert(game_equal(g3x3w, g3x3w_from_file));
+	game_delete(g3x3w);
+	game_delete(g3x3w_from_file);
+	game g3x3 = game_new_ext(3, 3, ext_3x3w_squares, false);
+	game_save(g3x3, "g3x3.txt");
+	game g3x3_from_file = game_load("g3x3.txt");
+	assert(game_equal(g3x3, g3x3_from_file));
+	game_delete(g3x3);
+	game_delete(g3x3_from_file);
+
 	return EXIT_SUCCESS;
 }
 
