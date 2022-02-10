@@ -8,7 +8,7 @@ project (game_text)
 include(CTest)
 
 #positionne la variable
-set(CMAKE_C_FLAGS "-std=c99 -g -Wall")
+set(CMAKE_C_FLAGS "-std=c99 -g -Wall -Wextra -Wpedantic -Werror")
 
 #définit le nom du programme ainsi que
 #ses sources
