@@ -1162,10 +1162,12 @@ int main(int argc, char* argv[]) {
 	                    &test_game_update_flags};
 	// array of the tests functions's name
 	char* tab_fct_name[sizeof(tab_fct) / sizeof(tab_fct[0])];
-	// for each function on tab_fct call the function to fill tab_fct_name
+	// get each function's name from tab_fct by calling the function with its first parm set to true and the second one with a pointer on tab_fct_name to fill
+	// it to get the name of the i-th element of tab_fct, get it with tab_fct_name[i]
 	for (uint index_tab_fct = 0; index_tab_fct < sizeof(tab_fct) / sizeof(tab_fct[0]); index_tab_fct++) {
 		(*(tab_fct[index_tab_fct]))(true, &tab_fct_name[index_tab_fct]);
-		tab_fct_name[index_tab_fct] = tab_fct_name[index_tab_fct] + 5;  // remove the test_ from the functions's name
+		// remove the test_ from the functions's name
+		tab_fct_name[index_tab_fct] = tab_fct_name[index_tab_fct] + 5;
 	}
 	if (argc != 2) {
 		usage(argv);
