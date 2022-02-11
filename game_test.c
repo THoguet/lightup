@@ -301,10 +301,11 @@ bool test_game_undo(bool whoami, char** name) {
 	return true;
 }
 
-#define NB_CHAR_SAVED_FILE_INFO 6
+#define NB_CHAR_SAVED_FILE_FIRST_LINE 6  // <nb_rows>' '<nb_cols>' '<wrapping>'\n'
 
 /* ********** game_get_black_number ********** */
 bool test_game_get_black_number(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -334,6 +335,7 @@ bool test_game_get_black_number(bool whoami, char** name) {
 
 /* ********** game_is_black ********** */
 bool test_game_is_black(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -366,6 +368,7 @@ bool test_game_is_black(bool whoami, char** name) {
 
 /* ********** game_is_lightbulb ********** */
 bool test_game_is_lightbulb(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -395,6 +398,7 @@ bool test_game_is_lightbulb(bool whoami, char** name) {
 
 /* ********** game_is_blank ********** */
 bool test_game_is_blank(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -424,6 +428,7 @@ bool test_game_is_blank(bool whoami, char** name) {
 
 /* ********** game_delete ********** */
 bool test_game_delete(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -437,6 +442,7 @@ bool test_game_delete(bool whoami, char** name) {
 /* ********** game_equal ********** */
 
 bool test_equal_ext(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -473,6 +479,7 @@ bool test_equal_ext(bool whoami, char** name) {
 }
 
 bool test_equal(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -502,6 +509,7 @@ bool test_equal(bool whoami, char** name) {
 
 /* ********** game_new_empty ********** */
 bool test_game_new_empty(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -522,6 +530,7 @@ bool test_game_new_empty(bool whoami, char** name) {
 
 /* ********** game_copy ********** */
 bool test_game_copy(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -555,6 +564,7 @@ bool test_game_copy(bool whoami, char** name) {
 
 /* ********** game_undo ********** */
 bool test_game_undo(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -588,6 +598,7 @@ bool test_game_undo(bool whoami, char** name) {
 
 /* ********** game_redo ********** */
 bool test_game_redo(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -627,6 +638,7 @@ bool test_game_redo(bool whoami, char** name) {
  * @return true if every game has been created well
  */
 bool test_game_new_empty_ext(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -651,6 +663,7 @@ bool test_game_new_empty_ext(bool whoami, char** name) {
  * @return true if every game has been created well and well filled
  */
 bool test_game_new_ext(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -689,6 +702,7 @@ bool test_game_new_ext(bool whoami, char** name) {
  * @return true if there is no errors
  */
 bool test_game_is_over(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -716,6 +730,7 @@ bool test_game_is_over(bool whoami, char** name) {
  * @return true if there is no error
  */
 bool test_game_restart(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -756,6 +771,7 @@ bool test_game_restart(bool whoami, char** name) {
  * @return true if there is no error
  */
 bool test_game_new(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -788,6 +804,7 @@ bool test_game_new(bool whoami, char** name) {
  * @return true if there is no error
  */
 bool test_game_print(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -819,6 +836,7 @@ bool test_game_print(bool whoami, char** name) {
  * @return true if there is no error
  */
 bool test_game_get_square(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -849,6 +867,7 @@ bool test_game_get_square(bool whoami, char** name) {
  * @return true if there is no error
  */
 bool test_game_default(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -882,6 +901,7 @@ bool test_game_default(bool whoami, char** name) {
  * @return true if there is no error
  */
 bool test_game_default_solution(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -964,6 +984,7 @@ On the 2x2, 3x3 and 5x3 tests, we play these move to win and we test if the grid
                                    (5x3)
 */
 bool test_game_update_flags(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -1054,6 +1075,7 @@ bool test_game_update_flags(bool whoami, char** name) {
  * @return true if there is no error
  */
 bool test_game_play_move(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -1085,6 +1107,7 @@ bool test_game_play_move(bool whoami, char** name) {
  * @return true if there is no error
  */
 bool test_game_check_move(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -1116,6 +1139,7 @@ bool test_game_check_move(bool whoami, char** name) {
 
 /* ************** game_set_square ************** */
 bool test_game_set_square(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -1142,6 +1166,7 @@ bool test_game_set_square(bool whoami, char** name) {
 
 /* ************** game_get_state ************** */
 bool test_game_get_state(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -1168,6 +1193,7 @@ bool test_game_get_state(bool whoami, char** name) {
 
 /* ************** game_get_flags ************** */
 bool test_game_get_flags(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -1191,6 +1217,7 @@ bool test_game_get_flags(bool whoami, char** name) {
 
 /* ************** game_is_marked ************** */
 bool test_game_is_marked(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -1214,6 +1241,7 @@ bool test_game_is_marked(bool whoami, char** name) {
 
 /* ************** game_is_lighted ************** */
 bool test_game_is_lighted(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -1237,6 +1265,7 @@ bool test_game_is_lighted(bool whoami, char** name) {
 
 /* ************** game_has_error ************** */
 bool test_game_has_error(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -1260,6 +1289,7 @@ bool test_game_has_error(bool whoami, char** name) {
 
 /* ************** game_nb_rows ************** */
 bool test_game_nb_rows(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -1275,6 +1305,7 @@ bool test_game_nb_rows(bool whoami, char** name) {
 
 /* ************** game_nb_cols ************** */
 bool test_game_nb_cols(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -1290,6 +1321,7 @@ bool test_game_nb_cols(bool whoami, char** name) {
 
 /* ************** game_is_wrapping ************** */
 bool test_game_is_wrapping(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -1314,21 +1346,51 @@ bool test_game_is_wrapping(bool whoami, char** name) {
 
 /* ***** game_save ***** */
 bool test_game_save(bool whoami, char** name) {
-	// if whoami is true return in name the name of the function
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
 	}
 	game gdefault = game_default();
 	game_save(gdefault, "gdefault.txt");
+	// try to open the created save file
 	FILE* f_gdefault = fopen("gdefault.txt", "r");
 	assert(f_gdefault);
-	char char_to_test = '?';
-	for (uint index_gdefault_str = 0; index_gdefault_str < game_nb_cols(gdefault) * game_nb_rows(gdefault) + NB_CHAR_SAVED_FILE_INFO + game_nb_rows(gdefault);
-	     index_gdefault_str++) {
-		char_to_test = fgetc(f_gdefault);
-		assert(char_to_test == game_default_str[index_gdefault_str]);
+	// explore default_str and test if each char of the saved file == char of default_str
+	for (uint index_default_str = 0;
+	     index_default_str < game_nb_cols(gdefault) * game_nb_rows(gdefault) + NB_CHAR_SAVED_FILE_FIRST_LINE + game_nb_rows(gdefault); index_default_str++) {
+		int char_to_test = fgetc(f_gdefault);
+		assert(char_to_test != -1);
+		assert((char)char_to_test == default_str[index_default_str]);
 	}
+	game_delete(gdefault);
+	fclose(f_gdefault);
+	// do the same as gdefault but with ext_5x3w_squares
+	game g5x3w = game_new_ext(5, 3, ext_5x3w_squares, true);
+	game_save(g5x3w, "g5x3w.txt");
+	FILE* file_g5x3w = fopen("g5x3w.txt", "r");
+	assert(file_g5x3w);
+	for (uint index_ext_5x3w_str = 0; index_ext_5x3w_str < game_nb_cols(g5x3w) * game_nb_rows(g5x3w) + NB_CHAR_SAVED_FILE_FIRST_LINE + game_nb_rows(g5x3w);
+	     index_ext_5x3w_str++) {
+		int char_to_test = fgetc(file_g5x3w);
+		assert(char_to_test != -1);
+		assert((char)char_to_test == ext_5x3w_str[index_ext_5x3w_str]);
+	}
+	game_delete(g5x3w);
+	fclose(file_g5x3w);
+	// do the same as gdefault but with other_squares
+	game gother = game_new(other_squares);
+	game_save(gother, "gother.txt");
+	FILE* file_gother = fopen("gother.txt", "r");
+	assert(file_gother);
+	for (uint index_other_str = 0; index_other_str < game_nb_cols(gother) * game_nb_rows(gother) + NB_CHAR_SAVED_FILE_FIRST_LINE + game_nb_rows(gother);
+	     index_other_str++) {
+		int char_to_test = fgetc(file_gother);
+		assert(char_to_test != -1);
+		assert((char)char_to_test == other_str[index_other_str]);
+	}
+	game_delete(gother);
+	fclose(file_gother);
 	return true;
 }
 

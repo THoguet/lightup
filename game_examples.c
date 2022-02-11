@@ -212,7 +212,7 @@ square sol_5x3w_squares[] = {
 /*                               GAME SAVE (V3)                               */
 /* ************************************************************************** */
 
-char game_default_str[] = {
+char default_str[] = {
     '7', ' ', '7', ' ', '0', '\n',             // <nb_rows> <nb_cols> <wrapping>\n
     'b', 'b', '1', 'b', 'b', 'b',  'b', '\n',  // <squares[0][0]><squares[0][1]>...<squares[0][nb_cols-1]>\n
     'b', 'b', '2', 'b', 'b', 'b',  'b', '\n',  // <squares[1][0]><squares[1][1]>...<squares[1][nb_cols-1]>\n
@@ -221,5 +221,25 @@ char game_default_str[] = {
     '1', 'w', 'b', 'b', 'b', 'b',  'b', '\n',  // <squares[4][0]><squares[4][1]>...<squares[4][nb_cols-1]>\n
     'b', 'b', 'b', 'b', '2', 'b',  'b', '\n',  // <squares[5][0]><squares[5][1]>...<squares[5][nb_cols-1]>\n
     'b', 'b', 'b', 'b', 'w', 'b',  'b', '\n'   // <squares[6][0]><squares[6][1]>...<squares[6][nb_cols-1]>\n
+};
+
+char ext_5x3w_str[] = {
+    '5', ' ', '3', ' ',  '1', '\n',  // <nb_rows> <nb_cols> <wrapping>\n
+    'b', 'b', 'b', '\n',             // <squares[0][0]><squares[0][1]>...<squares[0][nb_cols-1]>\n
+    'w', 'b', '1', '\n',             // <squares[1][0]><squares[1][1]>...<squares[1][nb_cols-1]>\n
+    'b', '2', 'b', '\n',             // <squares[2][0]><squares[2][1]>...<squares[2][nb_cols-1]>\n
+    'b', 'b', 'b', '\n',             // <squares[3][0]><squares[3][1]>...<squares[3][nb_cols-1]>\n
+    'b', 'b', 'b', '\n'              // <squares[4][0]><squares[4][1]>...<squares[4][nb_cols-1]>\n
+};
+
+char other_str[] = {
+    '7', ' ', '7', ' ', '0', '\n',             // <nb_rows> <nb_cols> <wrapping>\n
+    '*', 'b', '1', 'b', 'b', 'b',  'b', '\n',  // <squares[0][0]><squares[0][1]>...<squares[0][nb_cols-1]>\n
+    'b', 'b', '2', 'b', 'b', 'b',  'b', '\n',  // <squares[1][0]><squares[1][1]>...<squares[1][nb_cols-1]>\n
+    'b', 'b', 'b', 'b', 'b', 'w',  '2', '\n',  // <squares[2][0]><squares[2][1]>...<squares[2][nb_cols-1]>\n
+    '*', 'b', 'b', 'b', 'b', 'b',  'b', '\n',  // <squares[3][0]><squares[3][1]>...<squares[3][nb_cols-1]>\n
+    '1', 'w', 'b', 'b', 'b', 'b',  'b', '\n',  // <squares[4][0]><squares[4][1]>...<squares[4][nb_cols-1]>\n
+    'b', 'b', 'b', 'b', '2', 'b',  'b', '\n',  // <squares[5][0]><squares[5][1]>...<squares[5][nb_cols-1]>\n
+    'b', 'b', 'b', 'b', 'w', 'b',  '-', '\n'   // <squares[6][0]><squares[6][1]>...<squares[6][nb_cols-1]>\n
 };
 /* ************************************************************************** */
