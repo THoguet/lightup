@@ -12,7 +12,7 @@ bool test_dummy(void) {
 	return true;
 }
 
-void usage(int argc, char* argv[]) {
+void usage(char* argv[]) {
 	fprintf(stderr, "Usage: %s <testname> [<...>]\n", argv[0]);
 	exit(EXIT_FAILURE);
 }
@@ -181,7 +181,7 @@ bool test_game_is_wrapping(void) {
 
 int main(int argc, char* argv[]) {
 	if (argc != 2) {
-		usage(argc, argv);
+		usage(argv);
 	}
 	fprintf(stderr, "=> Start test \"%s\"\n", argv[1]);
 	bool success = false;

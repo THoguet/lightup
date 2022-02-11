@@ -197,8 +197,8 @@ bool test_game_print(bool whoami, char** name) {
 		*name = (char*)__func__;
 		return false;
 	}
-	for (int height = 1; height <= SIZE_LIMIT_GAME; height++) {
-		for (int width = 1; width <= SIZE_LIMIT_GAME; width++) {
+	for (uint height = 1; height <= SIZE_LIMIT_GAME; height++) {
+		for (uint width = 1; width <= SIZE_LIMIT_GAME; width++) {
 			square tab[width * height];
 			square list[] = LIST_OF_SQUARE;
 			game g;
@@ -228,8 +228,8 @@ bool test_game_get_square(bool whoami, char** name) {
 		*name = (char*)__func__;
 		return false;
 	}
-	for (int height = 1; height <= SIZE_LIMIT_GAME; height++) {
-		for (int width = 1; width <= SIZE_LIMIT_GAME; width++) {
+	for (uint height = 1; height <= SIZE_LIMIT_GAME; height++) {
+		for (uint width = 1; width <= SIZE_LIMIT_GAME; width++) {
 			square tab[width * height];
 			square list[] = LIST_OF_SQUARE;
 			for (uint index_list = 0; index_list < sizeof(list) / sizeof(list[0]); index_list++) {
@@ -586,7 +586,7 @@ bool test_game_save(bool whoami, char** name) {
 
 /* ********** USAGE ********** */
 
-int usage(int argc, char* argv[]) {
+int usage(char* argv[]) {
 	fprintf(stderr, "Usage: %s <testname> [<...>]\n", argv[0]);
 	exit(EXIT_FAILURE);
 }
@@ -609,7 +609,7 @@ int main(int argc, char* argv[]) {
 		tab_fct_name[index_tab_fct] = tab_fct_name[index_tab_fct] + 5;  // remove the test_ from the functions's name
 	}
 	if (argc != 2) {
-		usage(argc, argv);
+		usage(argv);
 	}
 	fprintf(stderr, "=> Start test \"%s\"\n", argv[1]);
 	bool test_success = true;

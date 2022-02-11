@@ -188,8 +188,9 @@ void history_delete_entire_history(history h) {
 	if (history_is_empty(h))
 		return;
 	if (history_is_empty(history_prev(h)))
-		return history_free(history_delete_all_after(h, h));
-	return history_delete_entire_history(history_prev(h));
+		history_free(history_delete_all_after(h, h));
+	else
+		history_delete_entire_history(history_prev(h));
 }
 
 history history_copy(history h) {

@@ -22,8 +22,8 @@ bool checkerrors(cgame g, char* stringError) {
 	uint index_taberr = 0;
 	// initialize stringError
 	stringError[0] = '\0';
-	for (int i = 0; i < game_nb_rows(g); i++) {
-		for (int j = 0; j < game_nb_cols(g); j++) {
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
 			// check each case
 			if (game_has_error(g, i, j)) {
 				// if error append stringError with coordinate of the error,
@@ -77,7 +77,7 @@ void printhelp(void) {
 	printf("b <i> <j> : Place une case vide ( ) à la position (<i>,<j>).\n");
 }
 
-void usage(int argc, char* argv[]) {
+void usage(char* argv[]) {
 	printf("Usage : %s => Joue la partie par défaut\n", argv[0]);
 	exit(EXIT_FAILURE);
 }
@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
 		// Create new game
 		g = game_default();
 	else
-		usage(argc, argv);
+		usage(argv);
 	// init string for errors
 	char stringError[game_nb_rows(g) * game_nb_cols(g) * NBCHARERR];
 	char c;

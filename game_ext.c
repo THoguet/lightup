@@ -5,8 +5,8 @@
 
 game game_new_ext(uint nb_rows, uint nb_cols, square* squares, bool wrapping) {
 	game g = game_new_empty_ext(nb_rows, nb_cols, wrapping);
-	for (int i = 0; i < game_nb_rows(g); i++) {
-		for (int j = 0; j < game_nb_cols(g); j++) {
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
 			g->tab_cell[i][j] = squares[game_nb_cols(g) * i + j];
 		}
 	}
@@ -33,7 +33,7 @@ game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping) {
 		exit(EXIT_FAILURE);
 	}
 	// alloc each tab of tab_cell
-	for (int i = 0; i < game_nb_rows(g); i++) {
+	for (uint i = 0; i < game_nb_rows(g); i++) {
 		g->tab_cell[i] = (square*)calloc(game_nb_cols(g), sizeof(square));
 		if (g->tab_cell[i] == NULL) {
 			fprintf(stderr, "not enough memory\n");

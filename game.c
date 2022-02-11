@@ -12,8 +12,8 @@
 
 game game_new(square* squares) {
 	game g = game_new_empty();
-	for (int i = 0; i < game_nb_rows(g); i++) {
-		for (int j = 0; j < game_nb_cols(g); j++) {
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
 			g->tab_cell[i][j] = squares[game_nb_cols(g) * i + j];
 		}
 	}
@@ -36,12 +36,12 @@ game game_new_empty(void) {
 	if (g->tab_cell == NULL) {
 		memoryError();
 	}
-	for (int i = 0; i < game_nb_rows(g); i++) {
+	for (uint i = 0; i < game_nb_rows(g); i++) {
 		g->tab_cell[i] = (square*)malloc(sizeof(square) * game_nb_cols(g));
 		if (g->tab_cell[i] == NULL) {
 			memoryError();
 		}
-		for (int j = 0; j < game_nb_cols(g); j++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
 			g->tab_cell[i][j] = S_BLANK;
 		}
 	}
@@ -52,8 +52,8 @@ game game_new_empty(void) {
 
 game game_copy(cgame g1) {
 	game g2 = game_new_empty_ext(g1->height, g1->width, g1->wrapping);
-	for (int i = 0; i < g2->height; i++) {
-		for (int j = 0; j < g2->width; j++) {
+	for (uint i = 0; i < g2->height; i++) {
+		for (uint j = 0; j < g2->width; j++) {
 			g2->tab_cell[i][j] = g1->tab_cell[i][j];
 		}
 	}
@@ -68,8 +68,8 @@ bool game_equal(cgame g1, cgame g2) {
 	if (g1->height != g2->height || g1->width != g2->width || g1->wrapping != g2->wrapping)
 		return false;
 	// check each cell and seek any difference between g1 and g2
-	for (int i = 0; i < g1->height; i++) {
-		for (int j = 0; j < g1->width; j++) {
+	for (uint i = 0; i < g1->height; i++) {
+		for (uint j = 0; j < g1->width; j++) {
 			if (g1->tab_cell[i][j] != g2->tab_cell[i][j]) {
 				return false;
 			}
@@ -80,7 +80,7 @@ bool game_equal(cgame g1, cgame g2) {
 
 void game_delete(game g) {
 	// free each tab of tab_cell
-	for (int i = 0; i < game_nb_rows(g); i++) {
+	for (uint i = 0; i < game_nb_rows(g); i++) {
 		free(g->tab_cell[i]);
 		g->tab_cell[i] = NULL;
 	}
@@ -203,7 +203,7 @@ void update_flags_lightbulb(game g, uint i, uint j) {
 		for (uint index_tab = 0; index_tab < sizeof(tab) / sizeof(tab[0]); index_tab += 2) {
 			// big if to check if INORMAL and JNORMAL are correct or if wrapping is true and IWRAPPING and JWRAPPING are not the initial case
 			if (/* test if both tab are not 0*/ tab[index_tab] != tab[index_tab + 1] &&
-			    (/* normal check */ (JNORMAL >= 0 && JNORMAL < game_nb_cols(g) && INORMAL >= 0 && INORMAL < game_nb_rows(g)) ||
+			    (/* normal check */ (JNORMAL < game_nb_cols(g) && INORMAL < game_nb_rows(g)) ||
 			     /* wrapping check + not the inital case*/ (game_is_wrapping(g) && !(IWRAPPING == i && JWRAPPING == j)))) {
 				if (game_is_black(g, IWRAPPING, JWRAPPING)) {
 					tab[index_tab] = 0;
@@ -226,7 +226,7 @@ void update_flags_walls(game g, uint i, uint j) {
 	int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
 	for (uint index_tab = 0; index_tab < (sizeof(tab) / sizeof(tab[0])); index_tab += 2) {
 		uint gap_position = 1;
-		if (/* normal check*/ (JNORMAL >= 0 && JNORMAL < game_nb_cols(g) && INORMAL >= 0 && INORMAL < game_nb_rows(g)) ||
+		if (/* normal check*/ (JNORMAL < game_nb_cols(g) && INORMAL < game_nb_rows(g)) ||
 		    /*wrapping check*/ (game_is_wrapping(g) &&
 		                        /*not the same case*/ !(IWRAPPING == i && JWRAPPING == j))) {
 			if (game_is_lightbulb(g, IWRAPPING, JWRAPPING))
