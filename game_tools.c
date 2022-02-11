@@ -56,34 +56,48 @@ game game_load(char* filename) {
 	game_print(g1);
 	return g1;
 }
+
 /**
  * @brief Get the char from state object
  *
- * @param g game the get the element from
+ * @param g game to get the square from
  * @param i the i coordinate
  * @param j the j coordinate
- * @return char the corresponding char
+ * @return char of the corresponding square
  */
 char get_char_from_state(cgame g, uint i, uint j) {
 	// char tab[index] => index in enum square
 	char tab[] = {'b', '*', '-', '?', '?', '?', '?', '?', '0', '1', '2', '3', '4', 'w'};
-	return tab[game_get_state(g, i, j)];
+	return tab[(int)game_get_state(g, i, j)];
 }
 
 void game_save(cgame g, char* filename) {
 	checkPointer((void*)filename);
 	checkPointer((void*)g);
+	// try create or open file named filename
 	FILE* f = fopen(filename, "w");
 	if (f == NULL) {
-		fprintf(stderr, "Couldn't open file %s.\n", filename);
+		fprintf(stderr, "Couldn't create / open file %s.\n", filename);
 		exit(EXIT_FAILURE);
 	}
-	fprintf(f, "%d %d %d\n", game_nb_rows(g), game_nb_cols(g), game_is_wrapping(g));
+	// try to print the first line
+	if (fprintf(f, "%d %d %d\n", game_nb_rows(g), game_nb_cols(g), game_is_wrapping(g)) < 6) {
+		fprintf(stderr, "Couldn't print in file %s.\n", filename);
+		exit(EXIT_FAILURE);
+	}
+	// for each case of the game get the char of the given case and try to print it on the file
 	for (uint i = 0; i < game_nb_rows(g); i++) {
 		for (uint j = 0; j < game_nb_cols(g); j++) {
-			fprintf(f, "%c", get_char_from_state(g, i, j));
+			if (fprintf(f, "%c", get_char_from_state(g, i, j)) < 1) {
+				fprintf(stderr, "Couldn't print in file %s.\n", filename);
+				exit(EXIT_FAILURE);
+			}
 		}
-		fprintf(f, "\n");
+		// print a \n at the end of each row
+		if (fprintf(f, "\n") < 1) {
+			fprintf(stderr, "Couldn't print in file %s.\n", filename);
+			exit(EXIT_FAILURE);
+		}
 	}
 	fclose(f);
 }
