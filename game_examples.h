@@ -32,6 +32,8 @@ extern square ext_2x2w_squares[];
 extern square sol_2x2w_squares[];
 
 // V3
-extern char game_default_str[];
+extern char default_str[];
+extern char ext_5x3w_str[];
+extern char other_str[];
 
 #endif  // __GAME_EXAMPLES_H__
