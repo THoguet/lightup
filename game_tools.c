@@ -11,8 +11,8 @@ game game_load(char* filename) {
 	// ouvrons le fichier
 	FILE* f = fopen(filename, "r");
 	// récuperer les valeurs dont on a beson pour créer le jeu initail
-	uint nb_rows = fscanf(f, "%u"), nb_cols = fscanf(f, "%u");
-	bool wrapping = fscanf(f, "%d");
+	uint nb_rows = fscanf(f, "%u", &nb_rows), nb_cols = fscanf(f, "%u", &nb_cols);
+	int wrapping = fscanf(f, "%d", &wrapping);
 	// créer le jeu initail
 	game g1 = game_new_empty_ext(nb_rows, nb_cols, wrapping);
 	// récuperer les coups à jouer
@@ -24,24 +24,24 @@ game game_load(char* filename) {
 				if (feof(f)) {
 					break;
 				}
-				if (play = 'b')
+				if (play == 'b')
 					game_set_square(g1, i, j, S_BLANK);
-				else if (play = '*')
+				else if (play == '*')
 					game_set_square(g1, i, j, S_LIGHTBULB);
-				else if (play = '-')
+				else if (play == '-')
 					game_set_square(g1, i, j, S_MARK);
-				else if (play = 'w')
+				else if (play == 'w')
 					game_set_square(g1, i, j, S_BLACKU);
-				else if (play = '0')
+				else if (play == '0')
 					game_set_square(g1, i, j, S_BLACK0);
-				else if (play = '1')
+				else if (play == '1')
 					game_set_square(g1, i, j, S_BLACK1);
-				else if (play = '2')
+				else if (play == '2')
 					game_set_square(g1, i, j, S_BLACK2);
-				else if (play = '3')
+				else if (play == '3')
 					game_set_square(g1, i, j, S_BLACK3);
-				else if (play = '4')
-					game_set_square(g1, i, j, S_BLACK0);
+				else if (play == '4')
+					game_set_square(g1, i, j, S_BLACK4);
 			}
 		}
 	}
