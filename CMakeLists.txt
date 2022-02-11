@@ -42,6 +42,7 @@ add_test(test_thperrier_game_get_black_number_v1 ./game_test game_get_black_numb
 add_test(test_thperrier_game_is_lightbulb_v1 ./game_test game_is_lightbulb)
 add_test(test_thperrier_game_is_blank_v1 ./game_test game_is_blank)
 add_test(test_thperrier_game_new_empty_v1 ./game_test game_new_empty)
+add_test(test_game_equal_v1 ./game_test equal)
 
 # V2
 
@@ -53,7 +54,7 @@ add_test(test_thoguet_game_check_move_v2 ./game_test game_check_move)
 add_test(test_thoguet_game_new_empty_ext_v2 ./game_test game_new_empty_ext)
 add_test(test_thoguet_game_new_ext_v2 ./game_test game_new_ext)
 add_test(test_thperrier_game_copy_v2 ./game_test game_copy)
-add_test(test_thperrier_game_equal_v2 ./game_test game_equal)
+add_test(test_game_equal_v2 ./game_test equal_ext)
 add_test(test_thperrier_game_delete_v2 ./game_test game_delete)
 add_test(test_thperrier_game_undo_v2 ./game_test game_undo)
 add_test(test_thperrier_game_redo_v2 ./game_test game_redo)
