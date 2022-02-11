@@ -17,12 +17,22 @@ build-job:       # This job runs in the build stage, which runs first.
     paths:
       - build/
 
-make-test:   # This job runs in the test stage.
+test-v1-job:   # This job runs in the test stage.
   allow_failure: false
   tags:
     - shell
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
     - cd build
-    - echo "Running tests..."
-    - make test
+    - echo "Running tests V1..."
+    - ctest -R v1
+
+test-v2-job:   # This job runs in the test stage.
+  allow_failure: false
+  tags:
+    - shell
+  stage: test    # It only starts when the job in the build stage completes successfully.
+  script:
+    - cd build
+    - echo "Running tests V2..."
+    - ctest -R v2
