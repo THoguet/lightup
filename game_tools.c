@@ -4,17 +4,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "game.h"
+#include "game_aux.h"
 #include "game_ext.h"
 #include "game_private.h"
 
 game game_load(char* filename) {
+	checkPointer((void*)filename);
 	// ouvrons le fichier
 	FILE* f = fopen(filename, "r");
+	if (f == NULL) {
+		fprintf(stderr, "Problems with file %s.\n", filename);
+		exit(EXIT_FAILURE);
+	}
 	// récuperer les valeurs dont on a beson pour créer le jeu initail
 	uint nb_rows = fscanf(f, "%u", &nb_rows), nb_cols = fscanf(f, "%u", &nb_cols);
 	int wrapping = fscanf(f, "%d", &wrapping);
 	// créer le jeu initail
 	game g1 = game_new_empty_ext(nb_rows, nb_cols, wrapping);
+	checkPointer((void*)g1);
 	// récuperer les coups à jouer
 	for (uint i = 0; i < nb_rows; i++) {
 		for (uint j = 0; j < nb_cols; j++) {
@@ -45,6 +52,8 @@ game game_load(char* filename) {
 			}
 		}
 	}
+	fclose(f);
+	game_print(g1);
 	return g1;
 }
 /**
