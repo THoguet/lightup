@@ -63,6 +63,10 @@ add_test(test_nnunes_game_nb_cols_v2 ./game_test game_nb_cols)
 add_test(test_nnunes_game_is_wrapping_v2 ./game_test game_is_wrapping)
 add_test(test_thoguet_game_print_v2 ./game_test game_print)
 
+# V3
+
+add_test(test_thoguet_game_save_v3 ./game_test game_save)
+
 #Tests HISTORY
 # add_test(test_history_history_alloc ./history_test history_alloc)
 # add_test(test_history_create_empty ./history_test history_create_empty)

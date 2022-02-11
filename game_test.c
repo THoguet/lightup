@@ -12,11 +12,17 @@
 
 #define TAB_SQUARE \
 	{ S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU }
+
 #define SIZE_LIMIT_GAME 10
+
 // put usable square at the start of the list and S_BLANK at the first element
 #define LIST_OF_SQUARE \
 	{ S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU, F_LIGHTED, F_ERROR }
+
 #define USABLE_SQUARE 2
+
+#define NB_CHAR_SAVED_FILE_INFO 6
+
 /* ********** game_get_black_number ********** */
 bool test_game_get_black_number(bool whoami, char** name) {
 	if (whoami) {
@@ -828,76 +834,6 @@ bool test_game_check_move(bool whoami, char** name) {
 	return true;
 }
 
-/* ***** game_save ***** */
-bool test_game_save(bool whoami, char** name) {
-	if (whoami) {
-		*name = (char*)__func__;
-		return false;
-	}
-	game g4x4w = game_new_ext(4, 4, ext_4x4_squares, true);
-	game_save(g4x4w, "g4x4w.txt");
-	game g4x4w_from_file = game_load("g4x4w.txt");
-	assert(game_equal(g4x4w, g4x4w_from_file));
-	game_delete(g4x4w);
-	game_delete(g4x4w_from_file);
-	game g4x4 = game_new_ext(4, 4, ext_4x4_squares, false);
-	game_save(g4x4, "g4x4.txt");
-	game g4x4_from_file = game_load("g4x4.txt");
-	assert(game_equal(g4x4, g4x4_from_file));
-	game_delete(g4x4);
-	game_delete(g4x4_from_file);
-	game g3x10w = game_new_ext(3, 10, ext_3x10_squares, true);
-	game_save(g3x10w, "g3x10w.txt");
-	game g3x10w_from_file = game_load("g3x10w.txt");
-	assert(game_equal(g3x10w, g3x10w_from_file));
-	game_delete(g3x10w);
-	game_delete(g3x10w_from_file);
-	game g3x10 = game_new_ext(3, 10, ext_3x10_squares, false);
-	game_save(g3x10, "g3x10.txt");
-	game g3x10_from_file = game_load("g3x10.txt");
-	assert(game_equal(g3x10, g3x10_from_file));
-	game_delete(g3x10);
-	game_delete(g3x10_from_file);
-	game g5x1w = game_new_ext(5, 1, ext_5x1_squares, true);
-	game_save(g5x1w, "g5x1w.txt");
-	game g5x1w_from_file = game_load("g5x1w.txt");
-	assert(game_equal(g5x1w, g5x1w_from_file));
-	game_delete(g5x1w);
-	game_delete(g5x1w_from_file);
-	game g5x1 = game_new_ext(5, 1, ext_5x1_squares, false);
-	game_save(g5x1, "g5x1.txt");
-	game g5x1_from_file = game_load("g5x1.txt");
-	assert(game_equal(g5x1, g5x1_from_file));
-	game_delete(g5x1);
-	game_delete(g5x1_from_file);
-	game g2x2w = game_new_ext(5, 1, ext_2x2w_squares, true);
-	game_save(g2x2w, "g2x2w.txt");
-	game g2x2w_from_file = game_load("g2x2w.txt");
-	assert(game_equal(g2x2w, g2x2w_from_file));
-	game_delete(g2x2w);
-	game_delete(g2x2w_from_file);
-	game g2x2 = game_new_ext(5, 1, ext_2x2w_squares, false);
-	game_save(g2x2, "g2x2.txt");
-	game g2x2_from_file = game_load("g2x2.txt");
-	assert(game_equal(g2x2, g2x2_from_file));
-	game_delete(g2x2);
-	game_delete(g2x2_from_file);
-	game g3x3w = game_new_ext(3, 3, ext_3x3w_squares, true);
-	game_save(g3x3w, "g3x3w.txt");
-	game g3x3w_from_file = game_load("g3x3w.txt");
-	assert(game_equal(g3x3w, g3x3w_from_file));
-	game_delete(g3x3w);
-	game_delete(g3x3w_from_file);
-	game g3x3 = game_new_ext(3, 3, ext_3x3w_squares, false);
-	game_save(g3x3, "g3x3.txt");
-	game g3x3_from_file = game_load("g3x3.txt");
-	assert(game_equal(g3x3, g3x3_from_file));
-	game_delete(g3x3);
-	game_delete(g3x3_from_file);
-
-	return true;
-}
-
 /* ************** game_set_square ************** */
 bool test_game_set_square(bool whoami, char** name) {
 	if (whoami) {
@@ -1094,6 +1030,26 @@ bool test_game_is_wrapping(bool whoami, char** name) {
 	}
 	game_delete(g);
 	return false;
+}
+
+/* ***** game_save ***** */
+bool test_game_save(bool whoami, char** name) {
+	// if whoami is true return in name the name of the function
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game gdefault = game_default();
+	game_save(gdefault, "gdefault.txt");
+	FILE* f_gdefault = fopen("gdefault.txt", "r");
+	assert(f_gdefault);
+	char char_to_test = '?';
+	for (uint index_gdefault_str = 0; index_gdefault_str < game_nb_cols(gdefault) * game_nb_rows(gdefault) + NB_CHAR_SAVED_FILE_INFO + game_nb_rows(gdefault);
+	     index_gdefault_str++) {
+		char_to_test = fgetc(f_gdefault);
+		assert(char_to_test == game_default_str[index_gdefault_str]);
+	}
+	return true;
 }
 
 /* ********** USAGE ********** */
