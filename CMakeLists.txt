@@ -13,60 +13,55 @@ set(CMAKE_C_FLAGS "-std=c99 -g -Wall -Wextra -Wpedantic -Werror")
 #définit le nom du programme ainsi que
 #ses sources
 add_executable(game_text game_text.c)
-add_executable(game_test_thoguet game_test_thoguet.c)
-add_executable(game_test_thperrier game_test_thperrier.c)
-add_executable(game_test_nnunes game_test_nnunes.c)
+add_executable(game_test game_test.c)
 #add_executable(history_test history_test.c)
 
 #les dépendances sont calculées automatiquement
 target_link_libraries(game_text game)
-target_link_libraries(game_test_thoguet game)
-target_link_libraries(game_test_thperrier game)
-target_link_libraries(game_test_nnunes game)
+target_link_libraries(game_test game)
 #target_link_libraries(history_test game)
 
 #Libraries
 add_library (game game.c game_aux.c game_ext.c game_private.c history.c game_tools.c game_examples.c)
 
-#Tests THOGUET
-add_test(test_thoguet_dummy_v1 ./game_test_thoguet dummy)
-add_test(test_thoguet_game_new_v1 ./game_test_thoguet game_new)
-add_test(test_thoguet_game_print_v2 ./game_test_thoguet game_print)
-add_test(test_thoguet_game_get_square_v2 ./game_test_thoguet game_get_square)
-add_test(test_thoguet_game_default_v1 ./game_test_thoguet game_default)
-add_test(test_thoguet_game_default_solution_v1 ./game_test_thoguet game_default_solution)
-add_test(test_thoguet_game_restart_v2 ./game_test_thoguet game_restart)
-add_test(test_thoguet_game_is_over_v1 ./game_test_thoguet game_is_over)
-add_test(test_thoguet_game_update_flags_v2 ./game_test_thoguet game_update_flags)
-add_test(test_thoguet_game_play_move_v2 ./game_test_thoguet game_play_move)
-add_test(test_thoguet_game_check_move_v2 ./game_test_thoguet game_check_move)
-add_test(test_thoguet_game_new_empty_ext_v2 ./game_test_thoguet game_new_empty_ext)
-add_test(test_thoguet_game_new_ext_v2 ./game_test_thoguet game_new_ext)
+# Tests
 
-#Tests THPERRIER
-add_test(test_thperrier_dummy_v1 ./game_test_thperrier dummy)
-add_test(test_thperrier_game_copy_v2 ./game_test_thperrier game_copy)
-add_test(test_thperrier_game_new_empty_v1 ./game_test_thperrier game_new_empty)
-add_test(test_thperrier_game_equal_v2 ./game_test_thperrier game_equal)
-add_test(test_thperrier_game_delete_v2 ./game_test_thperrier game_delete)
-add_test(test_thperrier_game_is_blank_v1 ./game_test_thperrier game_is_blank)
-add_test(test_thperrier_game_is_lightbulb_v1 ./game_test_thperrier game_is_lightbulb)
-add_test(test_thperrier_game_is_black_v1 ./game_test_thperrier game_is_black)
-add_test(test_thperrier_game_get_black_number_v1 ./game_test_thperrier game_get_black_number)
-add_test(test_thperrier_game_undo_v2 ./game_test_thperrier game_undo)
-add_test(test_thperrier_game_redo_v2 ./game_test_thperrier game_redo)
+# V1
 
-#Tests NNUNES
-add_test(test_nnunes_dummy_v1 ./game_test_nnunes dummy)
-add_test(test_nnunes_game_set_square_v1 ./game_test_nnunes game_set_square)
-add_test(test_nnunes_game_get_state_v1 ./game_test_nnunes game_get_state)
-add_test(test_nnunes_game_get_flags_v1 ./game_test_nnunes game_get_flags)
-add_test(test_nnunes_game_is_marked_v1 ./game_test_nnunes game_is_marked)
-add_test(test_nnunes_game_is_lighted_v1 ./game_test_nnunes game_is_lighted)
-add_test(test_nnunes_game_has_error_v2 ./game_test_nnunes game_has_error)
-add_test(test_nnunes_game_nb_rows_v2 ./game_test_nnunes game_nb_rows)
-add_test(test_nnunes_game_nb_cols_v2 ./game_test_nnunes game_nb_cols)
-add_test(test_nnunes_game_is_wrapping_v2 ./game_test_nnunes game_is_wrapping)
+add_test(test_thoguet_game_new_v1 ./game_test game_new)
+add_test(test_thoguet_game_default_v1 ./game_test game_default)
+add_test(test_thoguet_game_default_solution_v1 ./game_test game_default_solution)
+add_test(test_nnunes_game_set_square_v1 ./game_test game_set_square)
+add_test(test_nnunes_game_get_state_v1 ./game_test game_get_state)
+add_test(test_nnunes_game_get_flags_v1 ./game_test game_get_flags)
+add_test(test_nnunes_game_is_marked_v1 ./game_test game_is_marked)
+add_test(test_nnunes_game_is_lighted_v1 ./game_test game_is_lighted)
+add_test(test_thperrier_game_is_black_v1 ./game_test game_is_black)
+add_test(test_thoguet_game_is_over_v1 ./game_test game_is_over)
+add_test(test_thperrier_game_get_black_number_v1 ./game_test game_get_black_number)
+add_test(test_thperrier_game_is_lightbulb_v1 ./game_test game_is_lightbulb)
+add_test(test_thperrier_game_is_blank_v1 ./game_test game_is_blank)
+add_test(test_thperrier_game_new_empty_v1 ./game_test game_new_empty)
+
+# V2
+
+add_test(test_thoguet_game_get_square_v2 ./game_test game_get_square)
+add_test(test_thoguet_game_restart_v2 ./game_test game_restart)
+add_test(test_thoguet_game_update_flags_v2 ./game_test game_update_flags)
+add_test(test_thoguet_game_play_move_v2 ./game_test game_play_move)
+add_test(test_thoguet_game_check_move_v2 ./game_test game_check_move)
+add_test(test_thoguet_game_new_empty_ext_v2 ./game_test game_new_empty_ext)
+add_test(test_thoguet_game_new_ext_v2 ./game_test game_new_ext)
+add_test(test_thperrier_game_copy_v2 ./game_test game_copy)
+add_test(test_thperrier_game_equal_v2 ./game_test game_equal)
+add_test(test_thperrier_game_delete_v2 ./game_test game_delete)
+add_test(test_thperrier_game_undo_v2 ./game_test game_undo)
+add_test(test_thperrier_game_redo_v2 ./game_test game_redo)
+add_test(test_nnunes_game_has_error_v2 ./game_test game_has_error)
+add_test(test_nnunes_game_nb_rows_v2 ./game_test game_nb_rows)
+add_test(test_nnunes_game_nb_cols_v2 ./game_test game_nb_cols)
+add_test(test_nnunes_game_is_wrapping_v2 ./game_test game_is_wrapping)
+add_test(test_thoguet_game_print_v2 ./game_test game_print)
 
 #Tests HISTORY
 # add_test(test_history_history_alloc ./history_test history_alloc)

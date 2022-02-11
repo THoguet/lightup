@@ -1,35 +1,344 @@
+#include "game.h"
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "game.h"
 #include "game_aux.h"
 #include "game_examples.h"
 #include "game_ext.h"
 #include "game_tools.h"
 
+#define TAB_SQUARE \
+	{ S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU }
 #define SIZE_LIMIT_GAME 10
 // put usable square at the start of the list and S_BLANK at the first element
 #define LIST_OF_SQUARE \
 	{ S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU, F_LIGHTED, F_ERROR }
 #define USABLE_SQUARE 2
-
-/* ********** DUMMY ********** */
-bool test_dummy(bool whoami, char** name) {
+/* ********** game_get_black_number ********** */
+bool test_game_get_black_number(bool whoami, char** name) {
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
 	}
-	return EXIT_SUCCESS;
+	square tab_square[] = TAB_SQUARE;
+	game g = game_new_empty();
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
+			// check for each case given in tab_square if the function return the expected result
+			for (uint tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
+				game_set_square(g, i, j, tab_square[tab_index]);
+				if (tab_square[tab_index] == S_BLACKU) {
+					if (game_get_black_number(g, i, j) != -1) {
+						game_delete(g);
+						return false;
+					}
+				} else if (tab_square[tab_index] > S_MARK && (uint)game_get_black_number(g, i, j) != tab_square[tab_index] - S_BLACK) {
+					game_delete(g);
+					return false;
+				}
+			}
+		}
+	}
+	game_delete(g);
+	return true;
+}
+
+/* ********** game_is_black ********** */
+bool test_game_is_black(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	square tab_square[] = TAB_SQUARE;
+	game g = game_new_empty();
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
+			// check for each case given in tab_square if the function return the expected result
+			for (uint tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
+				game_set_square(g, i, j, tab_square[tab_index]);
+				if (tab_square[tab_index] <= S_MARK) {
+					if (game_is_black(g, i, j)) {
+						game_delete(g);
+						return false;
+					}
+				} else {
+					if (!((game_get_square(g, i, j) == tab_square[tab_index]) && game_is_black(g, i, j))) {
+						game_delete(g);
+						return false;
+					}
+				}
+			}
+		}
+	}
+
+	game_delete(g);
+	return true;
+}
+
+/* ********** game_is_lightbulb ********** */
+bool test_game_is_lightbulb(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	square tab_square[] = TAB_SQUARE;
+	game g = game_new_empty();
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
+			// check for each case given in tab_square if the function return the expected result
+			for (uint tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
+				game_set_square(g, i, j, tab_square[tab_index]);
+				if (tab_square[tab_index] == S_LIGHTBULB) {
+					if (!game_is_lightbulb(g, i, j)) {
+						game_delete(g);
+						return false;
+					}
+				} else if (game_is_lightbulb(g, 0, 0)) {
+					game_delete(g);
+					return false;
+				}
+			}
+		}
+	}
+	game_delete(g);
+	return true;
+}
+
+/* ********** game_is_blank ********** */
+bool test_game_is_blank(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	square tab_square[] = {S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
+	game g = game_new_empty();
+	game_set_square(g, 0, 0, S_BLANK);
+	if (!((game_get_square(g, 0, 0) == S_BLANK) && game_is_blank(g, 0, 0))) {
+		game_delete(g);
+		return false;
+	}
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
+			// check for each case given in tab_square if the function return the expected result
+			for (uint tab_index = 0; tab_index < (sizeof(tab_square) / sizeof(tab_square[0])); tab_index++) {
+				game_set_square(g, i, j, tab_square[tab_index]);
+				if (game_is_blank(g, i, j)) {
+					game_delete(g);
+					return false;
+				}
+			}
+		}
+	}
+	game_delete(g);
+	return true;
+}
+
+/* ********** game_delete ********** */
+bool test_game_delete(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game g = game_new_empty();
+	assert(g);
+	game_delete(g);
+	return true;
+}
+
+/* ********** game_equal ********** */
+
+bool test_equal_ext(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	square ext_3x10_squares[] = {
+	    S_BLANK,  S_BLANK,  S_BLANK, S_BLACK1, S_BLANK,  /* row 0 */
+	    S_BLANK,  S_BLANK,  S_BLANK, S_BLACK1, S_BLACKU, /* row 0 */
+	    S_BLACK1, S_BLANK,  S_BLANK, S_BLANK,  S_BLANK,  /* row 1 */
+	    S_BLANK,  S_BLANK,  S_BLANK, S_BLANK,  S_BLACK1, /* row 1 */
+	    S_BLACKU, S_BLACK0, S_BLANK, S_BLANK,  S_BLANK,  /* row 2 */
+	    S_BLANK,  S_BLACK0, S_BLANK, S_BLANK,  S_BLANK,  /* row 2 */
+	};
+	game g1 = game_new_ext(3, 10, ext_3x10_squares, false);
+	game g2 = game_new_ext(3, 10, ext_3x10_squares, false);
+	game g3 = game_new_ext(3, 10, ext_3x10_squares, true);
+
+	// same game
+	bool test1 = (game_equal(g1, g2) == true);
+
+	// set a single different square
+	game_set_square(g2, 2, 9, S_LIGHTBULB);
+	bool test2 = (game_equal(g1, g2) == false);
+
+	// different options
+	bool test3 = (game_equal(g1, g3) == false);
+
+	game_delete(g1);
+	game_delete(g2);
+	game_delete(g3);
+
+	if (test1 && test2 && test3)
+		return true;
+	return false;
+}
+
+bool test_equal(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game g1 = game_default();
+	game g2 = game_default();
+	game g3 = game_default();
+	game g4 = game_default();
+
+	bool test1 = (game_equal(g1, g2) == true);
+
+	game_play_move(g3, 0, 0, S_LIGHTBULB);
+	bool test2 = (game_equal(g1, g3) == false);
+
+	game_set_square(g4, 0, 0, F_LIGHTED);
+	bool test3 = (game_equal(g1, g4) == false);
+
+	game_delete(g1);
+	game_delete(g2);
+	game_delete(g3);
+	game_delete(g4);
+
+	if (test1 && test2 && test3)
+		return true;
+	return false;
+}
+
+/* ********** game_new_empty ********** */
+bool test_game_new_empty(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game g = game_new_empty();
+	// check if each square is a S_BLANK
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
+			if (game_get_square(g, i, j) != S_BLANK) {
+				game_delete(g);
+				return false;
+			}
+		}
+	}
+	game_delete(g);
+	return true;
+}
+
+/* ********** game_copy ********** */
+bool test_game_copy(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	square tab_square[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
+	uint index_tab = 0;
+	for (int wrap = 0; wrap < 2 /*we only need to test two versions (with and without wrapping)*/; wrap++) {
+		game g1 = game_new_empty_ext(DEFAULT_SIZE, DEFAULT_SIZE, wrap);
+		for (uint i = 0; i < game_nb_rows(g1); i++) {
+			for (uint j = 0; j < game_nb_cols(g1); j++) {
+				// check if index_tab reach end of tab
+				if (index_tab == sizeof(tab_square) / sizeof(tab_square[0])) {
+					index_tab = 0;
+				}
+				game_set_square(g1, i, j, tab_square[index_tab]);
+				index_tab++;
+			}
+		}
+		game g2 = game_copy(g1);
+		// check if g2 is a correct copy of g1
+		if (!game_equal(g1, g2)) {
+			game_delete(g1);
+			game_delete(g2);
+			return false;
+		}
+		game_delete(g1);
+		game_delete(g2);
+	}
+	return true;
+}
+
+/* ********** game_undo ********** */
+bool test_game_undo(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game g1 = game_new_empty();
+	game g2 = game_copy(g1);
+	// check if you can undo without playing a move
+	game_undo(g2);
+	if (!game_equal(g1, g2)) {
+		game_delete(g1);
+		game_delete(g2);
+		return false;
+	}
+	game_play_move(g1, 0, 0, S_LIGHTBULB);
+	game_play_move(g1, 1, 1, S_MARK);
+	game g3 = game_copy(g1);
+	// check if the function undo correctly
+	game_play_move(g3, 2, 2, S_LIGHTBULB);
+	game_undo(g3);
+	if (!game_equal(g1, g3)) {
+		game_delete(g1);
+		game_delete(g2);
+		game_delete(g3);
+		return false;
+	}
+	game_delete(g1);
+	game_delete(g2);
+	game_delete(g3);
+	return true;
+}
+
+/* ********** game_redo ********** */
+bool test_game_redo(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game g1 = game_new_empty();
+	game_play_move(g1, 0, 0, S_LIGHTBULB);
+	game_play_move(g1, 1, 1, S_MARK);
+	game g2 = game_copy(g1);
+	// check if you can redo a non existant move
+	game_undo(g1);
+	game_redo(g1);
+	game_redo(g1);
+	if (!game_equal(g1, g2)) {
+		game_delete(g1);
+		game_delete(g2);
+		return false;
+	}
+	game_play_move(g1, 2, 2, S_LIGHTBULB);
+	game_play_move(g2, 2, 2, S_LIGHTBULB);
+	// check if the function redo correctly
+	game_undo(g1);
+	game_redo(g1);
+	if (!game_equal(g1, g2)) {
+		game_delete(g1);
+		game_delete(g2);
+		return false;
+	}
+	game_delete(g1);
+	game_delete(g2);
+	return true;
 }
 
 /* ******* game_new_ext_empty ******* */
 /**
  * @brief test creating every game between size 0 to SIZE_LIMIT_GAME
  *
- * @return EXIT_SUCCESS if every game has been created well
+ * @return true if every game has been created well
  */
 bool test_game_new_empty_ext(bool whoami, char** name) {
 	if (whoami) {
@@ -46,14 +355,14 @@ bool test_game_new_empty_ext(bool whoami, char** name) {
 			}
 		}
 	}
-	return EXIT_SUCCESS;
+	return true;
 }
 
 /* ******* game_new_ext ******* */
 /**
  * @brief  test creating every game between size 0 to SIZE_LIMIT_GAME + fill it with every square of list
  *
- * @return EXIT_SUCCESS if every game has been created well and well filled
+ * @return true if every game has been created well and well filled
  */
 bool test_game_new_ext(bool whoami, char** name) {
 	if (whoami) {
@@ -84,14 +393,14 @@ bool test_game_new_ext(bool whoami, char** name) {
 			}
 		}
 	}
-	return EXIT_SUCCESS;
+	return true;
 }
 
 /* ******* game_is_over ******* */
 /**
  * @brief test if game_is_over return true with default_solution, false with one flag F_ERROR, false with one S_BLANK and false with game_default
  *
- * @return EXIT_SUCCESS if there is no errors
+ * @return true if there is no errors
  */
 bool test_game_is_over(bool whoami, char** name) {
 	if (whoami) {
@@ -111,14 +420,14 @@ bool test_game_is_over(bool whoami, char** name) {
 	game_update_flags(g);
 	assert(!game_is_over(g));
 	game_delete(g);
-	return EXIT_SUCCESS;
+	return true;
 }
 
 /* ******* game_restart ******* */
 /**
  * @brief test if game_restart remove every S_LIGHTBULB, S_MARK, and F_LIGHTED but nothing else and if the history has been reset
  *
- * @return EXIT_SUCCESS if there is no error
+ * @return true if there is no error
  */
 bool test_game_restart(bool whoami, char** name) {
 	if (whoami) {
@@ -151,14 +460,14 @@ bool test_game_restart(bool whoami, char** name) {
 	assert(game_equal(game_def, game_def_solution));
 	game_delete(game_def);
 	game_delete(game_def_solution);
-	return EXIT_SUCCESS;
+	return true;
 }
 
 /* ********* game_new ********* */
 /**
  * @brief test if created game with game_new are well filled by the tab
  *
- * @return EXIT_SUCCESS if there is no error
+ * @return true if there is no error
  */
 bool test_game_new(bool whoami, char** name) {
 	if (whoami) {
@@ -183,14 +492,14 @@ bool test_game_new(bool whoami, char** name) {
 		game_delete(g);
 		g = NULL;
 	}
-	return EXIT_SUCCESS;
+	return true;
 }
 
 /* ******** game_print ******** */
 /**
  * @brief test if there is no major problems by printing every square of list
  *
- * @return EXIT_SUCCESS if there is no error
+ * @return true if there is no error
  */
 bool test_game_print(bool whoami, char** name) {
 	if (whoami) {
@@ -214,14 +523,14 @@ bool test_game_print(bool whoami, char** name) {
 			}
 		}
 	}
-	return EXIT_SUCCESS;
+	return true;
 }
 
 /* ******* game_get_square ******* */
 /**
  * @brief test if get_square return the same as tab, used to create the game
  *
- * @return EXIT_SUCCESS if there is no error
+ * @return true if there is no error
  */
 bool test_game_get_square(bool whoami, char** name) {
 	if (whoami) {
@@ -244,14 +553,14 @@ bool test_game_get_square(bool whoami, char** name) {
 			}
 		}
 	}
-	return EXIT_SUCCESS;
+	return true;
 }
 
 /* ******* game_default ******* */
 /**
  * @brief test if the game_default is the same as tab (tab is game_default)
  *
- * @return EXIT_SUCCESS if there is no error
+ * @return true if there is no error
  */
 bool test_game_default(bool whoami, char** name) {
 	if (whoami) {
@@ -277,14 +586,14 @@ bool test_game_default(bool whoami, char** name) {
 	assert(game_equal(game_def, game_test));
 	game_delete(game_def);
 	game_delete(game_test);
-	return EXIT_SUCCESS;
+	return true;
 }
 
 /* *** game_default_solution *** */
 /**
  * @brief test if game_default_solution is the same as game_default with moves needed to win
  *
- * @return EXIT_SUCCESS if there is no error
+ * @return true if there is no error
  */
 bool test_game_default_solution(bool whoami, char** name) {
 	if (whoami) {
@@ -309,7 +618,7 @@ bool test_game_default_solution(bool whoami, char** name) {
 	assert(game_equal(game_def_solution, game_def));
 	game_delete(game_def_solution);
 	game_delete(game_def);
-	return EXIT_SUCCESS;
+	return true;
 }
 
 /* **** game_update_flags **** */
@@ -449,14 +758,14 @@ bool test_game_update_flags(bool whoami, char** name) {
 	assert(game_has_error(g5x1, 2, 0));
 	assert(counterF_ERROR(g5x1) == 3);
 	game_delete(g5x1);
-	return EXIT_SUCCESS;
+	return true;
 }
 
 /* ****** game_play_move ****** */
 /**
  * @brief test if play move set square + update the flags + update history
  *
- * @return EXIT_SUCCESS if there is no error
+ * @return true if there is no error
  */
 bool test_game_play_move(bool whoami, char** name) {
 	if (whoami) {
@@ -480,14 +789,14 @@ bool test_game_play_move(bool whoami, char** name) {
 	// delete
 	game_delete(game_play);
 	game_delete(game_set);
-	return EXIT_SUCCESS;
+	return true;
 }
 
 /* ***** game_check_move ***** */
 /**
  * @brief  test if we can place usable square (here : S_BLANK, S_LIGHTBULB, S_MARK) and nothing else + if we can place something over the limits
  *
- * @return EXIT_SUCCESS if there is no error
+ * @return true if there is no error
  */
 bool test_game_check_move(bool whoami, char** name) {
 	if (whoami) {
@@ -516,7 +825,7 @@ bool test_game_check_move(bool whoami, char** name) {
 		}
 	}
 	game_delete(g);
-	return EXIT_SUCCESS;
+	return true;
 }
 
 /* ***** game_save ***** */
@@ -586,7 +895,205 @@ bool test_game_save(bool whoami, char** name) {
 	game_delete(g3x3);
 	game_delete(g3x3_from_file);
 
-	return EXIT_SUCCESS;
+	return true;
+}
+
+/* ************** game_set_square ************** */
+bool test_game_set_square(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game g = game_new_empty();
+	square list[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
+	square list_flag[] = {F_ERROR, F_LIGHTED, (F_ERROR | F_LIGHTED)};
+	for (uint i = 0; i < DEFAULT_SIZE; i++) {
+		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+			for (uint flag_index = 0; flag_index < sizeof(list_flag) / sizeof(list_flag[0]); flag_index++) {
+				for (uint tab_index = 0; tab_index < sizeof(list) / sizeof(list[0]); tab_index++) {
+					game_set_square(g, i, j, (list[tab_index] | list_flag[flag_index]));
+					if (game_get_square(g, i, j) != (list[tab_index] | list_flag[flag_index])) {
+						game_delete(g);
+						return false;
+					}
+				}
+			}
+		}
+	}
+	game_delete(g);
+	return true;
+}
+
+/* ************** game_get_state ************** */
+bool test_game_get_state(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game g = game_new_empty();
+	square list[] = {S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU};
+	square list_flag[] = {S_BLANK, F_ERROR, F_LIGHTED, (F_ERROR | F_LIGHTED)};
+	for (uint i = 0; i < DEFAULT_SIZE; i++) {
+		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+			for (uint flag_index = 0; flag_index < sizeof(list_flag) / sizeof(list_flag[0]); flag_index++) {
+				for (uint tab_index = 0; tab_index < sizeof(list) / sizeof(list[0]); tab_index++) {
+					game_set_square(g, i, j, (list[tab_index] | list_flag[flag_index]));
+					if (game_get_state(g, i, j) != list[tab_index]) {
+						game_delete(g);
+						return false;
+					}
+				}
+			}
+		}
+	}
+	game_delete(g);
+	return true;
+}
+
+/* ************** game_get_flags ************** */
+bool test_game_get_flags(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game g = game_new_empty();
+	square list_flag[] = {F_ERROR, F_LIGHTED, (F_ERROR | F_LIGHTED)};
+	for (uint i = 0; i < DEFAULT_SIZE; i++) {
+		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+			for (uint flag_index = 0; flag_index < sizeof(list_flag) / sizeof(list_flag[0]); flag_index++) {
+				game_set_square(g, i, j, (S_BLANK | list_flag[flag_index]));
+				if (game_get_flags(g, i, j) != list_flag[flag_index]) {
+					game_delete(g);
+					return false;
+				}
+			}
+		}
+	}
+	game_delete(g);
+	return true;
+}
+
+/* ************** game_is_marked ************** */
+bool test_game_is_marked(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game g = game_new_empty();
+	square list_flag[] = {S_BLANK, F_ERROR, F_LIGHTED, (F_ERROR | F_LIGHTED)};
+	for (uint i = 0; i < DEFAULT_SIZE; i++) {
+		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+			for (uint flag_index = 0; flag_index < sizeof(list_flag) / sizeof(list_flag[0]); flag_index++) {
+				game_set_square(g, i, j, (S_MARK | list_flag[flag_index]));
+				if ((game_get_state(g, i, j) == S_MARK) && game_is_marked(g, i, j)) {
+					game_delete(g);
+					return true;
+				}
+			}
+		}
+	}
+	game_delete(g);
+	return false;
+}
+
+/* ************** game_is_lighted ************** */
+bool test_game_is_lighted(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game g = game_new_empty();
+	square list_flag[] = {F_LIGHTED, (F_ERROR | F_LIGHTED)};
+	for (uint i = 0; i < DEFAULT_SIZE; i++) {
+		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+			for (uint flag_index = 0; flag_index < sizeof(list_flag) / sizeof(list_flag[0]); flag_index++) {
+				game_set_square(g, i, j, (S_BLANK | list_flag[flag_index]));
+				if ((game_get_flags(g, i, j) == list_flag[flag_index]) && game_is_lighted(g, i, j)) {
+					game_delete(g);
+					return true;
+				}
+			}
+		}
+	}
+	game_delete(g);
+	return false;
+}
+
+/* ************** game_has_error ************** */
+bool test_game_has_error(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game g = game_new_empty();
+	square list_flag[] = {F_ERROR, (F_ERROR | F_LIGHTED)};
+	for (uint i = 0; i < DEFAULT_SIZE; i++) {
+		for (uint j = 0; j < DEFAULT_SIZE; j++) {
+			for (uint flag_index = 0; flag_index < sizeof(list_flag) / sizeof(list_flag[0]); flag_index++) {
+				game_set_square(g, i, j, (S_BLANK | list_flag[flag_index]));
+				if ((game_get_flags(g, i, j) == list_flag[flag_index]) && game_has_error(g, i, j)) {
+					game_delete(g);
+					return true;
+				}
+			}
+		}
+	}
+	game_delete(g);
+	return false;
+}
+
+/* ************** game_nb_rows ************** */
+bool test_game_nb_rows(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game g = game_new_empty();
+	if (game_get_square(g, game_nb_rows(g) - 1, 0) == S_BLANK) {
+		game_delete(g);
+		return true;
+	}
+	game_delete(g);
+	return false;
+}
+
+/* ************** game_nb_cols ************** */
+bool test_game_nb_cols(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game g = game_new_empty();
+	if (game_get_square(g, 0, game_nb_cols(g) - 1) == S_BLANK) {
+		game_delete(g);
+		return true;
+	}
+	game_delete(g);
+	return false;
+}
+
+/* ************** game_is_wrapping ************** */
+bool test_game_is_wrapping(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game g = game_new_empty();
+	game_set_square(g, 0, 0, S_LIGHTBULB);
+	game_set_square(g, 1, 0, S_BLACK);
+	game_set_square(g, 0, 1, S_BLACK);
+	for (uint i = 0; i < DEFAULT_SIZE; i++) {
+		if (!(game_is_lighted(g, 0, i) && game_is_wrapping(g))) {
+			game_delete(g);
+			return true;
+		}
+		if (!(game_is_lighted(g, i, 0) && game_is_wrapping(g))) {
+			game_delete(g);
+			return true;
+		}
+	}
+	game_delete(g);
+	return false;
 }
 
 /* ********** USAGE ********** */
@@ -602,10 +1109,39 @@ int main(int argc, char* argv[]) {
 	// function type
 	typedef bool (*func_t)(bool, char**);
 	// array of all tests functions
-	func_t tab_fct[] = {
-	    &test_dummy,           &test_game_print,   &test_game_default,      &test_game_default_solution, &test_game_new,        &test_game_restart,
-	    &test_game_get_square, &test_game_is_over, &test_game_update_flags, &test_game_play_move,        &test_game_check_move, &test_game_new_empty_ext,
-	    &test_game_new_ext,    &test_game_save};
+	func_t tab_fct[] = {&test_equal,
+	                    &test_equal_ext,
+	                    &test_game_check_move,
+	                    &test_game_copy,
+	                    &test_game_default,
+	                    &test_game_default_solution,
+	                    &test_game_delete,
+	                    &test_game_get_black_number,
+	                    &test_game_get_flags,
+	                    &test_game_get_square,
+	                    &test_game_get_state,
+	                    &test_game_has_error,
+	                    &test_game_is_black,
+	                    &test_game_is_blank,
+	                    &test_game_is_lightbulb,
+	                    &test_game_is_lighted,
+	                    &test_game_is_marked,
+	                    &test_game_is_over,
+	                    &test_game_is_wrapping,
+	                    &test_game_nb_cols,
+	                    &test_game_nb_rows,
+	                    &test_game_new,
+	                    &test_game_new_empty,
+	                    &test_game_new_empty_ext,
+	                    &test_game_new_ext,
+	                    &test_game_play_move,
+	                    &test_game_print,
+	                    &test_game_redo,
+	                    &test_game_restart,
+	                    &test_game_save,
+	                    &test_game_set_square,
+	                    &test_game_undo,
+	                    &test_game_update_flags};
 	// array of the tests functions's name
 	char* tab_fct_name[sizeof(tab_fct) / sizeof(tab_fct[0])];
 	// for each function on tab_fct call the function to fill tab_fct_name
@@ -617,7 +1153,7 @@ int main(int argc, char* argv[]) {
 		usage(argv);
 	}
 	fprintf(stderr, "=> Start test \"%s\"\n", argv[1]);
-	bool test_success = true;
+	bool test_success = false;
 	bool test_found = false;
 	for (uint index_tab_fct = 0; index_tab_fct < sizeof(tab_fct) / sizeof(tab_fct[0]); index_tab_fct++) {
 		if (strcmp(argv[1], tab_fct_name[index_tab_fct]) == 0) {
@@ -630,7 +1166,7 @@ int main(int argc, char* argv[]) {
 		exit(EXIT_FAILURE);
 	}
 	// print test result
-	if (!test_success) {
+	if (test_success) {
 		fprintf(stderr, "Test \"%s\" finished: SUCCESS\n", argv[1]);
 		return EXIT_SUCCESS;
 	} else {
