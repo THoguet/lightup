@@ -30,12 +30,12 @@
 			"preLaunchTask": "make_build"
 		},
 		{
-			"name": "(gdb) debug tests thoguet",
+			"name": "(gdb) debug tests",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/build/game_test_thoguet",
+			"program": "${workspaceFolder}/build/game_test",
 			"args": [
-				"game_default_solution"
+				"game_save"
 			],
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
@@ -55,60 +55,6 @@
 				}
 			],
 			"preLaunchTask": "make_build"
-		},
-		{
-			"name": "(gdb) debug tests histo",
-			"type": "cppdbg",
-			"request": "launch",
-			"program": "${workspaceFolder}/build/history_test",
-			"args": [
-				"history_copy"
-			],
-			"stopAtEntry": false,
-			"cwd": "${fileDirname}",
-			"environment": [],
-			"externalConsole": false,
-			"MIMode": "gdb",
-			"setupCommands": [
-				{
-					"description": "Enable pretty-printing for gdb",
-					"text": "-enable-pretty-printing",
-					"ignoreFailures": true
-				},
-				{
-					"description": "Set Disassembly Flavor to Intel",
-					"text": "-gdb-set disassembly-flavor intel",
-					"ignoreFailures": true
-				}
-			],
-			"preLaunchTask": "make_build"
-		},
-		{
-			"name": "(gdb) debug tests thperrier",
-			"type": "cppdbg",
-			"request": "launch",
-			"program": "${workspaceFolder}/build/game_test_thperrier",
-			"args": [
-				"game_copy"
-			],
-			"stopAtEntry": false,
-			"cwd": "${fileDirname}",
-			"environment": [],
-			"externalConsole": false,
-			"MIMode": "gdb",
-			"setupCommands": [
-				{
-					"description": "Enable pretty-printing for gdb",
-					"text": "-enable-pretty-printing",
-					"ignoreFailures": true
-				},
-				{
-					"description": "Set Disassembly Flavor to Intel",
-					"text": "-gdb-set disassembly-flavor intel",
-					"ignoreFailures": true
-				}
-			],
-			"preLaunchTask": "make_build"
-		},
+		}
 	]
 }
