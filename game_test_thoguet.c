@@ -17,7 +17,11 @@
 #define USABLE_SQUARE 2
 
 /* ********** DUMMY ********** */
-bool test_dummy(void) {
+bool test_dummy(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
 	return EXIT_SUCCESS;
 }
 
@@ -27,7 +31,11 @@ bool test_dummy(void) {
  *
  * @return EXIT_SUCCESS if every game has been created well
  */
-bool test_game_new_empty_ext(void) {
+bool test_game_new_empty_ext(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
 	for (uint height = 1; height <= SIZE_LIMIT_GAME; height++) {
 		for (uint width = 1; width <= SIZE_LIMIT_GAME; width++) {
 			for (int wrap = 0; wrap < 2; wrap++) {
@@ -47,7 +55,11 @@ bool test_game_new_empty_ext(void) {
  *
  * @return EXIT_SUCCESS if every game has been created well and well filled
  */
-bool test_game_new_ext(void) {
+bool test_game_new_ext(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
 	square list[] = LIST_OF_SQUARE;
 	for (uint height = 1; height <= SIZE_LIMIT_GAME; height++) {
 		for (uint width = 1; width <= SIZE_LIMIT_GAME; width++) {
@@ -81,7 +93,11 @@ bool test_game_new_ext(void) {
  *
  * @return EXIT_SUCCESS if there is no errors
  */
-bool test_game_is_over(void) {
+bool test_game_is_over(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
 	game g = game_default_solution();
 	game_update_flags(g);
 	assert(game_is_over(g));
@@ -104,7 +120,11 @@ bool test_game_is_over(void) {
  *
  * @return EXIT_SUCCESS if there is no error
  */
-bool test_game_restart(void) {
+bool test_game_restart(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
 	game game_def = game_default();
 	game game_def_solution = game_default_solution();
 	game_set_square(game_def, 1, 5, S_BLACK4);
@@ -140,7 +160,11 @@ bool test_game_restart(void) {
  *
  * @return EXIT_SUCCESS if there is no error
  */
-bool test_game_new(void) {
+bool test_game_new(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
 	square tab[DEFAULT_SIZE * DEFAULT_SIZE];
 	square list[] = LIST_OF_SQUARE;
 	for (uint index_list = 0; index_list < sizeof(list) / sizeof(list[0]); index_list++) {
@@ -168,7 +192,11 @@ bool test_game_new(void) {
  *
  * @return EXIT_SUCCESS if there is no error
  */
-bool test_game_print(void) {
+bool test_game_print(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
 	for (int height = 1; height <= SIZE_LIMIT_GAME; height++) {
 		for (int width = 1; width <= SIZE_LIMIT_GAME; width++) {
 			square tab[width * height];
@@ -195,7 +223,11 @@ bool test_game_print(void) {
  *
  * @return EXIT_SUCCESS if there is no error
  */
-bool test_game_get_square(void) {
+bool test_game_get_square(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
 	for (int height = 1; height <= SIZE_LIMIT_GAME; height++) {
 		for (int width = 1; width <= SIZE_LIMIT_GAME; width++) {
 			square tab[width * height];
@@ -221,7 +253,11 @@ bool test_game_get_square(void) {
  *
  * @return EXIT_SUCCESS if there is no error
  */
-bool test_game_default(void) {
+bool test_game_default(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
 	game game_def = game_default();
 	assert(game_def);
 	// clang-format off
@@ -250,7 +286,11 @@ bool test_game_default(void) {
  *
  * @return EXIT_SUCCESS if there is no error
  */
-bool test_game_default_solution(void) {
+bool test_game_default_solution(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
 	game game_def_solution = game_default_solution();
 	game game_def = game_default();
 	assert(game_def_solution);
@@ -328,7 +368,11 @@ On the 2x2, 3x3 and 5x3 tests, we play these move to win and we test if the grid
                                     ---
                                    (5x3)
 */
-bool test_game_update_flags(void) {
+bool test_game_update_flags(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
 	// with wrapping
 	game g2x2w = game_new_ext(2, 2, ext_2x2w_squares, true);
 	game_play_move(g2x2w, 0, 1, S_LIGHTBULB);
@@ -409,7 +453,11 @@ bool test_game_update_flags(void) {
  *
  * @return EXIT_SUCCESS if there is no error
  */
-bool test_game_play_move(void) {
+bool test_game_play_move(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
 	game game_play = game_new_empty();
 	game game_set = game_new_empty();
 	square list[] = LIST_OF_SQUARE;
@@ -436,7 +484,11 @@ bool test_game_play_move(void) {
  *
  * @return EXIT_SUCCESS if there is no error
  */
-bool test_game_check_move(void) {
+bool test_game_check_move(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
 	game g = game_new_empty();
 	// put usable square at the start of the list
 	square list[] = LIST_OF_SQUARE;
@@ -463,7 +515,11 @@ bool test_game_check_move(void) {
 }
 
 /* ***** game_save ***** */
-bool test_game_save(void) {
+bool test_game_save(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
 	game g4x4w = game_new_ext(4, 4, ext_4x4_squares, true);
 	game_save(g4x4w, "g4x4w.txt");
 	game g4x4w_from_file = game_load("g4x4w.txt");
@@ -538,43 +594,38 @@ int usage(int argc, char* argv[]) {
 /* ********** MAIN ********** */
 
 int main(int argc, char* argv[]) {
-	if (argc == 1) {
+	// function type
+	typedef bool (*func_t)(bool, char**);
+	// array of all tests functions
+	func_t tab_fct[] = {
+	    &test_dummy,           &test_game_print,   &test_game_default,      &test_game_default_solution, &test_game_new,        &test_game_restart,
+	    &test_game_get_square, &test_game_is_over, &test_game_update_flags, &test_game_play_move,        &test_game_check_move, &test_game_new_empty_ext,
+	    &test_game_new_ext,    &test_game_save};
+	// array of the tests functions's name
+	char* tab_fct_name[sizeof(tab_fct) / sizeof(tab_fct[0])];
+	// for each function on tab_fct call the function to fill tab_fct_name
+	for (uint index_tab_fct = 0; index_tab_fct < sizeof(tab_fct) / sizeof(tab_fct[0]); index_tab_fct++) {
+		(*(tab_fct[index_tab_fct]))(true, &tab_fct_name[index_tab_fct]);
+		tab_fct_name[index_tab_fct] = tab_fct_name[index_tab_fct] + 5;  // remove the test_ from the functions's name
+	}
+	if (argc != 2) {
 		usage(argc, argv);
 	}
 	fprintf(stderr, "=> Start test \"%s\"\n", argv[1]);
-	bool ok = true;
-	if (strcmp("dummy", argv[1]) == 0)
-		ok = test_dummy();
-	else if (strcmp("game_print", argv[1]) == 0)
-		ok = test_game_print();
-	else if (strcmp("game_default", argv[1]) == 0)
-		ok = test_game_default();
-	else if (strcmp("game_default_solution", argv[1]) == 0)
-		ok = test_game_default_solution();
-	else if (strcmp("game_new", argv[1]) == 0)
-		ok = test_game_new();
-	else if (strcmp("game_restart", argv[1]) == 0)
-		ok = test_game_restart();
-	else if (strcmp("game_get_square", argv[1]) == 0)
-		ok = test_game_get_square();
-	else if (strcmp("game_is_over", argv[1]) == 0)
-		ok = test_game_is_over();
-	else if (strcmp("game_update_flags", argv[1]) == 0)
-		ok = test_game_update_flags();
-	else if (strcmp("game_play_move", argv[1]) == 0)
-		ok = test_game_play_move();
-	else if (strcmp("game_check_move", argv[1]) == 0)
-		ok = test_game_check_move();
-	else if (strcmp("game_new_empty_ext", argv[1]) == 0)
-		ok = test_game_new_empty_ext();
-	else if (strcmp("game_new_ext", argv[1]) == 0)
-		ok = test_game_new_ext();
-	else {
+	bool test_success = true;
+	bool test_found = false;
+	for (uint index_tab_fct = 0; index_tab_fct < sizeof(tab_fct) / sizeof(tab_fct[0]); index_tab_fct++) {
+		if (strcmp(argv[1], tab_fct_name[index_tab_fct]) == 0) {
+			test_success = tab_fct[index_tab_fct](false, NULL);
+			test_found = true;
+		}
+	}
+	if (!test_found) {
 		fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
 		exit(EXIT_FAILURE);
 	}
 	// print test result
-	if (!ok) {
+	if (!test_success) {
 		fprintf(stderr, "Test \"%s\" finished: SUCCESS\n", argv[1]);
 		return EXIT_SUCCESS;
 	} else {
