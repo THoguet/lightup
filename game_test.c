@@ -12,14 +12,20 @@
 
 #define TAB_SQUARE \
 	{ S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU }
+
 #define SIZE_LIMIT_GAME 10
+
 // put usable square at the start of the list and S_BLANK at the first element
 #define LIST_OF_SQUARE \
 	{ S_BLANK, S_LIGHTBULB, S_MARK, S_BLACK0, S_BLACK1, S_BLACK2, S_BLACK3, S_BLACK4, S_BLACKU, F_LIGHTED, F_ERROR }
 
 #define USABLE_SQUARE 2
+
+#define NB_CHAR_SAVED_FILE_FIRST_LINE 6  // <nb_rows>' '<nb_cols>' '<wrapping>'\n'
+
 /* ********** game_get_black_number ********** */
 bool test_game_get_black_number(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -49,6 +55,7 @@ bool test_game_get_black_number(bool whoami, char** name) {
 
 /* ********** game_is_black ********** */
 bool test_game_is_black(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -81,6 +88,7 @@ bool test_game_is_black(bool whoami, char** name) {
 
 /* ********** game_is_lightbulb ********** */
 bool test_game_is_lightbulb(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -110,6 +118,7 @@ bool test_game_is_lightbulb(bool whoami, char** name) {
 
 /* ********** game_is_blank ********** */
 bool test_game_is_blank(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -139,6 +148,7 @@ bool test_game_is_blank(bool whoami, char** name) {
 
 /* ********** game_delete ********** */
 bool test_game_delete(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -152,6 +162,7 @@ bool test_game_delete(bool whoami, char** name) {
 /* ********** game_equal ********** */
 
 bool test_equal_ext(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -188,6 +199,7 @@ bool test_equal_ext(bool whoami, char** name) {
 }
 
 bool test_equal(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -217,6 +229,7 @@ bool test_equal(bool whoami, char** name) {
 
 /* ********** game_new_empty ********** */
 bool test_game_new_empty(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -237,6 +250,7 @@ bool test_game_new_empty(bool whoami, char** name) {
 
 /* ********** game_copy ********** */
 bool test_game_copy(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
@@ -270,6 +284,7 @@ bool test_game_copy(bool whoami, char** name) {
 
 /* ********** game_undo ********** */
 bool test_game_undo(bool whoami, char** name) {
+	// if whoami is true return in name (second parms) the name of the function
 	if (whoami) {
 		*name = (char*)__func__;
 		return false;
