@@ -1,12 +1,40 @@
 {
-	"files.associations": {
-		"game_ext.h": "c",
-		"game_aux.h": "c",
-		"game.h": "c",
-		"game_private.h": "c",
-		"history.h": "c",
-		"game_tools.h": "c"
-	},
-	"editor.formatOnSave": true,
-	"C_Cpp.clang_format_path": "/usr/bin/clang-format"
+  "files.associations": {
+    "game_ext.h": "c",
+    "game_aux.h": "c",
+    "game.h": "c",
+    "game_private.h": "c",
+    "history.h": "c",
+    "game_tools.h": "c"
+  },
+  "editor.formatOnSave": true,
+  "C_Cpp.clang_format_path": "/usr/bin/clang-format",
+  "C_Cpp_Runner.cCompilerPath": "/usr/bin/gcc",
+  "C_Cpp_Runner.cppCompilerPath": "/usr/bin/g++",
+  "C_Cpp_Runner.debuggerPath": "/usr/bin/gdb",
+  "C_Cpp_Runner.cStandard": "",
+  "C_Cpp_Runner.cppStandard": "",
+  "C_Cpp_Runner.msvcBatchPath": "",
+  "C_Cpp_Runner.warnings": [
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic"
+  ],
+  "C_Cpp_Runner.enableWarnings": true,
+  "C_Cpp_Runner.warningsAsError": true,
+  "C_Cpp_Runner.compilerArgs": [],
+  "C_Cpp_Runner.linkerArgs": [],
+  "C_Cpp_Runner.includePaths": [],
+  "C_Cpp_Runner.includeSearch": [
+    "*",
+    "**/*"
+  ],
+  "C_Cpp_Runner.excludeSearch": [
+    "**/build",
+    "**/build/**",
+    "**/.*",
+    "**/.*/**",
+    "**/.vscode",
+    "**/.vscode/**"
+  ]
 }
