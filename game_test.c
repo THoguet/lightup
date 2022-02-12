@@ -1113,7 +1113,33 @@ bool test_game_save(bool whoami, char** name) {
 	fclose(file_gother);
 	return true;
 }
-
+bool test_game_load(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	// creation of a default game
+	game gdefault = game_default();
+	// save the default game in a file txt
+	game_save(gdefault, "gdefault.txt");
+	// load the game txt saved in a new game
+	game gdefault2 = game_load("gdefault.txt");
+	game_print(gdefault2);
+	square s1, s2;
+	for (uint i = 0; i < 7/*game_nb_cols(gdefault)*/; i++) {
+		for (uint j = 0; j < 7/*game_nb_rows(gdefault)*/; j++) {
+			// stock state of the square in s1
+			s1 = game_get_square(gdefault, i, j);
+			// stock state of the square in s2
+			s2 = game_get_square(gdefault2, i, j);
+			// check if the 2 states are the same
+			if (s1 != s2)
+				return false;
+		}
+	}
+	
+	return true;
+}
 /* ********** USAGE ********** */
 
 int usage(char* argv[]) {
@@ -1159,7 +1185,8 @@ int main(int argc, char* argv[]) {
 	                    &test_game_save,
 	                    &test_game_set_square,
 	                    &test_game_undo,
-	                    &test_game_update_flags};
+	                    &test_game_update_flags,
+	                    &test_game_load};
 	// array of the tests functions's name
 	char* tab_fct_name[sizeof(tab_fct) / sizeof(tab_fct[0])];
 	// get each function's name from tab_fct by calling the function with its first parm set to true and the second one with a pointer on tab_fct_name to fill

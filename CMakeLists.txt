@@ -14,11 +14,13 @@ set(CMAKE_C_FLAGS "-std=c99 -g -Wall -Wextra -Wpedantic -Werror")
 #ses sources
 add_executable(game_text game_text.c)
 add_executable(game_test game_test.c)
+
 #add_executable(history_test history_test.c)
 
 #les dépendances sont calculées automatiquement
 target_link_libraries(game_text game)
 target_link_libraries(game_test game)
+
 #target_link_libraries(history_test game)
 
 #Libraries
@@ -67,7 +69,7 @@ add_test(test_thoguet_game_print_v2 ./game_test game_print)
 # V3
 
 add_test(test_thoguet_game_save_v3 ./game_test game_save)
-
+add_test(test_mfatih_game_load_v3 ./game_test game_load)
 #Tests HISTORY
 # add_test(test_history_history_alloc ./history_test history_alloc)
 # add_test(test_history_create_empty ./history_test history_create_empty)
