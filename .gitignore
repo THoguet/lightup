@@ -1,3 +1,6 @@
+build/*
 build/
 .vscode/
+.vscode/*
 *.txt
+!CMakeLists.txt
