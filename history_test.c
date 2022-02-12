@@ -177,14 +177,14 @@ bool test_history_copy(void) {
 	return true;
 }
 
-int usage(int argc, char* argv[]) {
+int usage(char* argv[]) {
 	fprintf(stderr, "Usage: %s <testname> [<...>]\n", argv[0]);
 	exit(EXIT_FAILURE);
 }
 
 int main(int argc, char* argv[]) {
 	if (argc == 1) {
-		usage(argc, argv);
+		usage(argv);
 	}
 	fprintf(stderr, "=> Start test \"%s\"\n", argv[1]);
 	bool ok = true;
