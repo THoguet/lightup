@@ -11,7 +11,7 @@
 game game_load(char* filename) {
 	checkPointer((void*)filename);
 	// ouvrons le fichier
-	FILE* f = fopen(filename, "r");
+	FILE* f = fopen("filename.txt", "r");
 	if (f == NULL) {
 		fprintf(stderr, "Problems with file %s.\n", filename);
 		exit(EXIT_FAILURE);
