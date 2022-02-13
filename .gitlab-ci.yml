@@ -28,6 +28,7 @@ test-v1-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
     - mkdir -p build
+    - cd build
     - echo "building project"
     - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
     - make VERBOSE=ON -j 18 | tee ./build.log
@@ -47,6 +48,7 @@ test-v2-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
     - mkdir -p build
+    - cd build
     - echo "building project"
     - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
     - make VERBOSE=ON -j 18 | tee ./build.log
@@ -67,8 +69,8 @@ coverage-job:
       artifacts: false
   script:
     - mkdir -p build
-    - echo "building project"
     - cd build
+    - echo "building project"
     - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
     - make VERBOSE=ON -j 18
     - ctest -R v1
