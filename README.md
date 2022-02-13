@@ -1,4 +1,5 @@
 # README
+[![Build](https://gitlab.emi.u-bordeaux.fr/pt2/teams-s4/tm07/lightup-07c/badges/main/pipeline.svg?job=build-job&key_text=Build)](https://gitlab.emi.u-bordeaux.fr/pt2/teams-s4/tm07/lightup-07c/-/commits/main)
 [![Tests V1](https://gitlab.emi.u-bordeaux.fr/pt2/teams-s4/tm07/lightup-07c/badges/main/pipeline.svg?job=test-v1-job&key_text=Tests+V1)](https://gitlab.emi.u-bordeaux.fr/pt2/teams-s4/tm07/lightup-07c/-/commits/main)
 [![Tests V2](https://gitlab.emi.u-bordeaux.fr/pt2/teams-s4/tm07/lightup-07c/badges/main/pipeline.svg?job=test-v1-job&key_text=Tests+V2)](https://gitlab.emi.u-bordeaux.fr/pt2/teams-s4/tm07/lightup-07c/-/commits/main)
 [![Coverage report](https://gitlab.emi.u-bordeaux.fr/pt2/teams-s4/tm07/lightup-07c/badges/main/coverage.svg?min_good=90&min_acceptable=80&min_medium=70)](https://gitlab.emi.u-bordeaux.fr/pt2/teams-s4/tm07/lightup-07c/-/commits/main)
