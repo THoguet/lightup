@@ -53,7 +53,6 @@ game game_load(char* filename) {
 		}
 	}
 	fclose(f);
-	game_print(g1);
 	return g1;
 }
 

@@ -4,6 +4,7 @@
 #include "game.h"
 #include "game_aux.h"
 #include "game_ext.h"
+#include "game_tools.h"
 
 #define NBCHARERR 4
 #define CHAR0ASCII 48
@@ -75,6 +76,7 @@ void printhelp(void) {
 	printf("l <i> <j> : Place une ampoule (*) à la position (<i>,<j>).\n");
 	printf("m <i> <j> : Place une marque (-) à la position (<i>,<j>).\n");
 	printf("b <i> <j> : Place une case vide ( ) à la position (<i>,<j>).\n");
+	printf("w <n> : Sauvegardez votre partie au nom <n>.\n");
 }
 
 void usage(char* argv[]) {
@@ -84,14 +86,19 @@ void usage(char* argv[]) {
 
 int main(int argc, char* argv[]) {
 	game g;
-	if (argc == 1)
+	if (argc == 1){
 		// Create new game
 		g = game_default();
-	else
+	}else if (argc == 2){
+		char* gameFile = argv[1];
+		g = game_load(gameFile);
+	}else{
 		usage(argv);
+	}
 	// init string for errors
 	char stringError[game_nb_rows(g) * game_nb_cols(g) * NBCHARERR];
 	char c;
+	char* fileSave = (char*)malloc(sizeof(char)*20);
 	// print game
 	game_print(g);
 	// test if game is over
@@ -136,6 +143,11 @@ int main(int argc, char* argv[]) {
 					break;
 				case 'b':
 					checkPlayMove(g, S_BLANK);
+					break;
+				case 'w':
+					scanf(" %s", fileSave);
+					game_save(g, fileSave);
+					printf("Partie sauvegardée au nom %s\n", fileSave);
 					break;
 				default:
 					printf("Commande inconnue.\n");
