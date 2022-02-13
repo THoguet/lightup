@@ -59,10 +59,7 @@ coverage-job:
       artifacts: true
   script:
     - cd build
-    - pwd
-    - ls
-    - echo ${CI_PROJECT_DIR}
-    - cmake --build ${CI_PROJECT_DIR}/build --config Debug --target ExperimentalCoverage -j 18
+    - make ExperimentalCoverage
     - gcovr --xml-pretty --exclude-unreachable-branches --print-summary -o coverage.xml --root ${CI_PROJECT_DIR}
   coverage: /^\s*lines:\s*\d+.\d+\%/
   artifacts:
