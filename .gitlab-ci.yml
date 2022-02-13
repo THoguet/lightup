@@ -38,7 +38,7 @@ test-v1-job:   # This job runs in the test stage.
 
 test-v2-job:   # This job runs in the test stage.
   needs:
-    - job: build-job
+    - job: test-v1-job
       artifacts: true
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
@@ -55,7 +55,7 @@ test-v2-job:   # This job runs in the test stage.
 coverage-job:
   stage: coverage
   needs:
-    - job: build-job
+    - job: test-v2-job
       artifacts: true
   script:
     - cd build
