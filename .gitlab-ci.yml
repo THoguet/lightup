@@ -12,7 +12,7 @@ build-job:       # This job runs in the build stage, which runs first.
   stage: build
   script:
     - mkdir -p build
-    - cmake --no-warn-unused-cli -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc -H${CI_PROJECT_DIR} -B${CI_PROJECT_DIR}/build -G "Unix Makefiles"
+    - cmake --no-warn-unused-cli -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc -H${CI_PROJECT_DIR} -B${CI_PROJECT_DIR}/build -G "Unix Makefiles"
     - cmake --build ${CI_PROJECT_DIR}/build --config Debug --target all -j 18 | tee ./build.log
   artifacts:
     expire_in: 10 minutes
@@ -37,7 +37,7 @@ test-v1-job:   # This job runs in the test stage.
 
 test-v2-job:   # This job runs in the test stage.
   dependencies:
-    - build-job
+    - test-v1-job
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
     - cd build
@@ -53,7 +53,6 @@ test-v2-job:   # This job runs in the test stage.
 coverage-job:
   stage: coverage
   dependencies:
-    - test-v1-job
     - test-v2-job
   script:
     - cd build
