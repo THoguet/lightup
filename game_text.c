@@ -8,6 +8,9 @@
 
 #define NBCHARERR 4
 #define CHAR0ASCII 48
+#define GAME_PRINT_PLUS_LINE(g)                                     \
+	printf("--------------------------------------------------\n"); \
+	game_print(g);
 
 /**
  * @brief Edit the stringError with all errors of g
@@ -60,7 +63,7 @@ void checkPlayMove(game g, square s) {
 			game_play_move(g, i, j, s);
 		else
 			printf("Coordonnées invalide.\n");
-		game_print(g);
+		GAME_PRINT_PLUS_LINE(g);
 		return;
 	}
 	printf("Commande inconnue.\n");
@@ -80,33 +83,34 @@ void printhelp(void) {
 }
 
 void usage(char* argv[]) {
-	printf("Usage : %s => Joue la partie par défaut\n", argv[0]);
+	printf("Usage : %s            => Joue la partie par défaut\n", argv[0]);
+	printf("        %s <filename> => Charge la partie sur le fichier <filename>\n", argv[0]);
 	exit(EXIT_FAILURE);
 }
 
 int main(int argc, char* argv[]) {
 	game g;
-	if (argc == 1){
+	if (argc == 1) {
 		// Create new game
 		g = game_default();
-	}else if (argc == 2){
+	} else if (argc == 2) {
 		char* gameFile = argv[1];
 		g = game_load(gameFile);
-	}else{
+	} else {
 		usage(argv);
 	}
 	// init string for errors
 	char stringError[game_nb_rows(g) * game_nb_cols(g) * NBCHARERR];
 	char c;
-	char* fileSave = (char*)malloc(sizeof(char)*20);
+	char* fileSave = (char*)malloc(sizeof(char) * 20);
 	// print game
-	game_print(g);
+	GAME_PRINT_PLUS_LINE(g);
 	// test if game is over
 	while (!game_is_over(g)) {
 		// print errors
 		if (checkerrors(g, stringError))
-			printf("Il y a un problème case(s): %s\n", stringError);
-		printf("Entrez une commande (h pour afficher l'aide): ");
+			printf("\nIl y a un problème case(s): %s\n", stringError);
+		printf("\nEntrez une commande (h pour afficher l'aide): ");
 		// scan the first command without args
 		if (scanf(" %c", &c)) {
 			switch (c) {
@@ -115,25 +119,20 @@ int main(int argc, char* argv[]) {
 					break;
 				case 'r':
 					game_restart(g);
-					printf("Partie réinitialisé avec succes !\n");
-					game_print(g);
+					printf("\nPartie réinitialisé avec succes !\n");
+					GAME_PRINT_PLUS_LINE(g);
 					break;
 				case 'q':
-					printf("Solution: \n");
-					game solution = game_default_solution();
-					game_print(solution);
-					game_delete(solution);
 					game_delete(g);
-					printf("shame\n");
+					printf("shame on you :o\n");
 					return EXIT_SUCCESS;
-					break;
 				case 'z':
 					game_undo(g);
-					game_print(g);
+					GAME_PRINT_PLUS_LINE(g);
 					break;
 				case 'y':
 					game_redo(g);
-					game_print(g);
+					GAME_PRINT_PLUS_LINE(g);
 					break;
 				case 'l':
 					checkPlayMove(g, S_LIGHTBULB);
@@ -148,6 +147,7 @@ int main(int argc, char* argv[]) {
 					scanf(" %s", fileSave);
 					game_save(g, fileSave);
 					printf("Partie sauvegardée au nom %s\n", fileSave);
+					GAME_PRINT_PLUS_LINE(g);
 					break;
 				default:
 					printf("Commande inconnue.\n");
