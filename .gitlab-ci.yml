@@ -58,14 +58,14 @@ coverage-job:
     - test-v2-job
   script:
     - cd build
-    - make ExperimentalCoverage | tee ../coverage.log
+    - make test
+    - gcovr --xml-pretty --exclude-unreachable-branches --print-summary -o coverage.xml --root ${CI_PROJECT_DIR}
+  coverage: /^\s*lines:\s*\d+.\d+\%/
   artifacts:
-    expire_in: 10 minutes
-    paths:
-      - build/
-      - coverage.log
-  only:
-    - coverage
+    name: ${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}
+    expire_in: 2 days
+    reports:
+      cobertura: build/coverage.xml
 
 ### cleanup project for security issues
 cleanup:
