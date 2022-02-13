@@ -22,8 +22,9 @@ build-job:       # This job runs in the build stage, which runs first.
       - build.log
 
 test-v1-job:   # This job runs in the test stage.
-  dependencies:
-    - build-job
+  needs:
+    - job: build-job
+      artifacts: true
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
     - cd build
@@ -36,8 +37,9 @@ test-v1-job:   # This job runs in the test stage.
       - test-v2-job.log
 
 test-v2-job:   # This job runs in the test stage.
-  dependencies:
-    - test-v1-job
+  needs:
+    - job: test-v1-job
+      artifacts: true
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
     - cd build
@@ -52,8 +54,9 @@ test-v2-job:   # This job runs in the test stage.
 ### coverage
 coverage-job:
   stage: coverage
-  dependencies:
-    - test-v2-job
+  needs:
+    - job: test-v2-job
+      artifacts: true
   script:
     - cd build
     - pwd
