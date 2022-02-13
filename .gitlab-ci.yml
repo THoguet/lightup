@@ -23,7 +23,7 @@ build-job:       # This job runs in the build stage, which runs first.
 
 test-v1-job:   # This job runs in the test stage.
   needs:
-    - job: build-job
+    - job: test-v2-job
       artifacts: true
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
@@ -38,7 +38,7 @@ test-v1-job:   # This job runs in the test stage.
 
 test-v2-job:   # This job runs in the test stage.
   needs:
-    - job: test-v1-job
+    - job: build-job
       artifacts: true
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
