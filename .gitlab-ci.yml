@@ -12,6 +12,7 @@ build-job:       # This job runs in the build stage, which runs first.
   stage: build
   script:
     - mkdir -p build
+    - cd build
     - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
     - make VERBOSE=ON -j 18 | tee ./build.log
   artifacts:
