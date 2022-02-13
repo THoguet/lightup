@@ -67,7 +67,7 @@ coverage-job:
   script:
     - mkdir -p build
     - echo "building project"
-    - cmake --no-warn-unused-cli -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -H${CI_PROJECT_DIR} -B${CI_PROJECT_DIR}/build -G "Unix Makefiles"
+    - cmake --no-warn-unused-cli -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc -H${CI_PROJECT_DIR} -B${CI_PROJECT_DIR}/build -G "Unix Makefiles"
     - cmake --build ${CI_PROJECT_DIR}/build --config Debug --target all -j 18 | tee ./build.log
     - cd build
     - ctest -R v1
