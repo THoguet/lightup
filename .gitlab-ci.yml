@@ -23,9 +23,13 @@ build-job:       # This job runs in the build stage, which runs first.
 test-v1-job:   # This job runs in the test stage.
   needs:
     - job: build-job
-      artifacts: true
+      artifacts: false
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
+    - mkdir -p build
+    - echo "building project"
+    - cmake --no-warn-unused-cli -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc -H${CI_PROJECT_DIR} -B${CI_PROJECT_DIR}/build -G "Unix Makefiles"
+    - cmake --build ${CI_PROJECT_DIR}/build --config Debug --target all -j 18 | tee ./build.log
     - cd build
     - echo "Running tests V1..."
     - ctest -R v1 | tee ../test-v1-job.log
@@ -41,6 +45,10 @@ test-v2-job:   # This job runs in the test stage.
       artifacts: true
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
+    - mkdir -p build
+    - echo "building project"
+    - cmake --no-warn-unused-cli -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc -H${CI_PROJECT_DIR} -B${CI_PROJECT_DIR}/build -G "Unix Makefiles"
+    - cmake --build ${CI_PROJECT_DIR}/build --config Debug --target all -j 18 | tee ./build.log
     - cd build
     - echo "Running tests V2..."
     - ctest -R v2 | tee ../test-v2-job.log
@@ -57,6 +65,10 @@ coverage-job:
     - job: test-v2-job
       artifacts: true
   script:
+    - mkdir -p build
+    - echo "building project"
+    - cmake --no-warn-unused-cli -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc -H${CI_PROJECT_DIR} -B${CI_PROJECT_DIR}/build -G "Unix Makefiles"
+    - cmake --build ${CI_PROJECT_DIR}/build --config Debug --target all -j 18 | tee ./build.log
     - cd build
     - ctest -R v1
     - ctest -R v2
