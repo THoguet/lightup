@@ -42,11 +42,15 @@ test-v1-job:   # This job runs in the test stage.
 
 test-v2-job:   # This job runs in the test stage.
   needs:
-    - job: test-v1-job
-      artifacts: true
+    - job: build-job
+      artifacts: false
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
+    - mkdir -p build
     - cd build
+    - echo "building project"
+    - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
+    - make VERBOSE=ON -j 18 | tee ./build.log
     - echo "Running tests V2..."
     - ctest -R v2 | tee ../test-v2-job.log
   artifacts:
@@ -59,10 +63,18 @@ test-v2-job:   # This job runs in the test stage.
 coverage-job:
   stage: coverage
   needs:
+    - job: test-v1-job
+      artifacts: false
     - job: test-v2-job
-      artifacts: true
+      artifacts: false
   script:
+    - mkdir -p build
     - cd build
+    - echo "building project"
+    - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
+    - make VERBOSE=ON -j 18
+    - ctest -R v1
+    - ctest -R v2
     - make ExperimentalCoverage
     - gcovr --xml-pretty --exclude-unreachable-branches --print-summary -o coverage.xml --root ${CI_PROJECT_DIR}
   coverage: /^\s*lines:\s*\d+.\d+\%/
