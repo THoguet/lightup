@@ -73,10 +73,10 @@ coverage-job:
     - echo "building project"
     - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
     - make VERBOSE=ON -j 18
-    - ctest -R v1
-    - ctest -R v2
+    - make test
     - make ExperimentalCoverage
     - gcovr --xml-pretty --exclude-unreachable-branches --print-summary -o coverage.xml --root ${CI_PROJECT_DIR}
+  allow_failure: true
   coverage: /^\s*lines:\s*\d+.\d+\%/
   artifacts:
     name: ${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}
