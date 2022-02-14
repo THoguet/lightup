@@ -1,34 +1,37 @@
 #version minimale de cmake nécessaire
 cmake_minimum_required(VERSION 2.6...3.13)
 
-enable_testing()
-
 #nom du projet
-project (game_text)
+project ("Lightup" C)
+
+# enable testing
+enable_testing()
 include(CTest)
 
 #positionne la variable
-set(CMAKE_C_FLAGS "-std=c99 -g -Wall -Wextra -Wpedantic -Werror")
+set(CMAKE_C_FLAGS "-std=c99 -Wall -pthread -Wextra -Wunused-parameter -Wpedantic -Werror")
+set(CMAKE_C_FLAGS_DEBUG "-g --coverage")    # use CMake option: -DCMAKE_BUILD_TYPE=DEBUG
+set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")   # use CMake option: -DCMAKE_BUILD_TYPE=RELEASE
 
-#définit le nom du programme ainsi que
-#ses sources
+############################# SRC #############################
+
+# game_text
 add_executable(game_text game_text.c)
-add_executable(game_test game_test.c)
-
-#add_executable(history_test history_test.c)
-
-#les dépendances sont calculées automatiquement
 target_link_libraries(game_text game)
+
+# game tests
+add_executable(game_test game_test.c)
 target_link_libraries(game_test game)
 
-#target_link_libraries(history_test game)
-
-#Libraries
+# libgame
 add_library (game game.c game_aux.c game_ext.c game_private.c history.c game_tools.c game_examples.c)
 
-# Tests
+# history tests
+#add_executable(history_test history_test.c)
+#target_link_libraries(history_test game)
 
-# V1
+
+############################# TEST V1 #############################
 
 add_test(test_thoguet_game_new_v1 ./game_test game_new)
 add_test(test_thoguet_game_default_v1 ./game_test game_default)
@@ -46,7 +49,8 @@ add_test(test_thperrier_game_is_blank_v1 ./game_test game_is_blank)
 add_test(test_thperrier_game_new_empty_v1 ./game_test game_new_empty)
 add_test(test_game_equal_v1 ./game_test equal)
 
-# V2
+
+############################# TEST V2 #############################
 
 add_test(test_thoguet_game_get_square_v2 ./game_test game_get_square)
 add_test(test_thoguet_game_restart_v2 ./game_test game_restart)
@@ -66,11 +70,15 @@ add_test(test_nnunes_game_nb_cols_v2 ./game_test game_nb_cols)
 add_test(test_nnunes_game_is_wrapping_v2 ./game_test game_is_wrapping)
 add_test(test_thoguet_game_print_v2 ./game_test game_print)
 
-# V3
+
+############################# TEST V3 #############################
 
 add_test(test_thoguet_game_save_v3 ./game_test game_save)
 add_test(test_mfatih_game_load_v3 ./game_test game_load)
-#Tests HISTORY
+
+
+############################# TEST HISTORY #############################
+
 # add_test(test_history_history_alloc ./history_test history_alloc)
 # add_test(test_history_create_empty ./history_test history_create_empty)
 # add_test(test_history_delete_entire_history ./history_test history_delete_entire_history)

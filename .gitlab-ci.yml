@@ -13,35 +13,44 @@ build-job:       # This job runs in the build stage, which runs first.
   script:
     - mkdir -p build
     - cd build
-    - cmake -DCMAKE_BUILD_TYPE=DEBUG ..
-    - make VERBOSE=ON -j 4 | tee ../build.log
+    - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
+    - make VERBOSE=ON -j 18 | tee ./build.log
   artifacts:
     expire_in: 10 minutes
-    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
       - build/
       - build.log
 
 test-v1-job:   # This job runs in the test stage.
-  dependencies:
-    - build-job
+  needs:
+    - job: build-job
+      artifacts: false
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
+    - mkdir -p build
     - cd build
+    - echo "building project"
+    - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
+    - make VERBOSE=ON -j 18 | tee ./build.log
     - echo "Running tests V1..."
     - ctest -R v1 | tee ../test-v1-job.log
   artifacts:
     expire_in: 10 minutes
     paths:
       - build/
-      - test-v2-job.log
+      - test-v1-job.log
 
 test-v2-job:   # This job runs in the test stage.
-  dependencies:
-    - build-job
+  needs:
+    - job: build-job
+      artifacts: false
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
+    - mkdir -p build
     - cd build
+    - echo "building project"
+    - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
+    - make VERBOSE=ON -j 18 | tee ./build.log
     - echo "Running tests V2..."
     - ctest -R v2 | tee ../test-v2-job.log
   artifacts:
@@ -53,19 +62,27 @@ test-v2-job:   # This job runs in the test stage.
 ### coverage
 coverage-job:
   stage: coverage
-  dependencies:
-    - test-v1-job
-    - test-v2-job
+  needs:
+    - job: test-v1-job
+      artifacts: false
+    - job: test-v2-job
+      artifacts: false
   script:
+    - mkdir -p build
     - cd build
-    - make ExperimentalCoverage | tee ../coverage.log
+    - echo "building project"
+    - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
+    - make VERBOSE=ON -j 18
+    - ctest -R v1
+    - ctest -R v2
+    - make ExperimentalCoverage
+    - gcovr --xml-pretty --exclude-unreachable-branches --print-summary -o coverage.xml --root ${CI_PROJECT_DIR}
+  coverage: /^\s*lines:\s*\d+.\d+\%/
   artifacts:
-    expire_in: 10 minutes
-    paths:
-      - build/
-      - coverage.log
-  only:
-    - coverage
+    name: ${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}
+    expire_in: 2 days
+    reports:
+      cobertura: build/coverage.xml
 
 ### cleanup project for security issues
 cleanup:
