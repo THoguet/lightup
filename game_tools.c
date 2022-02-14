@@ -27,6 +27,7 @@ game game_load(char* filename) {
 		for (uint j = 0; j < nb_cols; j++) {
 			if (feof(f)) {
 				fprintf(stderr, "end of file");
+				fclose(f);
 				exit(EXIT_FAILURE);
 			}
 			// obtenir les squares pour les jouer dans g1
