@@ -14,11 +14,10 @@ build-job:       # This job runs in the build stage, which runs first.
     - mkdir -p build
     - cd build
     - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
-    - make VERBOSE=ON -j 18 | tee ./build.log
+    - make VERBOSE=ON -j 18 | tee ../build.log
   artifacts:
     expire_in: 10 minutes
     paths:
-      - build/
       - build.log
 
 test-v1-job:   # This job runs in the test stage.
@@ -31,13 +30,12 @@ test-v1-job:   # This job runs in the test stage.
     - cd build
     - echo "building project"
     - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
-    - make VERBOSE=ON -j 18 | tee ./build.log
+    - make VERBOSE=ON -j 18
     - echo "Running tests V1..."
     - ctest -R v1 | tee ../test-v1-job.log
   artifacts:
     expire_in: 10 minutes
     paths:
-      - build/
       - test-v1-job.log
 
 test-v2-job:   # This job runs in the test stage.
@@ -50,33 +48,32 @@ test-v2-job:   # This job runs in the test stage.
     - cd build
     - echo "building project"
     - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
-    - make VERBOSE=ON -j 18 | tee ./build.log
+    - make VERBOSE=ON -j 18
     - echo "Running tests V2..."
     - ctest -R v2 | tee ../test-v2-job.log
   artifacts:
     expire_in: 10 minutes
     paths:
-      - build/
       - test-v2-job.log
 
 ### coverage
 coverage-job:
-  stage: coverage
+  tags:
+    - shell
   needs:
-    - job: test-v1-job
+    - job: build-job
       artifacts: false
-    - job: test-v2-job
-      artifacts: false
+  stage: coverage
   script:
     - mkdir -p build
     - cd build
     - echo "building project"
     - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
     - make VERBOSE=ON -j 18
-    - ctest -R v1
-    - ctest -R v2
+    - make test
     - make ExperimentalCoverage
     - gcovr --xml-pretty --exclude-unreachable-branches --print-summary -o coverage.xml --root ${CI_PROJECT_DIR}
+  allow_failure: true
   coverage: /^\s*lines:\s*\d+.\d+\%/
   artifacts:
     name: ${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}
