@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "game_aux.h"
 #include "game_examples.h"
 #include "game_ext.h"
