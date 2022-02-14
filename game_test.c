@@ -1118,26 +1118,37 @@ bool test_game_load(bool whoami, char** name) {
 		*name = (char*)__func__;
 		return false;
 	}
+	// test 1 with game default
+
 	// creation of a default game
 	game gdefault = game_default();
 	// save the default game in a file txt
 	game_save(gdefault, "gdefault.txt");
-	// load the game txt saved in a new game
+	// load the game txt saved and put it in a new game
 	game gdefault2 = game_load("gdefault.txt");
-	game_print(gdefault2);
-	square s1, s2;
-	for (uint i = 0; i < 7/*game_nb_cols(gdefault)*/; i++) {
-		for (uint j = 0; j < 7/*game_nb_rows(gdefault)*/; j++) {
-			// stock state of the square in s1
-			s1 = game_get_square(gdefault, i, j);
-			// stock state of the square in s2
-			s2 = game_get_square(gdefault2, i, j);
-			// check if the 2 states are the same
-			if (s1 != s2)
-				return false;
-		}
-	}
-	
+	// verif. if the 2 game are the sames
+	assert(game_equal(gdefault, gdefault2));
+	game_delete(gdefault2);
+	game_delete(gdefault);
+
+	// test 2 with default solution
+
+	game dsolution = game_default_solution();
+	game_save(dsolution, "dsolution.txt");
+	game dsolution2 = game_load("dsolution.txt");
+	game_update_flags(dsolution2);
+	assert(game_equal(dsolution, dsolution2));
+	game_delete(dsolution2);
+	game_delete(dsolution);
+
+	// test 3 with game g5x3w
+	game g5x3w = game_new_ext(5, 3, ext_5x3w_squares, true);
+	game_save(g5x3w, "g5x3w.txt");
+	game g5x3waux = game_load("g5x3w.txt");
+	assert(game_equal(g5x3w, g5x3waux));
+	game_delete(g5x3w);
+	game_delete(g5x3waux);
+
 	return true;
 }
 /* ********** USAGE ********** */
