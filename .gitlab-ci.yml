@@ -56,6 +56,43 @@ test-v2-job:   # This job runs in the test stage.
     paths:
       - test-v2-job.log
 
+make-test-job:
+  needs:
+    - job: build-job
+      artifacts: false
+  stage: test
+  script:
+    - mkdir -p build
+    - cd build
+    - echo "building project"
+    - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
+    - make VERBOSE=ON -j 18
+    - echo "Running tests ..."
+    - make test | tee ../make-test-job.log
+  allow_failure: true
+  artifacts:
+    expire_in: 10 minutes
+    paths:
+      - make-test-job.log
+
+mem-check-job:
+  needs:
+    - job: make-test-job
+      artifacts: false
+  stage: test
+  script:
+    - mkdir -p build
+    - cd build
+    - echo "building project"
+    - cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
+    - make VERBOSE=ON -j 18
+    - echo "Running Memory Checks..."
+    - make ExperimentalMemCheck | tee ../mem-check-job.log
+  artifacts:
+    expire_in: 10 minutes
+    paths:
+      - mem-check-job.log
+
 ### coverage
 coverage-job:
   tags:
