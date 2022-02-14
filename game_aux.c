@@ -1,6 +1,4 @@
-#include <stdbool.h>
 #include <stdio.h>
-#include "game.h"
 #include "game_ext.h"
 #include "game_private.h"
 

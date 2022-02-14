@@ -6,14 +6,6 @@
 
 #include "game_examples.h"
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "game.h"
-#include "game_ext.h"
-
 /* ************************************************************************** */
 /*                                  MISC                                      */
 /* ************************************************************************** */

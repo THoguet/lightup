@@ -1,4 +1,3 @@
-#include "game.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "game_ext.h"
