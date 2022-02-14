@@ -63,6 +63,9 @@ test-v2-job:   # This job runs in the test stage.
 coverage-job:
   tags:
     - shell
+  needs:
+    - job: build-job
+      artifacts: false
   stage: coverage
   script:
     - mkdir -p build
