@@ -2,7 +2,7 @@
  * @file game_tools.h
  * @brief Game Tools.
  * @details See @ref index for further details.
- * @copyright University of Bordeaux. All rights reserved, 2020.
+ * @copyright University of Bordeaux. All rights reserved, 2021.
  *
  **/
 
@@ -19,9 +19,9 @@
  */
 
 /**
- * @brief Creates a game by loading its description in a text file.
+ * @brief Creates a game by loading its description from a text file.
  * @details See the file format description in @ref index.
- * @param filename
+ * @param filename input file
  * @return the loaded game
  **/
 game game_load(char* filename);
@@ -33,6 +33,22 @@ game game_load(char* filename);
  * @param filename output file
  **/
 void game_save(cgame g, char* filename);
+
+/**
+ * @brief Computes the solution of a given game
+ * @param g the game to solve
+ * @details The game @p g is updated with the first solution found. If there are
+ * no solution for this game, @p g must be unchanged.
+ * @return true if a solution is found, false otherwise
+ */
+bool game_solve(game g);
+
+/**
+ * @brief Computes the total number of solutions of a given game.
+ * @param g the game
+ * @return the number of solutions
+ */
+uint game_nb_solutions(game g);
 
 /**
  * @}
