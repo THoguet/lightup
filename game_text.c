@@ -1,7 +1,4 @@
-#include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include "game.h"
 #include "game_aux.h"
 #include "game_ext.h"
 #include "game_tools.h"
@@ -96,6 +93,7 @@ int main(int argc, char* argv[]) {
 	} else if (argc == 2) {
 		char* gameFile = argv[1];
 		g = game_load(gameFile);
+		game_update_flags(g);
 	} else {
 		usage(argv);
 	}

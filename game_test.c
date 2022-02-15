@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "game_aux.h"
 #include "game_examples.h"
 #include "game_ext.h"
@@ -1085,6 +1084,22 @@ bool test_game_save(bool whoami, char** name) {
 	}
 	game_delete(gdefault);
 	fclose(f_gdefault);
+	// test if flags aren't saved by game_save
+	game gdefault_sol = game_default();
+	game_save(gdefault_sol, "gdefault_sol.txt");
+	// try to open the created save file
+	FILE* f_gdefault_sol = fopen("gdefault_sol.txt", "r");
+	assert(f_gdefault_sol);
+	// explore default_str and test if each char of the saved file == char of default_str
+	for (uint index_default_str = 0;
+	     index_default_str < game_nb_cols(gdefault_sol) * game_nb_rows(gdefault_sol) + NB_CHAR_SAVED_FILE_FIRST_LINE + game_nb_rows(gdefault_sol);
+	     index_default_str++) {
+		int char_to_test = fgetc(f_gdefault_sol);
+		assert(char_to_test != -1);
+		assert((char)char_to_test == default_str[index_default_str]);
+	}
+	game_delete(gdefault_sol);
+	fclose(f_gdefault_sol);
 	// do the same as gdefault but with ext_5x3w_squares
 	game g5x3w = game_new_ext(5, 3, ext_5x3w_squares, true);
 	game_save(g5x3w, "g5x3w.txt");
@@ -1154,7 +1169,7 @@ bool test_game_load(bool whoami, char** name) {
 /* ********** USAGE ********** */
 
 int usage(char* argv[]) {
-	fprintf(stderr, "Usage: %s <testname> [<...>]\n", argv[0]);
+	fprintf(stderr, "Usage: %s <testname>\n", argv[0]);
 	exit(EXIT_FAILURE);
 }
 

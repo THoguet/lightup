@@ -1,9 +1,5 @@
 #include "game_tools.h"
-#include <assert.h>
-#include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include "game.h"
 #include "game_aux.h"
 #include "game_ext.h"
 #include "game_private.h"
@@ -31,6 +27,7 @@ game game_load(char* filename) {
 		for (uint j = 0; j < nb_cols; j++) {
 			if (feof(f)) {
 				fprintf(stderr, "end of file");
+				fclose(f);
 				exit(EXIT_FAILURE);
 			}
 			// obtenir les squares pour les jouer dans g1
