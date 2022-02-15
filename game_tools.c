@@ -55,6 +55,7 @@ game game_load(char* filename) {
 		}
 	}
 	fclose(f);
+	game_update_flags(g1);
 	return g1;
 }
 

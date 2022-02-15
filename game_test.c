@@ -1151,7 +1151,7 @@ bool test_game_load(bool whoami, char** name) {
 	game dsolution = game_default_solution();
 	game_save(dsolution, "dsolution.txt");
 	game dsolution2 = game_load("dsolution.txt");
-	game_update_flags(dsolution2);
+	
 	assert(game_equal(dsolution, dsolution2));
 	game_delete(dsolution2);
 	game_delete(dsolution);
