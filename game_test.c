@@ -1133,13 +1133,13 @@ bool test_game_load(bool whoami, char** name) {
 
 	// test 2 with default solution
 
-	/*game dsolution = game_default_solution();
+	game dsolution = game_default_solution();
 	game_save(dsolution, "dsolution.txt");
 	game dsolution2 = game_load("dsolution.txt");
 	game_update_flags(dsolution2);
 	assert(game_equal(dsolution, dsolution2));
 	game_delete(dsolution2);
-	game_delete(dsolution);*/
+	game_delete(dsolution);
 
 	// test 3 with game g5x3w
 	game g5x3w = game_new_ext(5, 3, ext_5x3w_squares, true);
