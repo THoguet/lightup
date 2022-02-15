@@ -93,7 +93,6 @@ int main(int argc, char* argv[]) {
 	} else if (argc == 2) {
 		char* gameFile = argv[1];
 		g = game_load(gameFile);
-		game_update_flags(g);
 	} else {
 		usage(argv);
 	}
