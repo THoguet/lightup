@@ -4,21 +4,22 @@
 #include "game_ext.h"
 #include "game_private.h"
 
+void test_output(int i, int excepted, char* message) {
+	if (i != excepted) {
+		fprintf(stderr, "%s", message);
+		exit(EXIT_FAILURE);
+	}
+}
+
 game game_load(char* filename) {
 	checkPointer((void*)filename);
 	// ouvrons le fichier
 	FILE* f = fopen(filename, "r");
-	if (f == NULL) {
-		fprintf(stderr, "Problems with file %s.\n", filename);
-		exit(EXIT_FAILURE);
-	}
+	checkPointer((void*)f);
 	// récuperer les valeurs dont on a beson pour créer le jeu initail
 	uint nb_rows, nb_cols;
 	int wrapping;
-	if (fscanf(f, "%u %u %d\n", &nb_rows, &nb_cols, &wrapping) != 3) {
-		fprintf(stderr, "Error in scan of file");
-		exit(EXIT_FAILURE);
-	}
+	test_output(fscanf(f, "%u %u %d\n", &nb_rows, &nb_cols, &wrapping), 3, "Error in scan of file");
 	// créer le jeu initail
 	game g1 = game_new_empty_ext(nb_rows, nb_cols, wrapping);
 	checkPointer((void*)g1);
@@ -78,28 +79,16 @@ void game_save(cgame g, char* filename) {
 	checkPointer((void*)g);
 	// try create or open file named filename
 	FILE* f = fopen(filename, "w");
-	if (f == NULL) {
-		fprintf(stderr, "Couldn't create / open file %s.\n", filename);
-		exit(EXIT_FAILURE);
-	}
+	checkPointer((void*)f);
 	// try to print the first line
-	if (fprintf(f, "%d %d %d\n", game_nb_rows(g), game_nb_cols(g), game_is_wrapping(g)) < 6) {
-		fprintf(stderr, "Couldn't print in file %s.\n", filename);
-		exit(EXIT_FAILURE);
-	}
+	test_output(fprintf(f, "%d %d %d\n", game_nb_rows(g), game_nb_cols(g), game_is_wrapping(g)), 6, "Couldn't print in file.\n");
 	// for each case of the game get the char of the given case and try to print it on the file
 	for (uint i = 0; i < game_nb_rows(g); i++) {
 		for (uint j = 0; j < game_nb_cols(g); j++) {
-			if (fprintf(f, "%c", get_char_from_state(g, i, j)) < 1) {
-				fprintf(stderr, "Couldn't print in file %s.\n", filename);
-				exit(EXIT_FAILURE);
-			}
+			test_output(fprintf(f, "%c", get_char_from_state(g, i, j)), 1, "Couldn't print in file.\n");
 		}
 		// print a \n at the end of each row
-		if (fprintf(f, "\n") < 1) {
-			fprintf(stderr, "Couldn't print in file %s.\n", filename);
-			exit(EXIT_FAILURE);
-		}
+		test_output(fprintf(f, "\n"), 1, "Couldn't print in file.\n");
 	}
 	fclose(f);
 }
