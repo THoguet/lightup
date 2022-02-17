@@ -4,6 +4,8 @@
 #include "game_ext.h"
 #include "game_private.h"
 
+#define NB_CHAR_HEADER_WITHTOUT_DIMENSIONS 4
+
 void test_output(int i, int excepted, char* message) {
 	if (i != excepted) {
 		fprintf(stderr, "%s", message);
@@ -81,7 +83,8 @@ void game_save(cgame g, char* filename) {
 	FILE* f = fopen(filename, "w");
 	checkPointer((void*)f);
 	// try to print the first line
-	test_output(fprintf(f, "%d %d %d\n", game_nb_rows(g), game_nb_cols(g), game_is_wrapping(g)), 6, "Couldn't print in file.\n");
+	test_output(fprintf(f, "%d %d %d\n", game_nb_rows(g), game_nb_cols(g), game_is_wrapping(g)),
+	            NB_CHAR_HEADER_WITHTOUT_DIMENSIONS + game_nb_rows(g) / 10 + 1 + game_nb_cols(g) / 10 + 1, "Couldn't print in file.\n");
 	// for each case of the game get the char of the given case and try to print it on the file
 	for (uint i = 0; i < game_nb_rows(g); i++) {
 		for (uint j = 0; j < game_nb_cols(g); j++) {
