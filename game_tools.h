@@ -46,9 +46,10 @@ bool game_solve(game g);
 /**
  * @brief Computes the total number of solutions of a given game.
  * @param g the game
+ * @details The game @p g must be unchanged.
  * @return the number of solutions
  */
-uint game_nb_solutions(game g);
+uint game_nb_solutions(cgame g);
 
 /**
  * @}
