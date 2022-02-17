@@ -1163,6 +1163,14 @@ bool test_game_load(bool whoami, char** name) {
 	game_delete(g5x3w);
 	game_delete(g5x3waux);
 
+	// test for the black squares
+	game gblack = game_new(other_squares);
+	game_save(gblack, "gblack.txt");
+	game gblack2 = game_load("gblack.txt");
+	assert(game_equal(gblack, gblack2));
+	game_delete(gblack);
+	game_delete(gblack2);
+
 	return true;
 }
 /* ********** USAGE ********** */
