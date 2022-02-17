@@ -8,7 +8,7 @@
 
 void test_output(int i, int excepted, char* message) {
 	if (i != excepted) {
-		fprintf(stderr, "%s", message);
+		fprintf(stderr, message);
 		exit(EXIT_FAILURE);
 	}
 }
@@ -28,11 +28,7 @@ game game_load(char* filename) {
 	// récuperer les coups à jouer
 	for (uint i = 0; i < nb_rows; i++) {
 		for (uint j = 0; j < nb_cols; j++) {
-			if (feof(f)) {
-				fprintf(stderr, "end of file");
-				fclose(f);
-				exit(EXIT_FAILURE);
-			}
+			test_output(feof(f), 0, "Malformed file : Reached end of file\n");
 			// obtenir les squares pour les jouer dans g1
 			char play = fgetc(f);
 			if (play == '\n')
@@ -55,6 +51,10 @@ game game_load(char* filename) {
 				game_set_square(g1, i, j, S_BLACK3);
 			else if (play == '4')
 				game_set_square(g1, i, j, S_BLACK4);
+			else {
+				fprintf(stderr, "Malformed file : Unrecognized character %c.\n", play);
+				exit(EXIT_FAILURE);
+			}
 		}
 	}
 	fclose(f);
@@ -82,7 +82,7 @@ void game_save(cgame g, char* filename) {
 	// try create or open file named filename
 	FILE* f = fopen(filename, "w");
 	checkPointer((void*)f);
-	// try to print the first line
+	// try to print the first line (game_nb_rows(g) / 10 + 1 = nb char of a number)
 	test_output(fprintf(f, "%d %d %d\n", game_nb_rows(g), game_nb_cols(g), game_is_wrapping(g)),
 	            NB_CHAR_HEADER_WITHTOUT_DIMENSIONS + game_nb_rows(g) / 10 + 1 + game_nb_cols(g) / 10 + 1, "Couldn't print in file.\n");
 	// for each case of the game get the char of the given case and try to print it on the file
