@@ -227,11 +227,11 @@ char ext_5x3w_str[] = {
 char other_str[] = {
     '7', ' ', '7', ' ', '0', '\n',             // <nb_rows> <nb_cols> <wrapping>\n
     '*', 'b', '1', 'b', 'b', 'b',  'b', '\n',  // <squares[0][0]><squares[0][1]>...<squares[0][nb_cols-1]>\n
-    'b', 'b', '2', 'b', 'b', 'b',  'b', '\n',  // <squares[1][0]><squares[1][1]>...<squares[1][nb_cols-1]>\n
+    'b', 'b', '2', 'b', '3', 'b',  'b', '\n',  // <squares[1][0]><squares[1][1]>...<squares[1][nb_cols-1]>\n
     'b', 'b', 'b', 'b', 'b', 'w',  '2', '\n',  // <squares[2][0]><squares[2][1]>...<squares[2][nb_cols-1]>\n
     '*', 'b', 'b', 'b', 'b', 'b',  'b', '\n',  // <squares[3][0]><squares[3][1]>...<squares[3][nb_cols-1]>\n
     '1', 'w', 'b', 'b', 'b', 'b',  'b', '\n',  // <squares[4][0]><squares[4][1]>...<squares[4][nb_cols-1]>\n
-    'b', 'b', 'b', 'b', '2', 'b',  'b', '\n',  // <squares[5][0]><squares[5][1]>...<squares[5][nb_cols-1]>\n
-    'b', 'b', 'b', 'b', 'w', 'b',  '-', '\n'   // <squares[6][0]><squares[6][1]>...<squares[6][nb_cols-1]>\n
+    'b', 'b', '4', 'b', '2', 'b',  'b', '\n',  // <squares[5][0]><squares[5][1]>...<squares[5][nb_cols-1]>\n
+    '0', 'b', 'b', 'b', 'w', 'b',  '-', '\n'   // <squares[6][0]><squares[6][1]>...<squares[6][nb_cols-1]>\n
 };
 /* ************************************************************************** */
