@@ -35,7 +35,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/game_test",
 			"args": [
-				"game_save"
+				"game_solve"
 			],
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
