@@ -6,6 +6,11 @@
 
 #define NB_CHAR_HEADER_WITHTOUT_DIMENSIONS 4
 
+#define JWRAPPING (j + game_nb_cols(g) + dir[index_dir + 1]) % game_nb_cols(g)
+#define IWRAPPING (i + game_nb_rows(g) + dir[index_dir]) % game_nb_rows(g)
+#define JNORMAL j + dir[index_dir + 1]
+#define INORMAL i + dir[index_dir]
+
 void test_output(int i, int excepted, char* message) {
 	if (i != excepted) {
 		fprintf(stderr, message);
@@ -116,9 +121,58 @@ bool aux_game_solve(game g, uint deep) {
 	return false;
 }
 
+void add_next_to(game g, uint i, uint j, square s) {
+	int dir[] = {1, 0, -1, 0, 0, 1, 0, -1};
+	for (uint index_dir = 0; index_dir < sizeof(dir) / sizeof(dir[0]); index_dir += 2) {
+		if (/* normal check*/ (JNORMAL < game_nb_cols(g) && INORMAL < game_nb_rows(g)) ||
+		    /*wrapping check*/ (game_is_wrapping(g) &&
+		                        /*not the same case*/ !(IWRAPPING == i && JWRAPPING == j))) {
+			if (game_get_state(g, IWRAPPING, JWRAPPING) == S_BLANK) {
+				game_set_square(g, IWRAPPING, JWRAPPING, s);
+			}
+		}
+	}
+}
+
+void game_analyze(game g) {
+	uint not_empty = 0;
+	int dir[] = {1, 0, -1, 0, 0, 1, 0, -1};
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
+			if (game_get_state(g, i, j) >= S_BLACK1) {
+				for (uint index_dir = 0; index_dir < sizeof(dir) / sizeof(dir[0]); index_dir += 2) {
+					if (/* normal check*/ (JNORMAL < game_nb_cols(g) && INORMAL < game_nb_rows(g)) ||
+					    /*wrapping check*/ (game_is_wrapping(g) &&
+					                        /*not the same case*/ !(IWRAPPING == i && JWRAPPING == j))) {
+						if (!game_is_blank(g, IWRAPPING, JWRAPPING) || game_is_lighted(g, IWRAPPING, JWRAPPING))
+							not_empty++;
+					} else {
+						not_empty++;
+					}
+				}
+				if (not_empty == abs(game_get_black_number(g, i, j) - 4)) {
+					add_next_to(g, i, j, S_LIGHTBULB);
+				}
+			} else if (game_get_state(g, i, j) == S_BLACK0)
+				add_next_to(g, i, j, S_MARK);
+		}
+	}
+}
+
 bool game_solve(game g) {
-	for (uint deep = 1; deep < game_nb_cols(g) * game_nb_rows(g); deep++) {
-		if (aux_game_solve(g, deep)) {
+	game g_copy = game_copy(g);
+	game_analyze(g_copy);
+	if (game_is_over(g_copy)) {
+		game to_delete = g;
+		*g = *g_copy;
+		game_delete(to_delete);
+		return true;
+	}
+	for (uint deep = 1; deep < game_nb_cols(g_copy) * game_nb_rows(g_copy); deep++) {
+		if (aux_game_solve(g_copy, deep)) {
+			game to_delete = g;
+			*g = *g_copy;
+			game_delete(to_delete);
 			return true;
 		}
 	}
