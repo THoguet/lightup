@@ -1128,6 +1128,9 @@ bool test_game_save(bool whoami, char** name) {
 	fclose(file_gother);
 	return true;
 }
+
+/* ***** game_load ***** */
+
 bool test_game_load(bool whoami, char** name) {
 	if (whoami) {
 		*name = (char*)__func__;
@@ -1173,6 +1176,20 @@ bool test_game_load(bool whoami, char** name) {
 
 	return true;
 }
+
+/* ***** game_solve ***** */
+bool test_game_solve(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game g_default = game_new_ext(4, 4, ext_4x4_squares, false);
+	game g_default_sol = game_new_ext(4, 4, sol_4x4_squares, false);
+	assert(game_solve(g_default));
+	assert(game_equal(g_default, g_default_sol));
+	return true;
+}
+
 /* ********** USAGE ********** */
 
 int usage(char* argv[]) {
@@ -1186,40 +1203,41 @@ int main(int argc, char* argv[]) {
 	// function type
 	typedef bool (*func_t)(bool, char**);
 	// array of all tests functions
-	func_t tab_fct[] = {&test_equal,
-	                    &test_equal_ext,
-	                    &test_game_check_move,
-	                    &test_game_copy,
-	                    &test_game_default,
-	                    &test_game_default_solution,
-	                    &test_game_delete,
-	                    &test_game_get_black_number,
-	                    &test_game_get_flags,
-	                    &test_game_get_square,
-	                    &test_game_get_state,
-	                    &test_game_has_error,
-	                    &test_game_is_black,
-	                    &test_game_is_blank,
-	                    &test_game_is_lightbulb,
-	                    &test_game_is_lighted,
-	                    &test_game_is_marked,
-	                    &test_game_is_over,
-	                    &test_game_is_wrapping,
-	                    &test_game_nb_cols,
-	                    &test_game_nb_rows,
-	                    &test_game_new,
-	                    &test_game_new_empty,
-	                    &test_game_new_empty_ext,
-	                    &test_game_new_ext,
-	                    &test_game_play_move,
-	                    &test_game_print,
-	                    &test_game_redo,
-	                    &test_game_restart,
-	                    &test_game_save,
-	                    &test_game_set_square,
-	                    &test_game_undo,
-	                    &test_game_update_flags,
-	                    &test_game_load};
+	func_t tab_fct[] = {test_equal,
+	                    test_equal_ext,
+	                    test_game_check_move,
+	                    test_game_copy,
+	                    test_game_default,
+	                    test_game_default_solution,
+	                    test_game_delete,
+	                    test_game_get_black_number,
+	                    test_game_get_flags,
+	                    test_game_get_square,
+	                    test_game_get_state,
+	                    test_game_has_error,
+	                    test_game_is_black,
+	                    test_game_is_blank,
+	                    test_game_is_lightbulb,
+	                    test_game_is_lighted,
+	                    test_game_is_marked,
+	                    test_game_is_over,
+	                    test_game_is_wrapping,
+	                    test_game_nb_cols,
+	                    test_game_nb_rows,
+	                    test_game_new,
+	                    test_game_new_empty,
+	                    test_game_new_empty_ext,
+	                    test_game_new_ext,
+	                    test_game_play_move,
+	                    test_game_print,
+	                    test_game_redo,
+	                    test_game_restart,
+	                    test_game_save,
+	                    test_game_set_square,
+	                    test_game_undo,
+	                    test_game_update_flags,
+	                    test_game_load,
+	                    test_game_solve};
 	// array of the tests functions's name
 	char* tab_fct_name[sizeof(tab_fct) / sizeof(tab_fct[0])];
 	// get each function's name from tab_fct by calling the function with its first parm set to true and the second one with a pointer on tab_fct_name to fill

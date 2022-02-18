@@ -95,3 +95,32 @@ void game_save(cgame g, char* filename) {
 	}
 	fclose(f);
 }
+
+bool aux_game_solve(game g, uint deep) {
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
+			if (game_get_state(g, i, j) == S_BLANK) {
+				game_set_square(g, i, j, S_LIGHTBULB);
+				game_update_flags(g);
+				if (game_is_over(g))
+					return true;
+				if (deep > 1) {
+					if (aux_game_solve(g, deep - 1)) {
+						return true;
+					}
+				}
+				game_set_square(g, i, j, S_BLANK);
+			}
+		}
+	}
+	return false;
+}
+
+bool game_solve(game g) {
+	for (uint deep = 1; deep < game_nb_cols(g) * game_nb_rows(g); deep++) {
+		if (aux_game_solve(g, deep)) {
+			return true;
+		}
+	}
+	return false;
+}
