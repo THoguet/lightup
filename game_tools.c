@@ -124,3 +124,8 @@ bool game_solve(game g) {
 	}
 	return false;
 }
+uint game_nb_solutions(cgame g) {
+	if (g == NULL)
+		return 0;
+	return 2;
+}
