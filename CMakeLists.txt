@@ -23,6 +23,10 @@ target_link_libraries(game_text game)
 add_executable(game_test game_test.c)
 target_link_libraries(game_test game)
 
+# game solve
+add_executable(game_solve game_solve.c)
+target_link_libraries(game_solve game)
+
 # libgame
 add_library (game game.c game_aux.c game_ext.c game_private.c history.c game_tools.c game_examples.c)
 
