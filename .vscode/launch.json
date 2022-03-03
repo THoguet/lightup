@@ -34,9 +34,9 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/game_solve",
 			"args": [
-				"-s gdefault.txt",
-				"gdefault.txt",
-				"gdefaultsol.txt"
+				"-s",
+				"${workspaceFolder}/build/gdefault.txt",
+				"${workspaceFolder}/build/gdefaultsol.txt"
 			],
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
