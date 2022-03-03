@@ -117,15 +117,13 @@ bool aux_game_solve(game g, uint deep) {
 			if (game_get_state(g, i, j) == S_BLANK) {
 				game_set_square(g, i, j, S_LIGHTBULB);
 				game_update_flags(g);
-				if (game_has_error_general(g)) {
-					game_set_square(g, i, j, S_BLANK);
-					return false;
-				}
-				if (game_is_over(g))
-					return true;
-				if (deep > 1) {
-					if (aux_game_solve(g, deep - 1)) {
+				if (!game_has_error_general(g)) {
+					if (game_is_over(g))
 						return true;
+					if (deep > 1) {
+						if (aux_game_solve(g, deep - 1)) {
+							return true;
+						}
 					}
 				}
 				game_set_square(g, i, j, S_BLANK);
