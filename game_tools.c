@@ -101,12 +101,26 @@ void game_save(cgame g, char* filename) {
 	fclose(f);
 }
 
+bool game_has_error_general(cgame g) {
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
+			if (game_has_error(g, i, j))
+				return true;
+		}
+	}
+	return false;
+}
+
 bool aux_game_solve(game g, uint deep) {
 	for (uint i = 0; i < game_nb_rows(g); i++) {
 		for (uint j = 0; j < game_nb_cols(g); j++) {
 			if (game_get_state(g, i, j) == S_BLANK) {
 				game_set_square(g, i, j, S_LIGHTBULB);
 				game_update_flags(g);
+				if (game_has_error_general(g)) {
+					game_set_square(g, i, j, S_BLANK);
+					return false;
+				}
 				if (game_is_over(g))
 					return true;
 				if (deep > 1) {
@@ -127,14 +141,14 @@ void add_next_to(game g, uint i, uint j, square s) {
 		if (/* normal check*/ (JNORMAL < game_nb_cols(g) && INORMAL < game_nb_rows(g)) ||
 		    /*wrapping check*/ (game_is_wrapping(g) &&
 		                        /*not the same case*/ !(IWRAPPING == i && JWRAPPING == j))) {
-			if (game_get_state(g, IWRAPPING, JWRAPPING) == S_BLANK) {
+			if (game_get_state(g, IWRAPPING, JWRAPPING) == S_BLANK || game_get_state(g, IWRAPPING, JWRAPPING) == S_LIGHTBULB) {
 				game_set_square(g, IWRAPPING, JWRAPPING, s);
 			}
 		}
 	}
 }
 
-void game_analyze(game g) {
+bool game_analyze(game g, uint deep) {
 	uint not_empty = 0;
 	int dir[] = {1, 0, -1, 0, 0, 1, 0, -1};
 	for (uint i = 0; i < game_nb_rows(g); i++) {
@@ -152,27 +166,28 @@ void game_analyze(game g) {
 				}
 				if (not_empty == abs(game_get_black_number(g, i, j) - 4)) {
 					add_next_to(g, i, j, S_LIGHTBULB);
+					game_update_flags(g);
+					if (game_analyze(g, deep))
+						return true;
+					add_next_to(g, i, j, S_BLANK);
+					return false;
 				}
-			} else if (game_get_state(g, i, j) == S_BLACK0)
+			} else if (game_get_state(g, i, j) == S_BLACK0) {
 				add_next_to(g, i, j, S_MARK);
+				game_update_flags(g);
+				if (game_analyze(g, deep))
+					return true;
+				add_next_to(g, i, j, S_BLANK);
+				return false;
+			}
 		}
 	}
+	return aux_game_solve(g, deep);
 }
 
 bool game_solve(game g) {
-	game g_copy = game_copy(g);
-	game_analyze(g_copy);
-	if (game_is_over(g_copy)) {
-		game to_delete = g;
-		*g = *g_copy;
-		game_delete(to_delete);
-		return true;
-	}
-	for (uint deep = 1; deep < game_nb_cols(g_copy) * game_nb_rows(g_copy); deep++) {
-		if (aux_game_solve(g_copy, deep)) {
-			game to_delete = g;
-			*g = *g_copy;
-			game_delete(to_delete);
+	for (uint deep = 1; deep < game_nb_cols(g) * game_nb_rows(g); deep++) {
+		if (game_analyze(g, deep)) {
 			return true;
 		}
 	}
