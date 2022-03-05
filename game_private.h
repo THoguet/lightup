@@ -26,6 +26,6 @@ int max(int a, int b);
  *
  * @param p any pointer
  */
-void checkPointer(void* p);
+void checkPointer(void* p, char* errMessage);
 
 #endif

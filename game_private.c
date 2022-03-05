@@ -7,9 +7,9 @@ int max(int a, int b) {
 	return b;
 }
 
-void checkPointer(void* p) {
+void checkPointer(void* p, char* errMessage) {
 	if (!p) {
-		fprintf(stderr, "Error on given pointer.\n");
+		fprintf(stderr, "%s", errMessage);
 		exit(EXIT_FAILURE);
 	}
 }
