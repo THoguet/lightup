@@ -15,11 +15,11 @@ struct game_s {
 /**
  * @brief return the max between a and b
  *
- * @param a int to test
- * @param b int to test
+ * @param a uint to test
+ * @param b uint to test
  * @return the max between a and b
  */
-int max(int a, int b);
+unsigned int max(unsigned int a, unsigned int b);
 
 /**
  * @brief check if the pointer is NULL fprinf and exit else nothing
