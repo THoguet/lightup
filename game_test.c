@@ -1183,10 +1183,10 @@ bool test_game_solve(bool whoami, char** name) {
 		*name = (char*)__func__;
 		return false;
 	}
-	game g = game_load("/home/nessar/lightup-07c/build/test.txt");
-	game_solve(g);
-	game_print(g);
-	game_delete(g);
+	game gDef = game_default();
+	game gDefSol = game_default_solution();
+	assert(game_solve(gDef));
+	assert(game_equal(gDef, gDefSol));
 	return true;
 }
 
