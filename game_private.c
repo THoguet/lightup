@@ -13,3 +13,10 @@ void checkPointer(void* p, char* errMessage) {
 		exit(EXIT_FAILURE);
 	}
 }
+
+void test_output(int i, int excepted, char* message) {
+	if (i != excepted) {
+		fprintf(stderr, message);
+		exit(EXIT_FAILURE);
+	}
+}

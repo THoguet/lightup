@@ -6,13 +6,6 @@
 
 #define NB_CHAR_HEADER_WITHTOUT_DIMENSIONS 4
 
-void test_output(int i, int excepted, char* message) {
-	if (i != excepted) {
-		fprintf(stderr, message);
-		exit(EXIT_FAILURE);
-	}
-}
-
 game game_load(char* filename) {
 	checkPointer((void*)filename, "NULL pointer filename on game_load\n");
 	// ouvrons le fichier

@@ -4,7 +4,6 @@
 #include "game.h"
 #include "game_ext.h"
 #include "game_private.h"
-#include "game_tools.c"
 #include "game_tools.h"
 
 void usage() {
