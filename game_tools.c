@@ -11,13 +11,6 @@
 #define JNORMAL j + dir[index_dir + 1]
 #define INORMAL i + dir[index_dir]
 
-void test_output(int i, int excepted, char* message) {
-	if (i != excepted) {
-		fprintf(stderr, message);
-		exit(EXIT_FAILURE);
-	}
-}
-
 game game_load(char* filename) {
 	checkPointer((void*)filename, "NULL pointer filename on game_load\n");
 	// ouvrons le fichier
