@@ -6,10 +6,10 @@
 
 #define NB_CHAR_HEADER_WITHTOUT_DIMENSIONS 4
 
-#define JWRAPPING (j + game_nb_cols(g) + dir[index_dir + 1]) % game_nb_cols(g)
-#define IWRAPPING (i + game_nb_rows(g) + dir[index_dir]) % game_nb_rows(g)
-#define JNORMAL j + dir[index_dir + 1]
-#define INORMAL i + dir[index_dir]
+#define JWRAPPING (j + game_nb_cols(g) + gap_position * dir[index_dir + 1]) % game_nb_cols(g)
+#define IWRAPPING (i + game_nb_rows(g) + gap_position * dir[index_dir]) % game_nb_rows(g)
+#define JNORMAL j + gap_position* dir[index_dir + 1]
+#define INORMAL i + gap_position* dir[index_dir]
 
 game game_load(char* filename) {
 	checkPointer((void*)filename, "NULL pointer filename on game_load\n");
@@ -104,86 +104,230 @@ bool game_has_error_general(cgame g) {
 	return false;
 }
 
-bool aux_game_solve(game g, uint deep) {
+uint coordinateCrossPointMaker(int* diagToTest, uint size) {
+	int tab[size];
+	uint cpt = 0;
+	for (uint i = 0; i < size; i += 2) {
+		for (uint j = i + 2; j < size; j += 2) {
+			if (diagToTest[i] != -1 && diagToTest[j] != -1 && diagToTest[i] != diagToTest[j] && diagToTest[i + 1] != -1 && diagToTest[j + 1] != -1 &&
+			    diagToTest[i + 1] != diagToTest[j + 1]) {
+				tab[cpt++] = diagToTest[i];
+				tab[cpt++] = diagToTest[j + 1];
+			}
+		}
+	}
+	for (uint i = 0; i < cpt; i++) {
+		diagToTest[i] = tab[i];
+	}
+	return cpt;
+}
+
+uint addAround(game g, uint i, uint j, square s, uint max_gap, int* dir, bool force) {
+	uint move_played = 0;
+	for (uint gap_position = 1; gap_position <= max_gap; gap_position++) {
+		for (uint index_dir = 0; index_dir < 8; index_dir += 2) {
+			if (/* test if both dir are not 0*/ (dir[index_dir] != 0 || 0 != dir[index_dir + 1]) &&
+			    /* normal check*/ ((JNORMAL < game_nb_cols(g) && INORMAL < game_nb_rows(g)) ||
+			                       /*wrapping check*/ (game_is_wrapping(g) &&
+			                                           /*not the same case*/ !(IWRAPPING == i && JWRAPPING == j)))) {
+				if (game_is_black(g, IWRAPPING, JWRAPPING)) {
+					dir[index_dir] = 0;
+					dir[index_dir + 1] = 0;
+				} else {
+					square state = game_get_state(g, IWRAPPING, JWRAPPING);
+					square sqr = game_get_square(g, IWRAPPING, JWRAPPING);
+					if ((force && state == S_BLANK) || sqr == S_BLANK) {
+						game_play_move(g, IWRAPPING, JWRAPPING, s);
+						move_played++;
+						if (game_has_error_general(g)) {
+							for (; move_played != 0; move_played--) {
+								game_undo(g);
+							}
+							return move_played;
+						}
+					}
+				}
+			}
+		}
+	}
+	return move_played;
+}
+
+void checkAround(cgame g, uint i, uint j, uint max_gap, int* not_empty, int* lightbulb, int* mark, int* blank_not_lighted, int* dirDiagoToEdit) {
+	int dir[] = {1, 0, -1, 0, 0, 1, 0, -1};
+	for (uint gap_position = 1; gap_position <= max_gap; gap_position++) {
+		for (uint index_dir = 0; index_dir < sizeof(dir) / sizeof(dir[0]); index_dir += 2) {
+			if (/* test if both dir are not 0*/ dir[index_dir] != dir[index_dir + 1] &&
+			    /* normal check*/ ((JNORMAL < game_nb_cols(g) && INORMAL < game_nb_rows(g)) ||
+			                       /*wrapping check*/ (game_is_wrapping(g) &&
+			                                           /*not the same case*/ !(IWRAPPING == i && JWRAPPING == j)))) {
+				if (game_is_black(g, IWRAPPING, JWRAPPING)) {
+					dir[index_dir] = 0;
+					dir[index_dir + 1] = 0;
+					(*not_empty)++;
+				} else if (game_is_lighted(g, IWRAPPING, JWRAPPING) || !game_is_blank(g, IWRAPPING, JWRAPPING)) {
+					(*not_empty)++;
+					if (game_is_marked(g, IWRAPPING, JWRAPPING))
+						(*mark)++;
+					if (game_is_lightbulb(g, IWRAPPING, JWRAPPING))
+						(*lightbulb)++;
+				} else {
+					if (dirDiagoToEdit != NULL) {
+						dirDiagoToEdit[index_dir] = IWRAPPING;
+						dirDiagoToEdit[index_dir + 1] = JWRAPPING;
+					}
+					(*blank_not_lighted)++;
+				}
+			} else {
+				(*not_empty)++;
+			}
+		}
+	}
+}
+/**
+ * @brief analyze the game and return the number of move played / special number
+ *
+ * @param g the game to analyze
+ * @return -1 if game_is_over ; -2 if the game has no sol ; else the number of move played
+ */
+int game_analyze(game g) {
+	uint total_move_played = 0, move_played;
+	do {
+		move_played = 0;
+		for (uint i = 0; i < game_nb_rows(g); i++) {
+			for (uint j = 0; j < game_nb_cols(g); j++) {
+				int dirLine[] = {1, 0, -1, 0, 0, 1, 0, -1};
+				int dirDiago[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
+				uint tmp = 0;
+				if (game_get_square(g, i, j) == S_BLANK) {
+					int lb = 0, not_empty = 0, mark = 0, blank = 0;
+					checkAround(g, i, j, max(game_nb_cols(g), game_nb_rows(g)), &not_empty, &lb, &mark, &blank, NULL);
+					if (blank == 0) {
+						game_play_move(g, i, j, S_LIGHTBULB);
+						move_played++;
+						if (game_is_over(g))
+							return -1;
+						if (game_has_error_general(g)) {
+							total_move_played += move_played;
+							for (; total_move_played != 0; total_move_played--) {
+								game_undo(g);
+							}
+							return -2;
+						}
+					}
+				} else if (game_get_state(g, i, j) >= S_BLACK1 && game_get_state(g, i, j) < S_BLACKU) {
+					int lb = 0, not_empty = 0, mark = 0, blank = 0;
+					checkAround(g, i, j, 1, &not_empty, &lb, &mark, &blank, dirDiago);
+					if (lb == game_get_black_number(g, i, j)) {
+						move_played += addAround(g, i, j, S_MARK, 1, dirLine, true);
+					} else if (not_empty - lb == abs(game_get_black_number(g, i, j) - 4)) {
+						tmp = addAround(g, i, j, S_LIGHTBULB, 1, dirLine, false);
+						if (tmp == 0) {
+							total_move_played += move_played;
+							for (; total_move_played != 0; total_move_played--) {
+								game_undo(g);
+							}
+							return -2;
+						}
+						move_played += tmp;
+						if (game_is_over(g))
+							return -1;
+					} else if (blank == game_get_black_number(g, i, j) - lb + 1) {
+						uint cpt = coordinateCrossPointMaker(dirDiago, 8);
+						for (uint cpt_index = 0; cpt_index < cpt; cpt_index += 2) {
+							if (game_get_square(g, dirDiago[cpt_index], dirDiago[cpt_index + 1]) == S_BLANK) {
+								game_play_move(g, dirDiago[cpt_index], dirDiago[cpt_index + 1], S_MARK);
+								move_played++;
+							}
+						}
+					}
+				} else if (game_get_state(g, i, j) == S_BLACK0) {
+					move_played += addAround(g, i, j, S_MARK, 1, dirLine, true);
+					if (game_is_over(g))
+						return -1;
+
+				} else if (game_get_state(g, i, j) == S_MARK && !game_is_lighted(g, i, j)) {
+					int lb = 0, not_empty = 0, mark = 0, blank = 0;
+					checkAround(g, i, j, max(game_nb_cols(g), game_nb_rows(g)), &not_empty, &lb, &mark, &blank, NULL);
+					if (blank == 1)
+						tmp = addAround(g, i, j, S_LIGHTBULB, max(game_nb_cols(g), game_nb_rows(g)), dirLine, false);
+					if (blank == 0 || (blank == 1 && tmp == 0)) {
+						total_move_played += move_played;
+						for (; total_move_played != 0; total_move_played--) {
+							game_undo(g);
+						}
+						return -2;
+					}
+					move_played += tmp;
+					if (game_is_over(g))
+						return -1;
+				}
+			}
+		}
+		total_move_played += move_played;
+	} while (move_played != 0);
+	return total_move_played;
+}
+
+bool aux_game_solve(game g, uint deep, int* move_played) {
 	for (uint i = 0; i < game_nb_rows(g); i++) {
 		for (uint j = 0; j < game_nb_cols(g); j++) {
 			if (game_get_state(g, i, j) == S_BLANK) {
-				game_set_square(g, i, j, S_LIGHTBULB);
-				game_update_flags(g);
+				int tmp = 0;
+				game_play_move(g, i, j, S_LIGHTBULB);
 				if (!game_has_error_general(g)) {
 					if (game_is_over(g))
 						return true;
+					tmp = game_analyze(g);
+					if (tmp == -1) {
+						return true;
+					}
+					if (tmp == -2) {
+						game_undo(g);
+						game_play_move(g, i, j, S_MARK);
+						(*move_played)++;
+					} else
+						(*move_played) += tmp;
 					if (deep > 1) {
-						if (aux_game_solve(g, deep - 1)) {
+						if (aux_game_solve(g, deep - 1, move_played)) {
 							return true;
 						}
 					}
 				}
-				game_set_square(g, i, j, S_BLANK);
+				if (tmp != -2) {
+					for (; (*move_played) > 0; (*move_played)--) {
+						game_undo(g);
+					}
+					game_undo(g);
+				}
 			}
 		}
 	}
 	return false;
-}
-
-void add_next_to(game g, uint i, uint j, square s) {
-	int dir[] = {1, 0, -1, 0, 0, 1, 0, -1};
-	for (uint index_dir = 0; index_dir < sizeof(dir) / sizeof(dir[0]); index_dir += 2) {
-		if (/* normal check*/ (JNORMAL < game_nb_cols(g) && INORMAL < game_nb_rows(g)) ||
-		    /*wrapping check*/ (game_is_wrapping(g) &&
-		                        /*not the same case*/ !(IWRAPPING == i && JWRAPPING == j))) {
-			if (game_get_state(g, IWRAPPING, JWRAPPING) == S_BLANK || game_get_state(g, IWRAPPING, JWRAPPING) == S_LIGHTBULB) {
-				game_set_square(g, IWRAPPING, JWRAPPING, s);
-			}
-		}
-	}
-}
-
-bool game_analyze(game g, uint deep) {
-	uint not_empty = 0;
-	int dir[] = {1, 0, -1, 0, 0, 1, 0, -1};
-	for (uint i = 0; i < game_nb_rows(g); i++) {
-		for (uint j = 0; j < game_nb_cols(g); j++) {
-			if (game_get_state(g, i, j) >= S_BLACK1) {
-				for (uint index_dir = 0; index_dir < sizeof(dir) / sizeof(dir[0]); index_dir += 2) {
-					if (/* normal check*/ (JNORMAL < game_nb_cols(g) && INORMAL < game_nb_rows(g)) ||
-					    /*wrapping check*/ (game_is_wrapping(g) &&
-					                        /*not the same case*/ !(IWRAPPING == i && JWRAPPING == j))) {
-						if (!game_is_blank(g, IWRAPPING, JWRAPPING) || game_is_lighted(g, IWRAPPING, JWRAPPING))
-							not_empty++;
-					} else {
-						not_empty++;
-					}
-				}
-				if (not_empty == abs(game_get_black_number(g, i, j) - 4)) {
-					add_next_to(g, i, j, S_LIGHTBULB);
-					game_update_flags(g);
-					if (game_analyze(g, deep))
-						return true;
-					add_next_to(g, i, j, S_BLANK);
-					return false;
-				}
-			} else if (game_get_state(g, i, j) == S_BLACK0) {
-				add_next_to(g, i, j, S_MARK);
-				game_update_flags(g);
-				if (game_analyze(g, deep))
-					return true;
-				add_next_to(g, i, j, S_BLANK);
-				return false;
-			}
-		}
-	}
-	return aux_game_solve(g, deep);
 }
 
 bool game_solve(game g) {
+	// TODELETE
+	// game_print(g);
+	int total_move_played = game_analyze(g);
+	// to keep the first analyze
+	int move_played = 0;
+	if (total_move_played == -1)
+		return true;
+	if (total_move_played == -2)
+		return false;
 	for (uint deep = 1; deep < game_nb_cols(g) * game_nb_rows(g); deep++) {
-		if (game_analyze(g, deep)) {
+		total_move_played += move_played;
+		if (aux_game_solve(g, deep, &move_played)) {
 			return true;
 		}
 	}
+	for (int i = 0; i < total_move_played; i++) {
+		game_undo(g);
+	}
 	return false;
 }
+
 uint game_nb_solutions(cgame g) {
 	if (g == NULL)
 		return 0;
