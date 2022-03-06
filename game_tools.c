@@ -6,25 +6,18 @@
 
 #define NB_CHAR_HEADER_WITHTOUT_DIMENSIONS 4
 
-void test_output(int i, int excepted, char* message) {
-	if (i != excepted) {
-		fprintf(stderr, message);
-		exit(EXIT_FAILURE);
-	}
-}
-
 game game_load(char* filename) {
-	checkPointer((void*)filename);
+	checkPointer((void*)filename, "NULL pointer filename on game_load\n");
 	// ouvrons le fichier
 	FILE* f = fopen(filename, "r");
-	checkPointer((void*)f);
+	checkPointer((void*)f, "Couldn't open file\n");
 	// récuperer les valeurs dont on a beson pour créer le jeu initail
 	uint nb_rows, nb_cols;
 	int wrapping;
 	test_output(fscanf(f, "%u %u %d\n", &nb_rows, &nb_cols, &wrapping), 3, "Error in scan of file");
 	// créer le jeu initail
 	game g1 = game_new_empty_ext(nb_rows, nb_cols, wrapping);
-	checkPointer((void*)g1);
+	checkPointer((void*)g1, "Couldn't create game\n");
 	// récuperer les coups à jouer
 	for (uint i = 0; i < nb_rows; i++) {
 		for (uint j = 0; j < nb_cols; j++) {
@@ -77,11 +70,11 @@ char get_char_from_state(cgame g, uint i, uint j) {
 }
 
 void game_save(cgame g, char* filename) {
-	checkPointer((void*)filename);
-	checkPointer((void*)g);
+	checkPointer((void*)filename, "NULL pointer filename on game_save\n");
+	checkPointer((void*)g, "NULL pointer game g on game_save\n");
 	// try create or open file named filename
 	FILE* f = fopen(filename, "w");
-	checkPointer((void*)f);
+	checkPointer((void*)f, "Couldn't open file in game_save\n");
 	// try to print the first line (game_nb_rows(g) / 10 + 1 = nb char of a number)
 	test_output(fprintf(f, "%d %d %d\n", game_nb_rows(g), game_nb_cols(g), game_is_wrapping(g)),
 	            NB_CHAR_HEADER_WITHTOUT_DIMENSIONS + game_nb_rows(g) / 10 + 1 + game_nb_cols(g) / 10 + 1, "Couldn't print in file.\n");
