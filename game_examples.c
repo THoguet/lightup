@@ -235,3 +235,16 @@ char other_str[] = {
     '0', 'b', 'b', 'b', 'w', 'b',  '-', '\n'   // <squares[6][0]><squares[6][1]>...<squares[6][nb_cols-1]>\n
 };
 /* ************************************************************************** */
+
+square ext_hard_10x10[] = {
+    S_BLANK,  S_BLANK,  S_BLANK,  S_BLACK2, S_BLANK,  S_BLANK,  S_BLANK,  S_BLACK0, S_BLANK,  S_BLANK,  /* row 0 */
+    S_BLANK,  S_BLACK0, S_BLANK,  S_BLANK,  S_BLACKU, S_BLANK,  S_BLANK,  S_BLACK2, S_BLACKU, S_BLANK,  /* row 1 */
+    S_BLACKU, S_BLACK0, S_BLANK,  S_BLACK1, S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  /* row 2 */
+    S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLACKU, S_BLANK,  S_BLACKU, /* row 4 */
+    S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLACK3, S_BLANK,  /* row 5 */
+    S_BLANK,  S_BLACK2, S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  /* row 6 */
+    S_BLACKU, S_BLANK,  S_BLACK2, S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  /* row 7 */
+    S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLANK,  S_BLACK0, S_BLANK,  S_BLACKU, S_BLACKU, /* row 8 */
+    S_BLANK,  S_BLACKU, S_BLACKU, S_BLANK,  S_BLANK,  S_BLACK2, S_BLANK,  S_BLANK,  S_BLACK1, S_BLANK,  /* row 9 */
+    S_BLANK,  S_BLANK,  S_BLACK0, S_BLANK,  S_BLANK,  S_BLANK,  S_BLACKU, S_BLANK,  S_BLANK,  S_BLANK   /* row 10 */
+};

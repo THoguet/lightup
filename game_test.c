@@ -1184,9 +1184,17 @@ bool test_game_solve(bool whoami, char** name) {
 		return false;
 	}
 	game gDef = game_default();
-	game gDefSol = game_default_solution();
 	assert(game_solve(gDef));
-	assert(game_equal(gDef, gDefSol));
+	assert(game_is_over(gDef));
+	game_delete(gDef);
+	game g5x3w = game_new_ext(5, 3, ext_5x3w_squares, true);
+	assert(game_solve(g5x3w));
+	assert(game_is_over(g5x3w));
+	game_delete(g5x3w);
+	game g10x10 = game_new_ext(10, 10, ext_hard_10x10, false);
+	assert(game_solve(g10x10));
+	assert(game_is_over(g10x10));
+	game_delete(g10x10);
 	return true;
 }
 
