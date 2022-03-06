@@ -4,7 +4,6 @@
 #include "game.h"
 #include "game_ext.h"
 #include "game_private.h"
-#include "game_tools.c"
 #include "game_tools.h"
 
 void usage() {
@@ -47,8 +46,8 @@ int main(int argc, char* argv[]) {
 		if (argc == 4) {
 			char* filename = argv[3];
 			FILE* f = fopen(filename, "w");
-			checkPointer((void*)f);
-			test_output(fprintf(f, "%u\n", nbsolutions), 2, "Error in scan of file");
+			checkPointer((void*)f, "Couldn't open file\n");
+			test_output(fprintf(f, "%u\n", nbsolutions), 2, "Error in scan of file\n");
 			fclose(f);
 		}
 	}

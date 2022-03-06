@@ -26,6 +26,15 @@ int max(int a, int b);
  *
  * @param p any pointer
  */
-void checkPointer(void* p);
+void checkPointer(void* p, char* errMessage);
+
+/**
+ * @brief test if i and excepted are the same else exit the prog with the message
+ *
+ * @param i
+ * @param excepted
+ * @param message to print in stderr
+ */
+void test_output(int i, int excepted, char* message);
 
 #endif
