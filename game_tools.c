@@ -124,7 +124,7 @@ uint game_nb_solutions_aux(game g, game* games) {
 	if (game_solve(g) == false) {
 		return 0;
 	}
-	games = (game*)calloc(sizeof(game));
+	games = (game*)malloc(sizeof(game));
 	games[0] = game_copy(g);
 	uint** tab = (uint**)malloc(sizeof(uint*) * (g->height * g->width));
 	for (uint r = 0; r < (g->height * g->width); r++) {
@@ -144,6 +144,8 @@ uint game_nb_solutions_aux(game g, game* games) {
 		game game_test = game_copy(game_save);
 		res = res + game_nb_solutions_aux(game_test, &games[1]);
 	}
+	free(games);
+	free(tab);
 	return res;
 }
 
@@ -154,12 +156,13 @@ uint game_nb_solutions(cgame g) {
 	uint res = nb;
 	for (uint n = 0; n < nb; n++) {
 		for (uint i = n; i < nb; i++) {
-			game g1 = g_tmp[n];
-			game g2 = g_tmp[i];
+			game g1 = games[n];
+			game g2 = games[i];
 			if (game_equal(g1, g2)) {
 				res--;
 			}
 		}
 	}
+	free(games);
 	return (res);
 }
