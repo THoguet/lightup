@@ -8,6 +8,13 @@ default:
     - shell
     - CREMI
 
+workflow:
+    rules:
+      - if: $CI_COMMIT_MESSAGE =~ /-draft$/
+        when: never
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
 build-job:       # This job runs in the build stage, which runs first.
   allow_failure: false
   stage: build
