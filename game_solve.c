@@ -8,12 +8,11 @@
 #include "game_tools.h"
 
 void usage() {
-	fprintf(stderr, "problem with paramametre");
+	fprintf(stderr, "problem with paramametre\n");
 	exit(EXIT_FAILURE);
 }
 
 int main(int argc, char* argv[]) {
-
 	// check if nb of param is correct
 	if (argc != 3 && argc != 4) {
 		// nb param is not correct
@@ -39,7 +38,7 @@ int main(int argc, char* argv[]) {
 			game_save(g1, filename);
 		}
 	}
-	// if the option is -s
+	// if the option is -c
 	else if (strcmp(option, "-c") == 0) {
 		// GET THE NB OF SOLUTIONS
 		cgame g2 = game_load(file);
@@ -59,6 +58,5 @@ int main(int argc, char* argv[]) {
 	    printf("or '-c' if you want the number of solutions\n");
 	    exit(EXIT_FAILURE);
 	}*/
-
 	return EXIT_SUCCESS;
 }
