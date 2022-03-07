@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int max(int a, int b) {
+unsigned int max(unsigned int a, unsigned int b) {
 	if (a > b)
 		return a;
 	return b;

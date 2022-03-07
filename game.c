@@ -196,7 +196,7 @@ void update_flags_lightbulb(game g, uint i, uint j) {
 	// F_ERROR on the initial lightbulb
 	//  tab[] = { i, j, i, j, i,  j, i, j}
 	int tab[] = {-1, 0, 1, 0, 0, -1, 0, 1};
-	for (int gap_position = 1; gap_position < max(game_nb_cols(g), game_nb_rows(g)); gap_position++) {
+	for (uint gap_position = 1; gap_position < max(game_nb_cols(g), game_nb_rows(g)); gap_position++) {
 		// index_tab => pair = i
 		// index_tab => odd = j
 		for (uint index_tab = 0; index_tab < sizeof(tab) / sizeof(tab[0]); index_tab += 2) {

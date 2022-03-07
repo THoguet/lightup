@@ -1183,10 +1183,18 @@ bool test_game_solve(bool whoami, char** name) {
 		*name = (char*)__func__;
 		return false;
 	}
-	game g_default = game_new_ext(4, 4, ext_4x4_squares, false);
-	game g_default_sol = game_new_ext(4, 4, sol_4x4_squares, false);
-	assert(game_solve(g_default));
-	assert(game_equal(g_default, g_default_sol));
+	game gDef = game_default();
+	assert(game_solve(gDef));
+	assert(game_is_over(gDef));
+	game_delete(gDef);
+	game g5x3w = game_new_ext(5, 3, ext_5x3w_squares, true);
+	assert(game_solve(g5x3w));
+	assert(game_is_over(g5x3w));
+	game_delete(g5x3w);
+	game g10x10 = game_new_ext(10, 10, ext_hard_10x10, false);
+	assert(game_solve(g10x10));
+	assert(game_is_over(g10x10));
+	game_delete(g10x10);
 	return true;
 }
 
