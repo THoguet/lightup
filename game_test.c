@@ -1079,6 +1079,9 @@ bool test_game_save(bool whoami, char** name) {
 	for (uint index_default_str = 0;
 	     index_default_str < game_nb_cols(gdefault) * game_nb_rows(gdefault) + NB_CHAR_SAVED_FILE_FIRST_LINE + game_nb_rows(gdefault); index_default_str++) {
 		int char_to_test = fgetc(f_gdefault);
+		if (char_to_test != -1 && (char)char_to_test == default_str[index_default_str]) {
+			exit(EXIT_FAILURE);
+		}
 		assert(char_to_test != -1);
 		assert((char)char_to_test == default_str[index_default_str]);
 	}
@@ -1095,6 +1098,9 @@ bool test_game_save(bool whoami, char** name) {
 	     index_default_str < game_nb_cols(gdefault_sol) * game_nb_rows(gdefault_sol) + NB_CHAR_SAVED_FILE_FIRST_LINE + game_nb_rows(gdefault_sol);
 	     index_default_str++) {
 		int char_to_test = fgetc(f_gdefault_sol);
+		if (char_to_test != -1 && (char)char_to_test == default_str[index_default_str]) {
+			exit(EXIT_FAILURE);
+		}
 		assert(char_to_test != -1);
 		assert((char)char_to_test == default_str[index_default_str]);
 	}
@@ -1108,6 +1114,9 @@ bool test_game_save(bool whoami, char** name) {
 	for (uint index_ext_5x3w_str = 0; index_ext_5x3w_str < game_nb_cols(g5x3w) * game_nb_rows(g5x3w) + NB_CHAR_SAVED_FILE_FIRST_LINE + game_nb_rows(g5x3w);
 	     index_ext_5x3w_str++) {
 		int char_to_test = fgetc(file_g5x3w);
+		if (char_to_test != -1 && (char)char_to_test == ext_5x3w_str[index_ext_5x3w_str]) {
+			exit(EXIT_FAILURE);
+		}
 		assert(char_to_test != -1);
 		assert((char)char_to_test == ext_5x3w_str[index_ext_5x3w_str]);
 	}
@@ -1121,6 +1130,9 @@ bool test_game_save(bool whoami, char** name) {
 	for (uint index_other_str = 0; index_other_str < game_nb_cols(gother) * game_nb_rows(gother) + NB_CHAR_SAVED_FILE_FIRST_LINE + game_nb_rows(gother);
 	     index_other_str++) {
 		int char_to_test = fgetc(file_gother);
+		if (char_to_test != -1 && (char)char_to_test == other_str[index_other_str]) {
+			exit(EXIT_FAILURE);
+		}
 		assert(char_to_test != -1);
 		assert((char)char_to_test == other_str[index_other_str]);
 	}
