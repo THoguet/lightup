@@ -1079,11 +1079,13 @@ bool test_game_save(bool whoami, char** name) {
 	for (uint index_default_str = 0;
 	     index_default_str < game_nb_cols(gdefault) * game_nb_rows(gdefault) + NB_CHAR_SAVED_FILE_FIRST_LINE + game_nb_rows(gdefault); index_default_str++) {
 		int char_to_test = fgetc(f_gdefault);
-		if (char_to_test != -1 && (char)char_to_test == default_str[index_default_str]) {
-			exit(EXIT_FAILURE);
-		}
 		assert(char_to_test != -1);
 		assert((char)char_to_test == default_str[index_default_str]);
+		if (!(char_to_test != -1 && (char)char_to_test == default_str[index_default_str])) {
+			game_delete(gdefault);
+			fclose(f_gdefault);
+			exit(EXIT_FAILURE);
+		}
 	}
 	game_delete(gdefault);
 	fclose(f_gdefault);
@@ -1098,11 +1100,13 @@ bool test_game_save(bool whoami, char** name) {
 	     index_default_str < game_nb_cols(gdefault_sol) * game_nb_rows(gdefault_sol) + NB_CHAR_SAVED_FILE_FIRST_LINE + game_nb_rows(gdefault_sol);
 	     index_default_str++) {
 		int char_to_test = fgetc(f_gdefault_sol);
-		if (char_to_test != -1 && (char)char_to_test == default_str[index_default_str]) {
-			exit(EXIT_FAILURE);
-		}
 		assert(char_to_test != -1);
 		assert((char)char_to_test == default_str[index_default_str]);
+		if (!(char_to_test != -1 && (char)char_to_test == default_str[index_default_str])) {
+			game_delete(gdefault_sol);
+			fclose(f_gdefault_sol);
+			exit(EXIT_FAILURE);
+		}
 	}
 	game_delete(gdefault_sol);
 	fclose(f_gdefault_sol);
@@ -1114,11 +1118,13 @@ bool test_game_save(bool whoami, char** name) {
 	for (uint index_ext_5x3w_str = 0; index_ext_5x3w_str < game_nb_cols(g5x3w) * game_nb_rows(g5x3w) + NB_CHAR_SAVED_FILE_FIRST_LINE + game_nb_rows(g5x3w);
 	     index_ext_5x3w_str++) {
 		int char_to_test = fgetc(file_g5x3w);
-		if (char_to_test != -1 && (char)char_to_test == ext_5x3w_str[index_ext_5x3w_str]) {
-			exit(EXIT_FAILURE);
-		}
 		assert(char_to_test != -1);
 		assert((char)char_to_test == ext_5x3w_str[index_ext_5x3w_str]);
+		if (!(char_to_test != -1 && (char)char_to_test == ext_5x3w_str[index_ext_5x3w_str])) {
+			game_delete(g5x3w);
+			fclose(file_g5x3w);
+			exit(EXIT_FAILURE);
+		}
 	}
 	game_delete(g5x3w);
 	fclose(file_g5x3w);
@@ -1130,11 +1136,13 @@ bool test_game_save(bool whoami, char** name) {
 	for (uint index_other_str = 0; index_other_str < game_nb_cols(gother) * game_nb_rows(gother) + NB_CHAR_SAVED_FILE_FIRST_LINE + game_nb_rows(gother);
 	     index_other_str++) {
 		int char_to_test = fgetc(file_gother);
-		if (char_to_test != -1 && (char)char_to_test == other_str[index_other_str]) {
-			exit(EXIT_FAILURE);
-		}
 		assert(char_to_test != -1);
 		assert((char)char_to_test == other_str[index_other_str]);
+		if (!(char_to_test != -1 && (char)char_to_test == other_str[index_other_str])) {
+			game_delete(gother);
+			fclose(file_gother);
+			exit(EXIT_FAILURE);
+		}
 	}
 	game_delete(gother);
 	fclose(file_gother);
@@ -1196,16 +1204,34 @@ bool test_game_solve(bool whoami, char** name) {
 		return false;
 	}
 	game gDef = game_default();
-	assert(game_solve(gDef));
-	assert(game_is_over(gDef));
+	bool tmp = game_solve(gDef);
+	bool tmp2 = game_is_over(gDef);
+	assert(tmp);
+	assert(tmp2);
+	if (!(tmp && tmp2)) {
+		game_delete(gDef);
+		exit(EXIT_FAILURE);
+	}
 	game_delete(gDef);
 	game g5x3w = game_new_ext(5, 3, ext_5x3w_squares, true);
-	assert(game_solve(g5x3w));
-	assert(game_is_over(g5x3w));
+	tmp = game_solve(g5x3w);
+	tmp2 = game_is_over(g5x3w);
+	assert(tmp);
+	assert(tmp2);
+	if (!(tmp && tmp2)) {
+		game_delete(g5x3w);
+		exit(EXIT_FAILURE);
+	}
 	game_delete(g5x3w);
 	game g10x10 = game_new_ext(10, 10, ext_hard_10x10, false);
-	assert(game_solve(g10x10));
-	assert(game_is_over(g10x10));
+	tmp = game_solve(g10x10);
+	tmp2 = game_is_over(g10x10);
+	assert(tmp);
+	assert(tmp2);
+	if (!(tmp && tmp2)) {
+		game_delete(g10x10);
+		exit(EXIT_FAILURE);
+	}
 	game_delete(g10x10);
 	return true;
 }

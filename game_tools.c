@@ -393,8 +393,8 @@ bool aux_game_solve(game g, uint deep, int* move_played) {
 
 uint total_number_of_blank_cases(game g) {
 	uint cpt = 0;
-	for (uint i = 0; i < game_nb_cols(g); i++) {
-		for (uint j = 0; j < game_nb_rows(g); j++) {
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
 			if (game_get_state(g, i, j) == S_BLANK)
 				cpt++;
 		}
