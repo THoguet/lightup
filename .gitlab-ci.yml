@@ -15,7 +15,7 @@ workflow:
       - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
-build-job:       # This job runs in the build stage, which runs first.
+build-job-debug:       # This job runs in the build stage, which runs first.
   allow_failure: false
   stage: build
   script:
@@ -28,9 +28,24 @@ build-job:       # This job runs in the build stage, which runs first.
     paths:
       - build.log
 
+build-job-release:       # This job runs in the build stage, which runs first.
+  allow_failure: false
+  stage: build
+  script:
+    - mkdir -p build
+    - cd build
+    - cmake -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/c99-gcc ..
+    - make VERBOSE=ON -j 18 | tee ../build.log
+  artifacts:
+    expire_in: 10 minutes
+    paths:
+      - build.log
+
 test-v1-job:   # This job runs in the test stage.
   needs:
-    - job: build-job
+    - job: build-job-release
+      artifacts: false
+    - job: build-job-debug
       artifacts: false
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
@@ -48,7 +63,9 @@ test-v1-job:   # This job runs in the test stage.
 
 test-v2-job:   # This job runs in the test stage.
   needs:
-    - job: build-job
+    - job: build-job-release
+      artifacts: false
+    - job: build-job-debug
       artifacts: false
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
@@ -66,7 +83,9 @@ test-v2-job:   # This job runs in the test stage.
 
 make-test-job:
   needs:
-    - job: build-job
+    - job: build-job-release
+      artifacts: false
+    - job: build-job-debug
       artifacts: false
   stage: test
   script:
@@ -106,7 +125,9 @@ coverage-job:
   tags:
     - shell
   needs:
-    - job: build-job
+    - job: build-job-release
+      artifacts: false
+    - job: build-job-debug
       artifacts: false
   stage: coverage
   script:
