@@ -425,8 +425,51 @@ bool game_solve(game g) {
 	return false;
 }
 
-uint game_nb_solutions(cgame g) {
-	if (g == NULL)
+uint game_nb_solutions_aux(game g, game* games) {
+	game game_save = game_copy(g);
+	uint res = 1;
+	if (game_solve(g) == false) {
 		return 0;
-	return 2;
+	}
+	games = (game*)malloc(sizeof(game));
+	games[0] = game_copy(g);
+	uint** tab = (uint**)malloc(sizeof(uint*) * (g->height * g->width));
+	for (uint r = 0; r < (g->height * g->width); r++) {
+		tab[r] = (uint*)malloc(sizeof(uint) * 2);
+	}
+	uint size = 0;
+	for (uint i = 0; i < g->height; i++) {
+		for (uint j = 0; j < g->width; j++) {
+			if (game_get_state(g, i, j) == S_LIGHTBULB) {
+				tab[size][0] = i;
+				tab[size][1] = j;
+				size++;
+			}
+		}
+	}
+	for (uint s = 0; s < size; s++) {
+		game game_test = game_copy(game_save);
+		res = res + game_nb_solutions_aux(game_test, &games[1]);
+	}
+	free(games);
+	free(tab);
+	return res;
+}
+
+uint game_nb_solutions(cgame g) {
+	game* games = (game*)malloc(0);
+	game g_tmp = game_copy(g);
+	uint nb = game_nb_solutions_aux(g_tmp, games);
+	uint res = nb;
+	for (uint n = 0; n < nb; n++) {
+		for (uint i = n; i < nb; i++) {
+			game g1 = games[n];
+			game g2 = games[i];
+			if (game_equal(g1, g2)) {
+				res--;
+			}
+		}
+	}
+	free(games);
+	return (res);
 }
