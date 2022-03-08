@@ -9,8 +9,8 @@ enable_testing()
 include(CTest)
 
 #positionne la variable
-set(CMAKE_C_FLAGS "-std=c99 -Wall -pthread -Wextra -Wunused-parameter -Wpedantic -Werror")
-set(CMAKE_C_FLAGS_DEBUG "-g --coverage")    # use CMake option: -DCMAKE_BUILD_TYPE=DEBUG
+set(CMAKE_C_FLAGS "-std=c99 -Wall")
+set(CMAKE_C_FLAGS_DEBUG "-g --coverage  -pthread -Wextra -Wunused-parameter -Wpedantic -Werror")    # use CMake option: -DCMAKE_BUILD_TYPE=DEBUG
 set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")   # use CMake option: -DCMAKE_BUILD_TYPE=RELEASE
 
 ############################# SRC #############################
