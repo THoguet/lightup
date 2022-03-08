@@ -438,9 +438,9 @@ uint game_nb_solutions_aux(game g, game* t_games, uint* index, uint* ind_max) {
 	*index = (*index) + 1;
 
 	if (*index == *ind_max) {
-		*ind_max = (*ind_max) * 2;
 		/*allocation de une place en plus dans le tableau t_game pour pouvoir ensuite utiliser en recursif la case d'apres*/
-		t_games = (game*)realloc(t_games, sizeof(game) * (*ind_max));
+		fprintf(stderr, "Too much solutions\n");
+		exit(EXIT_FAILURE);
 	}
 
 	/*initialisation des différentes variables utilisé par la suite dans la fonction*/
@@ -479,10 +479,11 @@ uint game_nb_solutions(cgame g) {
 		return 0;
 	}
 	uint index = 0;
-	uint ind_max = 1;
-	game* t_games = (game*)malloc(sizeof(game));
+	uint ind_max = 2048;
+	game t_games[ind_max];
 	game g_tmp = game_copy(g);
 	uint nb = game_nb_solutions_aux(g_tmp, t_games, &index, &ind_max);
+	game_delete(g_tmp);
 	uint res = nb;
 	for (uint n = 0; n < nb; n++) {
 		for (uint i = n + 1; i < nb; i++) {
@@ -493,10 +494,5 @@ uint game_nb_solutions(cgame g) {
 			}
 		}
 	}
-	game_delete(g_tmp);
-	for (unsigned int i = 0; i < index; i++) {
-		game_delete(t_games[i]);
-	}
-	free(t_games);
 	return (res);
 }

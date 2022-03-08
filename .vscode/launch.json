@@ -63,7 +63,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/game_test",
 			"args": [
-				"game_solve"
+				"game_nb_solutions"
 			],
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
