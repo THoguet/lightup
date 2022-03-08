@@ -1236,6 +1236,21 @@ bool test_game_solve(bool whoami, char** name) {
 	return true;
 }
 
+/* ***** game_nb_solution **** */
+
+bool test_game_nb_solutions(bool whoami, char** name) {
+	if (whoami) {
+		*name = (char*)__func__;
+		return false;
+	}
+	game game_4sol_3x3 = game_new_ext(3, 3, ext_4sol_3x3, false);
+	if (game_nb_solutions(game_4sol_3x3) != 4) {
+		game_delete(game_4sol_3x3);
+		return false;
+	}
+	return true;
+}
+
 /* ********** USAGE ********** */
 
 int usage(char* argv[]) {
@@ -1283,7 +1298,8 @@ int main(int argc, char* argv[]) {
 	                    test_game_undo,
 	                    test_game_update_flags,
 	                    test_game_load,
-	                    test_game_solve};
+	                    test_game_solve,
+	                    test_game_nb_solutions};
 	// array of the tests functions's name
 	char* tab_fct_name[sizeof(tab_fct) / sizeof(tab_fct[0])];
 	// get each function's name from tab_fct by calling the function with its first parm set to true and the second one with a pointer on tab_fct_name to fill
