@@ -36,6 +36,9 @@ extern char default_str[];
 extern char ext_5x3w_str[];
 extern char other_str[];
 extern square ext_hard_10x10[];
+extern square ext_1sol_1x1[];
+extern square ext_2sol_2x1[];
+extern square ext_2sol_2x2[];
 extern square ext_4sol_3x3[];
 
 #endif  // __GAME_EXAMPLES_H__

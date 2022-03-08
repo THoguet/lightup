@@ -1243,12 +1243,32 @@ bool test_game_nb_solutions(bool whoami, char** name) {
 		*name = (char*)__func__;
 		return false;
 	}
+	bool test1, test2, test3, test4;
+	game game_1sol_1x1 = game_new_ext(1, 1, ext_1sol_1x1, false);
+	if (game_nb_solutions(game_1sol_1x1) == 1) {
+		game_delete(game_1sol_1x1);
+		test1 = true;
+	}
+	game game_2sol_2x1 = game_new_ext(2, 1, ext_2sol_2x1, false);
+	if (game_nb_solutions(game_2sol_2x1) == 2) {
+		game_delete(game_2sol_2x1);
+		test2 = true;
+	}
+	game game_2sol_2x2 = game_new_ext(2, 2, ext_2sol_2x2, false);
+	if (game_nb_solutions(game_2sol_2x2) == 2) {
+		game_delete(game_2sol_2x2);
+		test3 = true;
+	}
 	game game_4sol_3x3 = game_new_ext(3, 3, ext_4sol_3x3, false);
-	if (game_nb_solutions(game_4sol_3x3) != 4) {
+	if (game_nb_solutions(game_4sol_3x3) == 4) {
 		game_delete(game_4sol_3x3);
+		test4 = true;
+	}
+	if (test1 && test2 && test3 && test4) {
+		return true;
+	} else {
 		return false;
 	}
-	return true;
 }
 
 /* ********** USAGE ********** */

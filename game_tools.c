@@ -425,7 +425,7 @@ bool game_solve(game g) {
 	return false;
 }
 
-uint game_nb_solutions_aux(game g, game* t_games) {
+uint game_nb_solutions_aux(game g, game* t_games, uint index, uint ind_max) {
 	/*sauvegarde de la game de base*/
 	game game_save = game_copy(g);
 	/*application du game solve*/
@@ -434,11 +434,16 @@ uint game_nb_solutions_aux(game g, game* t_games) {
 	}
 
 	/*copy de la solution dans le tableau*/
-	t_games[0] = game_copy(g);
-	/*allocation de une place en plus dans le tableau t_game pour pouvoir ensuite utiliser en recursif la case d'apres*/
-	t_games = (game*)malloc(sizeof(game));
+	t_games[index] = game_copy(g);
+	index++;
 
-	/*inittialisation des différentes variables utilisé par la suite dans la fonction*/
+	if (index == ind_max) {
+		/*allocation de une place en plus dans le tableau t_game pour pouvoir ensuite utiliser en recursif la case d'apres*/
+		t_games = (game*)realloc(t_games, sizeof(game) * ind_max);
+		ind_max = ind_max * 2;
+	}
+
+	/*initialisation des différentes variables utilisé par la suite dans la fonction*/
 	uint res = 1;                                                         // resultat renvoyé par la fonction
 	uint** tab = (uint**)malloc(sizeof(uint*) * (g->height * g->width));  // tableau stockant l'emplacement des lightbulbs
 	for (uint r = 0; r < (g->height * g->width); r++) {
@@ -461,17 +466,21 @@ uint game_nb_solutions_aux(game g, game* t_games) {
 	for (uint s = 0; s < size; s++) {
 		game game_test = game_copy(game_save);
 		game_set_square(game_test, tab[s][0], tab[s][1], S_MARK);
-		res = res + game_nb_solutions_aux(game_test, &t_games[1]);
+		res = res + game_nb_solutions_aux(game_test, t_games, index, ind_max);
+		game_delete(game_test);
 	}
-
+	game_delete(game_save);
 	free(tab);
 	return res;
 }
 
 uint game_nb_solutions(cgame g) {
+	if (g == NULL) {
+		return 0;
+	}
 	game* t_games = (game*)malloc(sizeof(game));
 	game g_tmp = game_copy(g);
-	uint nb = game_nb_solutions_aux(g_tmp, t_games);
+	uint nb = game_nb_solutions_aux(g_tmp, t_games, 0, 2);
 	uint res = nb;
 	for (uint n = 0; n < nb; n++) {
 		for (uint i = n + 1; i < nb; i++) {
@@ -482,11 +491,14 @@ uint game_nb_solutions(cgame g) {
 			} else {
 				game_print(t_games[n]);
 			}
+			game_delete(g1);
+			game_delete(g2);
 		}
 	}
 	for (uint i = 0; i < nb; i++) {
 		game_print(t_games[i]);
 	}
+	game_delete(g_tmp);
 	free(t_games);
 	return (res);
 }
