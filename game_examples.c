@@ -248,3 +248,9 @@ square ext_hard_10x10[] = {
     S_BLANK,  S_BLACKU, S_BLACKU, S_BLANK,  S_BLANK,  S_BLACK2, S_BLANK,  S_BLANK,  S_BLACK1, S_BLANK,  /* row 9 */
     S_BLANK,  S_BLANK,  S_BLACK0, S_BLANK,  S_BLANK,  S_BLANK,  S_BLACKU, S_BLANK,  S_BLANK,  S_BLANK   /* row 10 */
 };
+
+square ext_4sol_3x3[] = {
+    S_BLANK, S_BLANK,  S_BLANK, /* row 0 */
+    S_BLANK, S_BLACK2, S_BLANK, /* row 1 */
+    S_BLANK, S_BLANK,  S_BLANK  /* row 3 */
+};
