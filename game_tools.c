@@ -437,14 +437,14 @@ uint game_nb_solutions_aux(game g, game* t_games) {
 	t_games[0] = game_copy(g);
 	/*allocation de une place en plus dans le tableau t_game pour pouvoir ensuite utiliser en recursif la case d'apres*/
 	t_games = (game*)malloc(sizeof(game));
-	
+
 	/*inittialisation des différentes variables utilisé par la suite dans la fonction*/
-	uint res = 1; 															//resultat renvoyé par la fonction
-	uint** tab = (uint**)malloc(sizeof(uint*) * (g->height * g->width)); 	//tableau stockant l'emplacement des lightbulbs
+	uint res = 1;                                                         // resultat renvoyé par la fonction
+	uint** tab = (uint**)malloc(sizeof(uint*) * (g->height * g->width));  // tableau stockant l'emplacement des lightbulbs
 	for (uint r = 0; r < (g->height * g->width); r++) {
 		tab[r] = (uint*)malloc(sizeof(uint) * 2);
 	}
-	uint size = 0;															//nombre de lightbulb dans tab
+	uint size = 0;  // nombre de lightbulb dans tab
 
 	/*listage est stock des emplacements des lightbulb dans tab*/
 	for (uint i = 0; i < g->height; i++) {
@@ -463,7 +463,7 @@ uint game_nb_solutions_aux(game g, game* t_games) {
 		game_set_square(game_test, tab[s][0], tab[s][1], S_MARK);
 		res = res + game_nb_solutions_aux(game_test, &t_games[1]);
 	}
-	
+
 	free(tab);
 	return res;
 }
@@ -474,17 +474,17 @@ uint game_nb_solutions(cgame g) {
 	uint nb = game_nb_solutions_aux(g_tmp, t_games);
 	uint res = nb;
 	for (uint n = 0; n < nb; n++) {
-		for (uint i = n+1; i < nb; i++) {
+		for (uint i = n + 1; i < nb; i++) {
 			game g1 = t_games[n];
 			game g2 = t_games[i];
 			if (game_equal(g1, g2)) {
 				res--;
-			}else{
+			} else {
 				game_print(t_games[n]);
 			}
 		}
 	}
-	for(uint i =0; i < nb; i++){
+	for (uint i = 0; i < nb; i++) {
 		game_print(t_games[i]);
 	}
 	free(t_games);
