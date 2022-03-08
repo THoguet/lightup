@@ -1,6 +1,7 @@
-stages:          # List of stages for jobs, and their order of execution
+stages: # List of stages for jobs, and their order of execution
   - build
   - test
+  - clang
   - coverage
 
 default:
@@ -9,13 +10,13 @@ default:
     - CREMI
 
 workflow:
-    rules:
-      - if: $CI_COMMIT_MESSAGE =~ /-draft$/
-        when: never
-      - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  rules:
+    - if: $CI_COMMIT_MESSAGE =~ /-draft$/
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
-build-job-debug:       # This job runs in the build stage, which runs first.
+build-job-debug: # This job runs in the build stage, which runs first.
   allow_failure: false
   stage: build
   script:
@@ -28,7 +29,7 @@ build-job-debug:       # This job runs in the build stage, which runs first.
     paths:
       - build.log
 
-build-job-release:       # This job runs in the build stage, which runs first.
+build-job-release: # This job runs in the build stage, which runs first.
   allow_failure: false
   stage: build
   script:
@@ -41,13 +42,13 @@ build-job-release:       # This job runs in the build stage, which runs first.
     paths:
       - build.log
 
-test-v1-job:   # This job runs in the test stage.
+test-v1-job: # This job runs in the test stage.
   needs:
     - job: build-job-release
       artifacts: false
     - job: build-job-debug
       artifacts: false
-  stage: test    # It only starts when the job in the build stage completes successfully.
+  stage: test # It only starts when the job in the build stage completes successfully.
   script:
     - mkdir -p build
     - cd build
@@ -61,13 +62,13 @@ test-v1-job:   # This job runs in the test stage.
     paths:
       - test-v1-job.log
 
-test-v2-job:   # This job runs in the test stage.
+test-v2-job: # This job runs in the test stage.
   needs:
     - job: build-job-release
       artifacts: false
     - job: build-job-debug
       artifacts: false
-  stage: test    # It only starts when the job in the build stage completes successfully.
+  stage: test # It only starts when the job in the build stage completes successfully.
   script:
     - mkdir -p build
     - cd build
@@ -119,6 +120,17 @@ mem-check-job:
     expire_in: 10 minutes
     paths:
       - mem-check-job.log
+
+### clang
+clang-job:
+  needs:
+    - job: build-job-release
+      artifacts: false
+    - job: build-job-debug
+      artifacts: false
+  stage: clang
+  script:
+    - if [ $(clang-format -style=file -output-replacements-xml *.c | grep -c "<replacement ") -eq 0 ]; then    exit 0; else    exit 1; fi
 
 ### coverage
 coverage-job:
