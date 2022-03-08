@@ -488,15 +488,10 @@ uint game_nb_solutions(cgame g) {
 			game g2 = t_games[i];
 			if (game_equal(g1, g2)) {
 				res--;
-			} else {
-				game_print(t_games[n]);
 			}
 			game_delete(g1);
 			game_delete(g2);
 		}
-	}
-	for (uint i = 0; i < nb; i++) {
-		game_print(t_games[i]);
 	}
 	game_delete(g_tmp);
 	free(t_games);
