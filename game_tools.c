@@ -425,19 +425,28 @@ bool game_solve(game g) {
 	return false;
 }
 
-uint game_nb_solutions_aux(game g, game* games) {
+uint game_nb_solutions_aux(game g, game* t_games) {
+	/*sauvegarde de la game de base*/
 	game game_save = game_copy(g);
-	uint res = 1;
+	/*application du game solve*/
 	if (game_solve(g) == false) {
 		return 0;
 	}
-	games = (game*)malloc(sizeof(game));
-	games[0] = game_copy(g);
-	uint** tab = (uint**)malloc(sizeof(uint*) * (g->height * g->width));
+
+	/*copy de la solution dans le tableau*/
+	t_games[0] = game_copy(g);
+	/*allocation de une place en plus dans le tableau t_game pour pouvoir ensuite utiliser en recursif la case d'apres*/
+	t_games = (game*)malloc(sizeof(game));
+	
+	/*inittialisation des différentes variables utilisé par la suite dans la fonction*/
+	uint res = 1; 															//resultat renvoyé par la fonction
+	uint** tab = (uint**)malloc(sizeof(uint*) * (g->height * g->width)); 	//tableau stockant l'emplacement des lightbulbs
 	for (uint r = 0; r < (g->height * g->width); r++) {
 		tab[r] = (uint*)malloc(sizeof(uint) * 2);
 	}
-	uint size = 0;
+	uint size = 0;															//nombre de lightbulb dans tab
+
+	/*listage est stock des emplacements des lightbulb dans tab*/
 	for (uint i = 0; i < g->height; i++) {
 		for (uint j = 0; j < g->width; j++) {
 			if (game_get_state(g, i, j) == S_LIGHTBULB) {
@@ -447,29 +456,37 @@ uint game_nb_solutions_aux(game g, game* games) {
 			}
 		}
 	}
+
+	/*marquage dans la game de base des emplacements des lightbulbs 1 a 1 et appel recursif de sorte a tester toutes les possibilitées*/
 	for (uint s = 0; s < size; s++) {
 		game game_test = game_copy(game_save);
-		res = res + game_nb_solutions_aux(game_test, &games[1]);
+		game_set_square(game_test, tab[s][0], tab[s][1], S_MARK);
+		res = res + game_nb_solutions_aux(game_test, &t_games[1]);
 	}
-	free(games);
+	
 	free(tab);
 	return res;
 }
 
 uint game_nb_solutions(cgame g) {
-	game* games = (game*)malloc(0);
+	game* t_games = (game*)malloc(sizeof(game));
 	game g_tmp = game_copy(g);
-	uint nb = game_nb_solutions_aux(g_tmp, games);
+	uint nb = game_nb_solutions_aux(g_tmp, t_games);
 	uint res = nb;
 	for (uint n = 0; n < nb; n++) {
-		for (uint i = n; i < nb; i++) {
-			game g1 = games[n];
-			game g2 = games[i];
+		for (uint i = n+1; i < nb; i++) {
+			game g1 = t_games[n];
+			game g2 = t_games[i];
 			if (game_equal(g1, g2)) {
 				res--;
+			}else{
+				game_print(t_games[n]);
 			}
 		}
 	}
-	free(games);
+	for(uint i =0; i < nb; i++){
+		game_print(t_games[i]);
+	}
+	free(t_games);
 	return (res);
 }
