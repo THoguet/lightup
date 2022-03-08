@@ -130,7 +130,7 @@ clang-job:
       artifacts: false
   stage: clang
   script:
-    - if [ $(clang-format -style=file -output-replacements-xml *.c | grep -c "<replacement ") -eq 0 ]; then    exit 0; else    exit 1; fi
+    - if [ $(clang-format -style=file -output-replacements-xml *.[c\|h] | grep -c "<replacement ") -eq 0 ]; then    exit 0; else    exit 1; fi
 
 ### coverage
 coverage-job:
