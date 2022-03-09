@@ -425,53 +425,35 @@ bool game_solve(game g) {
 	return false;
 }
 
-uint game_nb_solutions_aux(game g, game* t_games, uint* index, uint* ind_max) {
-	/*sauvegarde de la game de base*/
-	game game_save = game_copy(g);
-	/*application du game solve*/
-	if (game_solve(g) == false) {
-		return 0;
+void delete_all_marks(game g) {
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
+			if (game_is_marked(g, i, j))
+				game_play_move(g, i, j, S_BLANK);
+		}
 	}
+}
 
-	/*copy de la solution dans le tableau*/
-	t_games[*index] = game_copy(g);
-	*index = (*index) + 1;
-
-	if (*index == *ind_max) {
-		/*allocation de une place en plus dans le tableau t_game pour pouvoir ensuite utiliser en recursif la case d'apres*/
-		fprintf(stderr, "Too much solutions\n");
-		exit(EXIT_FAILURE);
-	}
-
-	/*initialisation des différentes variables utilisé par la suite dans la fonction*/
-	uint res = 1;                                                         // resultat renvoyé par la fonction
-	uint** tab = (uint**)malloc(sizeof(uint*) * (g->height * g->width));  // tableau stockant l'emplacement des lightbulbs
-	for (uint r = 0; r < (g->height * g->width); r++) {
-		tab[r] = (uint*)malloc(sizeof(uint) * 2);
-	}
-	uint size = 0;  // nombre de lightbulb dans tab
-
-	/*listage est stock des emplacements des lightbulb dans tab*/
-	for (uint i = 0; i < g->height; i++) {
-		for (uint j = 0; j < g->width; j++) {
-			if (game_get_state(g, i, j) == S_LIGHTBULB) {
-				tab[size][0] = i;
-				tab[size][1] = j;
-				size++;
+void game_nb_solutions_aux(game g, game* t_games, uint* index, uint* ind_max) {
+	game g_copy = game_copy(g);
+	if (game_solve(g)) {
+		if (*index == *ind_max) {
+			(*ind_max) = (*ind_max) * 2;
+			t_games = realloc(t_games, sizeof(game) * (*ind_max));
+		}
+		t_games[*index] = game_copy(g);
+		(*index)++;
+		for (uint i = 0; i < game_nb_rows(g); i++) {
+			for (uint j = 0; j < game_nb_cols(g); j++) {
+				if (game_is_lightbulb(g, i, j)) {
+					game_play_move(g_copy, i, j, S_MARK);
+					game_nb_solutions_aux(g_copy, t_games, index, ind_max);
+					game_undo(g_copy);
+				}
 			}
 		}
 	}
-
-	/*marquage dans la game de base des emplacements des lightbulbs 1 a 1 et appel recursif de sorte a tester toutes les possibilitées*/
-	for (uint s = 0; s < size; s++) {
-		game game_test = game_copy(game_save);
-		game_set_square(game_test, tab[s][0], tab[s][1], S_MARK);
-		res = res + game_nb_solutions_aux(game_test, t_games, index, ind_max);
-		game_delete(game_test);
-	}
-	game_delete(game_save);
-	free(tab);
-	return res;
+	game_delete(g_copy);
 }
 
 uint game_nb_solutions(cgame g) {
@@ -479,20 +461,27 @@ uint game_nb_solutions(cgame g) {
 		return 0;
 	}
 	uint index = 0;
-	uint ind_max = 2048;
-	game t_games[ind_max];
+	uint max_tab = 8;
+	uint res = 0;
+	game* t_games = malloc(sizeof(game) * max_tab);
 	game g_tmp = game_copy(g);
-	uint nb = game_nb_solutions_aux(g_tmp, t_games, &index, &ind_max);
+	game_nb_solutions_aux(g_tmp, t_games, &index, &max_tab);
 	game_delete(g_tmp);
-	uint res = nb;
-	for (uint n = 0; n < nb; n++) {
-		for (uint i = n + 1; i < nb; i++) {
-			game g1 = t_games[n];
-			game g2 = t_games[i];
-			if (game_equal(g1, g2)) {
-				res--;
+	for (uint i = 0; i < index; i++) {
+		delete_all_marks(t_games[i]);
+	}
+	for (uint i = 0; i < index; i++) {
+		bool toadd = true;
+		for (uint j = i + 1; j < index; j++) {
+			if (game_equal(t_games[i], t_games[j])) {
+				toadd = false;
+				break;
 			}
 		}
+		if (toadd)
+			res++;
+		game_delete(t_games[i]);
 	}
-	return (res);
+	free(t_games);
+	return res;
 }

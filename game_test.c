@@ -1243,32 +1243,33 @@ bool test_game_nb_solutions(bool whoami, char** name) {
 		*name = (char*)__func__;
 		return false;
 	}
-	bool test1, test2, test3, test4;
+	bool test1, test2, test3, test4, test5;
 	game game_1sol_1x1 = game_new_ext(1, 1, ext_1sol_1x1, false);
-	if (game_nb_solutions(game_1sol_1x1) == 1) {
-		game_delete(game_1sol_1x1);
-		test1 = true;
-	}
+	test1 = (game_nb_solutions(game_1sol_1x1) == 1);
+	game_delete(game_1sol_1x1);
 	game game_2sol_2x1 = game_new_ext(2, 1, ext_2sol_2x1, false);
-	if (game_nb_solutions(game_2sol_2x1) == 2) {
-		game_delete(game_2sol_2x1);
-		test2 = true;
-	}
+	test2 = (game_nb_solutions(game_2sol_2x1) == 2);
+	game_delete(game_2sol_2x1);
 	game game_2sol_2x2 = game_new_ext(2, 2, ext_2sol_2x2, false);
-	if (game_nb_solutions(game_2sol_2x2) == 2) {
-		game_delete(game_2sol_2x2);
-		test3 = true;
-	}
+	test3 = (game_nb_solutions(game_2sol_2x2) == 2);
+	game_delete(game_2sol_2x2);
 	game game_4sol_3x3 = game_new_ext(3, 3, ext_4sol_3x3, false);
-	if (game_nb_solutions(game_4sol_3x3) == 4) {
-		game_delete(game_4sol_3x3);
-		test4 = true;
-	}
-	if (test1 && test2 && test3 && test4) {
+	test4 = (game_nb_solutions(game_4sol_3x3) == 4);
+	game_delete(game_4sol_3x3);
+	game gNoSol = game_new_empty_ext(3, 3, false);
+	game_set_square(gNoSol, 2, 2, S_BLACK4);
+	test5 = (game_nb_solutions(gNoSol) == 0);
+	game_delete(gNoSol);
+	if (test1 && test2 && test3 && test4 && test5)
 		return true;
-	} else {
-		return false;
-	}
+
+	printf("test%u => %s\n", 1, test1 ? "SUCCESS" : "FAILURE");
+	printf("test%u => %s\n", 2, test2 ? "SUCCESS" : "FAILURE");
+	printf("test%u => %s\n", 3, test3 ? "SUCCESS" : "FAILURE");
+	printf("test%u => %s\n", 4, test4 ? "SUCCESS" : "FAILURE");
+	printf("test%u => %s\n", 5, test5 ? "SUCCESS" : "FAILURE");
+	// printf("test%u => %s\n", 6, test6 ? "SUCCESS" : "FAILURE");
+	return false;
 }
 
 /* ********** USAGE ********** */

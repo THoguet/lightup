@@ -254,12 +254,13 @@ square ext_1sol_1x1[] = {
 };
 
 square ext_2sol_2x1[] = {
-    S_BLANK, S_BLANK /* row 0 */
+    S_BLANK, /* row 0 */
+    S_BLANK  /* row 1*/
 };
 
 square ext_2sol_2x2[] = {
-    S_BLANK, S_BLACK1, /* row 0 */
-    S_BLANK, S_BLANK   /* row 1 */
+    S_BLANK, S_BLANK, /* row 0 */
+    S_BLANK, S_BLANK  /* row 1 */
 };
 
 square ext_4sol_3x3[] = {
