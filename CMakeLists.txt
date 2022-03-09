@@ -80,7 +80,7 @@ add_test(test_thoguet_game_print_v2 ./game_test game_print)
 add_test(test_thoguet_game_save_v3 ./game_test game_save)
 add_test(test_mfatih_game_load_v3 ./game_test game_load)
 add_test(test_thoguet_game_solve_v3 ./game_test game_solve)
-add_test(test_vcarmona_game_nb_solutions_v3 ./game_test game_nb_solution)
+add_test(test_vcarmona_game_nb_solutions_v3 ./game_test game_nb_solutions)
 
 
 ############################# TEST HISTORY #############################
