@@ -459,11 +459,13 @@ uint total_number_of_blank_cases(game g) {
 	return cpt;
 }
 
-void remove_all_mark(game g) {
+void remove_all_mark_and_flags(game g) {
 	for (uint i = 0; i < game_nb_rows(g); i++) {
 		for (uint j = 0; j < game_nb_cols(g); j++) {
 			if (game_is_marked(g, i, j)) {
 				game_set_square(g, i, j, S_BLANK);
+			} else {
+				game_set_square(g, i, j, game_get_state(g, i, j));
 			}
 		}
 	}
@@ -523,8 +525,7 @@ uint game_nb_solutions(cgame g) {
 		aux_game_solve(copy_g, deep, &move_played, alreadyDone, 0, nb_blank_cases * 2, true, &nb_solutions, &t_games, &size);
 	}
 	for (uint i = 0; i < nb_solutions; i++) {
-		remove_all_mark(t_games[i]);
-		game_update_flags(t_games[i]);
+		remove_all_mark_and_flags(t_games[i]);
 	}
 	uint res = nb_solutions;
 	for (uint i = 0; i < nb_solutions; i++) {
