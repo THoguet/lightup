@@ -268,7 +268,8 @@ void game_update_flags(game g) {
 bool game_is_over(cgame g) {
 	for (uint i = 0; i < game_nb_rows(g); i++) {
 		for (uint j = 0; j < game_nb_cols(g); j++) {
-			if ((game_get_state(g, i, j) == S_BLANK && game_get_flags(g, i, j) == S_BLANK) || game_get_flags(g, i, j) == F_ERROR ||
+			if ((game_get_state(g, i, j) == S_BLANK && game_get_flags(g, i, j) == S_BLANK) ||
+			    (game_get_state(g, i, j) == S_MARK && game_get_flags(g, i, j) == S_BLANK) || game_get_flags(g, i, j) == F_ERROR ||
 			    game_get_flags(g, i, j) == (F_LIGHTED | F_ERROR))
 				return false;
 		}
