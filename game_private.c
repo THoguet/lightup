@@ -7,6 +7,12 @@ unsigned int max(unsigned int a, unsigned int b) {
 	return b;
 }
 
+unsigned int min(unsigned int a, unsigned int b) {
+	if (a < b)
+		return a;
+	return b;
+}
+
 void checkPointer(void* p, char* errMessage) {
 	if (!p) {
 		fprintf(stderr, "%s", errMessage);

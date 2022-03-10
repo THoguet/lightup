@@ -22,6 +22,15 @@ struct game_s {
 unsigned int max(unsigned int a, unsigned int b);
 
 /**
+ * @brief return the min between a and b
+ *
+ * @param a uint to test
+ * @param b uint to test
+ * @return the min between a and b
+ */
+unsigned int min(unsigned int a, unsigned int b);
+
+/**
  * @brief check if the pointer is NULL fprinf and exit else nothing
  *
  * @param p any pointer
