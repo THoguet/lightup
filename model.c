@@ -11,42 +11,42 @@
 /* **************************************************************** */
 
 struct Env_t {
-  /* PUT YOUR VARIABLES HERE */
+	/* PUT YOUR VARIABLES HERE */
 };
 
 /* **************************************************************** */
 
-Env *init(SDL_Window *win, SDL_Renderer *ren, int argc, char *argv[]) {
-  Env *env = malloc(sizeof(struct Env_t));
+Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
+	Env* env = malloc(sizeof(struct Env_t));
 
-  /* PUT YOUR CODE HERE TO INIT TEXTURES, ... */
+	/* PUT YOUR CODE HERE TO INIT TEXTURES, ... */
 
-  return env;
+	return env;
 }
 
 /* **************************************************************** */
 
-void render(SDL_Window *win, SDL_Renderer *ren, Env *env) { /* PUT YOUR CODE HERE TO RENDER TEXTURES, ... */
+void render(SDL_Window* win, SDL_Renderer* ren, Env* env) { /* PUT YOUR CODE HERE TO RENDER TEXTURES, ... */
 }
 
 /* **************************************************************** */
 
-bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
-  if (e->type == SDL_QUIT) {
-    return true;
-  }
+bool process(SDL_Window* win, SDL_Renderer* ren, Env* env, SDL_Event* e) {
+	if (e->type == SDL_QUIT) {
+		return true;
+	}
 
-  /* PUT YOUR CODE HERE TO PROCESS EVENTS */
+	/* PUT YOUR CODE HERE TO PROCESS EVENTS */
 
-  return false;
+	return false;
 }
 
 /* **************************************************************** */
 
-void clean(SDL_Window *win, SDL_Renderer *ren, Env *env) {
-  /* PUT YOUR CODE HERE TO CLEAN MEMORY */
+void clean(SDL_Window* win, SDL_Renderer* ren, Env* env) {
+	/* PUT YOUR CODE HERE TO CLEAN MEMORY */
 
-  free(env);
+	free(env);
 }
 
 /* **************************************************************** */
