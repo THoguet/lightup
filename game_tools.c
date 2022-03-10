@@ -82,7 +82,8 @@ void game_save(cgame g, char* filename) {
 	checkPointer((void*)f, "Couldn't open file in game_save\n");
 	// try to print the first line (game_nb_rows(g) / 10 + 1 = nb char of a number)
 	test_output(fprintf(f, "%d %d %d\n", game_nb_rows(g), game_nb_cols(g), game_is_wrapping(g)),
-	            NB_CHAR_HEADER_WITHTOUT_DIMENSIONS + game_nb_rows(g) / 10 + 1 + game_nb_cols(g) / 10 + 1, "Couldn't print in file.\n");
+	            NB_CHAR_HEADER_WITHTOUT_DIMENSIONS + get_nb_char_from_int(game_nb_rows(g)) + get_nb_char_from_int(game_nb_cols(g)),
+	            "Couldn't print in file.\n");
 	// for each case of the game get the char of the given case and try to print it on the file
 	for (uint i = 0; i < game_nb_rows(g); i++) {
 		for (uint j = 0; j < game_nb_cols(g); j++) {

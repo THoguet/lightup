@@ -60,8 +60,8 @@ int main(int argc, char* argv[]) {
 			char* filename = argv[3];
 			FILE* f = fopen(filename, "w");
 			checkPointer((void*)f, "\nCouldn't open file in game_solve executable\n");
-			uint nbchar_nbsolution = nbSolutions / 10;
-			test_output(fprintf(f, "%u\n", nbSolutions), nbchar_nbsolution + 1, "\nError when printing in file in game_solve executable\n");
+			test_output(fprintf(f, "%u\n", nbSolutions), get_nb_char_from_int(nbSolutions) + 1 /*for the \n*/,
+			            "\nError when printing in file in game_solve executable\n");
 			fclose(f);
 			printf(", this number has been saved in file named : %s", filename);
 		}

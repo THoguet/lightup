@@ -20,3 +20,12 @@ void test_output(int i, int excepted, char* message) {
 		exit(EXIT_FAILURE);
 	}
 }
+
+unsigned int get_nb_char_from_int(unsigned int number) {
+	unsigned int res = 0;
+	do {
+		res++;
+		number = number / 10;
+	} while (number != 0);
+	return res;
+}

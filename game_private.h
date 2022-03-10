@@ -37,4 +37,12 @@ void checkPointer(void* p, char* errMessage);
  */
 void test_output(int i, int excepted, char* message);
 
+/**
+ * @brief Get the nb char from int object
+ *
+ * @param number
+ * @return unsigned int
+ */
+unsigned int get_nb_char_from_int(unsigned int number);
+
 #endif
