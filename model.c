@@ -32,11 +32,12 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) { /* PUT YOUR CODE HER
 /* **************************************************************** */
 
 bool process(SDL_Window* win, SDL_Renderer* ren, Env* env, SDL_Event* e) {
+	int w, h;
+	SDL_GetWindowSize(win, &w, &h);
+
 	if (e->type == SDL_QUIT) {
 		return true;
 	}
-
-	/* PUT YOUR CODE HERE TO PROCESS EVENTS */
 
 	return false;
 }
