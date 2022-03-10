@@ -6,7 +6,7 @@ project ("Lightup" C)
 
 # enable testing
 enable_testing()
-set(MEMORYCHECK_COMMAND_OPTIONS "--error-exitcode=1")
+set(MEMORYCHECK_COMMAND_OPTIONS "--error-exitcode=1 --leak-check=full")
 include(CTest)
 
 #positionne la variable
