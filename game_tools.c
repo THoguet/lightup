@@ -354,35 +354,42 @@ int game_analyze(game g) {
  * @return true if the game is solved
  * @return false if the game is unsolvable
  */
-bool aux_game_solve(game g, uint deep, int* move_played, bool nb_sol, uint* cpt) {
+bool aux_game_solve(game g, uint deep, int* move_played, bool nb_sol, uint* cpt, game** t_games, uint* max_size) {
 	for (uint i = 0; i < game_nb_rows(g); i++) {
 		for (uint j = 0; j < game_nb_cols(g); j++) {
-			if (game_get_state(g, i, j) == S_BLANK) {
+			if (nb_sol && (*cpt) + 1 == *max_size) {
+				(*max_size) = (*max_size) * 2;
+				(*t_games) = realloc((*t_games), sizeof(game) * (*max_size));
+			}
+			if (game_get_square(g, i, j) == S_BLANK) {
 				int tmp = 0;
 				game_play_move(g, i, j, S_LIGHTBULB);
 				if (!game_has_error_general(g)) {
 					if (game_is_over(g)) {
 						if (!nb_sol)
 							return true;
-						else
+						else {
+							(*t_games)[*cpt] = game_copy(g);
 							(*cpt)++;
-					}
-					tmp = game_analyze(g);
-					if (tmp == -1) {
-						if (!nb_sol)
+						}
+					} else {
+						if (!nb_sol) {
+							tmp = game_analyze(g);
+						}
+						if (tmp == -1)
 							return true;
-						else
-							(*cpt)++;
-					}
-					if (tmp == -2) {
-						game_undo(g);
-						game_play_move(g, i, j, S_MARK);
-						(*move_played)++;
-					} else
-						(*move_played) += tmp;
-					if (deep > 1) {
-						if (aux_game_solve(g, deep - 1, move_played, nb_sol, cpt)) {
-							return true;
+						else {
+							if (tmp == -2) {
+								game_undo(g);
+								game_play_move(g, i, j, S_MARK);
+								(*move_played)++;
+							} else
+								(*move_played) += tmp;
+							if (deep > 1) {
+								if (aux_game_solve(g, deep - 1, move_played, nb_sol, cpt, t_games, max_size)) {
+									return true;
+								}
+							}
 						}
 					}
 				}
@@ -422,7 +429,7 @@ bool game_solve(game g) {
 	// else try brutforce with deepness going from 1 to the total number of blank cases on the game
 	for (uint deep = 1; deep < total_number_of_blank_cases(g); deep++) {
 		total_move_played += move_played;
-		if (aux_game_solve(g, deep, &move_played, false, NULL)) {
+		if (aux_game_solve(g, deep, &move_played, false, NULL, NULL, NULL)) {
 			return true;
 		}
 	}
@@ -432,8 +439,20 @@ bool game_solve(game g) {
 	return false;
 }
 
+void remove_all_mark(game g) {
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
+			if (game_is_marked(g, i, j)) {
+				game_set_square(g, i, j, S_BLANK);
+			}
+		}
+	}
+}
+
 uint game_nb_solutions(cgame g) {
 	game copy_g = game_copy(g);
+	uint size = 4;
+	game* t_games = malloc(sizeof(game) * size);
 	// first analyze of the game to reduce the number of brutforce needed
 	int total_move_played = game_analyze(copy_g);
 	// give move_played and not total_move_played to keep the first analyze
@@ -445,8 +464,20 @@ uint game_nb_solutions(cgame g) {
 	if (total_move_played == -2)
 		return 0;
 	// else try brutforce with deepness going from 1 to the total number of blank cases on the game
-	for (uint deep = 1; deep < total_number_of_blank_cases(copy_g); deep++) {
-		aux_game_solve(copy_g, deep, &move_played, true, &nb_solutions);
+	for (uint deep = 1; deep < total_number_of_blank_cases(copy_g) && nb_solutions == 0; deep++) {
+		aux_game_solve(copy_g, deep, &move_played, true, &nb_solutions, &t_games, &size);
 	}
-	return nb_solutions;
+	for (uint i = 0; i < nb_solutions; i++) {
+		remove_all_mark(t_games[i]);
+	}
+	uint res = nb_solutions;
+	for (uint i = 0; i < nb_solutions; i++) {
+		for (uint j = i + 1; j < nb_solutions; j++) {
+			if (game_equal(t_games[i], t_games[j])) {
+				res--;
+				break;
+			}
+		}
+	}
+	return res;
 }
