@@ -478,6 +478,9 @@ uint game_nb_solutions(cgame g) {
 				break;
 			}
 		}
+		game_delete(t_games[i]);
 	}
+	free(t_games);
+	game_delete(copy_g);
 	return res;
 }

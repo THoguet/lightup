@@ -34,6 +34,7 @@ int main(int argc, char* argv[]) {
 		bool solution = game_solve(g1);
 		// if the game has not solutions EXIT
 		if (solution == false) {
+			game_delete(g1);
 			fprintf(stderr, "There is no solution.\n");
 			exit(EXIT_FAILURE);
 		}
@@ -45,11 +46,12 @@ int main(int argc, char* argv[]) {
 			game_save(g1, filename);
 			printf("This game has been saved in the file named : %s.\n", filename);
 		}
+		game_delete(g1);
 	}
 	// if the option is -c
 	else if (strcmp(option, "-c") == 0) {
 		// GET THE NB OF SOLUTIONS
-		cgame g2 = game_load(file);
+		game g2 = game_load(file);
 		printf("Game successfully load.\n");
 		uint nbSolutions = game_nb_solutions(g2);
 		// IF THERE ARE 3 ARGUMENTs, I create a file with nb of solutions
@@ -63,6 +65,7 @@ int main(int argc, char* argv[]) {
 			printf(" this number has been saved in file named : %s", filename);
 		}
 		printf("\n");
+		game_delete(g2);
 	}
 
 	else {
