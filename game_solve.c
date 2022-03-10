@@ -59,10 +59,11 @@ int main(int argc, char* argv[]) {
 		if (argc == 4) {
 			char* filename = argv[3];
 			FILE* f = fopen(filename, "w");
-			checkPointer((void*)f, "Couldn't open file in game_solve executable\n");
-			test_output(fprintf(f, "%u\n", nbSolutions), 2, "Error when printing in file in game_solve executable\n");
+			checkPointer((void*)f, "\nCouldn't open file in game_solve executable\n");
+			uint nbchar_nbsolution = nbSolutions / 10;
+			test_output(fprintf(f, "%u\n", nbSolutions), nbchar_nbsolution + 1, "\nError when printing in file in game_solve executable\n");
 			fclose(f);
-			printf(" this number has been saved in file named : %s", filename);
+			printf(", this number has been saved in file named : %s", filename);
 		}
 		printf("\n");
 		game_delete(g2);
