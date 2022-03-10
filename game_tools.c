@@ -244,7 +244,7 @@ void checkAround(cgame g, uint i, uint j, uint max_gap, int* not_empty, int* lig
  * @param g the game to analyze
  * @return -1 if game_is_over ; -2 if the game has no sol ; else the number of move played
  */
-int game_analyze(game g) {
+int game_analyze(game g, bool nb_sol, int* move_play_to_return) {
 	uint total_move_played = 0, move_played;
 	do {
 		move_played = 0;
@@ -264,8 +264,11 @@ int game_analyze(game g) {
 					if (blank == 0) {
 						game_play_move(g, i, j, S_LIGHTBULB);
 						move_played++;
-						if (game_is_over(g))
+						if (game_is_over(g)) {
+							if (nb_sol)
+								(*move_play_to_return) += total_move_played + move_played;
 							return -1;
+						}
 						if (game_has_error_general(g)) {
 							total_move_played += move_played;
 							for (; total_move_played != 0; total_move_played--) {
@@ -295,8 +298,11 @@ int game_analyze(game g) {
 							return -2;
 						}
 						move_played += tmp;
-						if (game_is_over(g))
+						if (game_is_over(g)) {
+							if (nb_sol)
+								(*move_play_to_return) += total_move_played + move_played;
 							return -1;
+						}
 					}
 					/**
 					 * @brief if this statement is true that means a single lightbulb (set on diagonals of the wall) can obfuscate two blanks around the wall
@@ -314,8 +320,11 @@ int game_analyze(game g) {
 				}  // we can set marks all around a wall0 because it must not have lightbulb right next to it
 				else if (game_get_state(g, i, j) == S_BLACK0) {
 					move_played += addAround(g, i, j, S_MARK, 1, dirLine, true);
-					if (game_is_over(g))
+					if (game_is_over(g)) {
+						if (nb_sol)
+							(*move_play_to_return) += total_move_played + move_played;
 						return -1;
+					}
 				} /**
 				   * @brief if the mark is not lighted and there is only one blank in all the directions we can place a lightbulb (if there is an error the game
 				   * is unsolvable)
@@ -334,8 +343,11 @@ int game_analyze(game g) {
 						return -2;
 					}
 					move_played += tmp;
-					if (game_is_over(g))
+					if (game_is_over(g)) {
+						if (nb_sol)
+							(*move_play_to_return) += total_move_played + move_played;
 						return -1;
+					}
 				}
 			}
 		}
@@ -395,12 +407,15 @@ bool aux_game_solve(game g,
 								(*cpt)++;
 							}
 						} else {
-							if (!nb_sol) {
-								tmp = game_analyze(g);
-							}
-							if (tmp == -1)
-								return true;
-							else {
+							tmp = game_analyze(g, nb_sol, move_played);
+							if (tmp == -1) {
+								if (!nb_sol)
+									return true;
+								else {
+									(*t_games)[*cpt] = game_copy(g);
+									(*cpt)++;
+								}
+							} else {
 								if (tmp == -2) {
 									game_undo(g);
 									game_play_move(g, i, j, S_MARK);
@@ -456,7 +471,7 @@ void remove_all_mark(game g) {
 
 bool game_solve(game g) {
 	// first analyze of the game to reduce the number of brutforce needed
-	int total_move_played = game_analyze(g);
+	int total_move_played = game_analyze(g, false, NULL);
 	// give move_played and not total_move_played to keep the first analyze
 	int move_played = 0;
 	if (total_move_played == -1)
@@ -485,7 +500,7 @@ uint game_nb_solutions(cgame g) {
 	uint size = 4;
 	game* t_games = malloc(sizeof(game) * size);
 	// first analyze of the game to reduce the number of brutforce needed
-	int total_move_played = game_analyze(copy_g);
+	int total_move_played = game_analyze(copy_g, false, NULL);
 	// give move_played and not total_move_played to keep the first analyze
 	int move_played = 0;
 	uint nb_solutions = 0;
@@ -509,6 +524,7 @@ uint game_nb_solutions(cgame g) {
 	}
 	for (uint i = 0; i < nb_solutions; i++) {
 		remove_all_mark(t_games[i]);
+		game_update_flags(t_games[i]);
 	}
 	uint res = nb_solutions;
 	for (uint i = 0; i < nb_solutions; i++) {
