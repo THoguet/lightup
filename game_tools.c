@@ -458,11 +458,17 @@ uint game_nb_solutions(cgame g) {
 	// give move_played and not total_move_played to keep the first analyze
 	int move_played = 0;
 	uint nb_solutions = 0;
-	if (total_move_played == -1)
+	if (total_move_played == -1) {
+		free(t_games);
+		game_delete(copy_g);
 		return 1;
+	}
 	// if the game is unsolvalbe at the first analyze it's unsolvable even with brutforce
-	if (total_move_played == -2)
+	if (total_move_played == -2) {
+		free(t_games);
+		game_delete(copy_g);
 		return 0;
+	}
 	// else try brutforce with deepness going from 1 to the total number of blank cases on the game
 	for (uint deep = 1; deep < total_number_of_blank_cases(copy_g) && nb_solutions == 0; deep++) {
 		aux_game_solve(copy_g, deep, &move_played, true, &nb_solutions, &t_games, &size);

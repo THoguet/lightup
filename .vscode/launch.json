@@ -34,9 +34,8 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/game_solve",
 			"args": [
-				"-s",
-				"${workspaceFolder}/build/test2.txt",
-				"${workspaceFolder}/build/test2sol.txt"
+				"-c",
+				"${workspaceFolder}/build/test.txt"
 			],
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
