@@ -28,16 +28,16 @@
 				}
 			],
 			"preLaunchTask": "make_build"
-		},{
+		},
+		{
 			"name": "(gdb) game_solve",
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/build/game_solve",
 			"args": [
 				"-c",
-				"${workspaceFolder}/build/test3.txt",
-				"${workspaceFolder}/build/testsol3.txt"
-
+				"${workspaceFolder}/build/test1.txt",
+				"${workspaceFolder}/build/testsol1.txt"
 			],
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",

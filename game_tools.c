@@ -465,8 +465,9 @@ bool game_solve(game g) {
 	if (total_move_played == -2)
 		return false;
 	uint nb_blank_cases = total_number_of_blank_cases(g);
-	// else try brutforce with deepness going from 1 to the total number of blank cases on the game
-	for (uint deep = 1; deep < nb_blank_cases; deep++) {
+	uint deep = min(game_nb_rows(g), game_nb_cols(g)) > nb_blank_cases ? 1 : min(game_nb_rows(g), game_nb_cols(g));
+	// else try brutforce with deepness going from ^ to the total number of blank cases on the game
+	for (; deep < nb_blank_cases; deep++) {
 		total_move_played += move_played;
 		uint alreadyDone[nb_blank_cases * 2];
 		if (aux_game_solve(g, deep, &move_played, alreadyDone, 0, nb_blank_cases * 2, false, NULL, NULL, NULL)) {
@@ -501,8 +502,9 @@ uint game_nb_solutions(cgame g) {
 	}
 	uint nb_blank_cases = total_number_of_blank_cases(copy_g);
 	uint alreadyDone[nb_blank_cases * 2];
-	// else try brutforce with deepness going from 1 to the total number of blank cases on the game
-	for (uint deep = min(game_nb_rows(copy_g), game_nb_cols(copy_g)); deep < nb_blank_cases; deep++) {
+	uint deep = min(game_nb_rows(copy_g), game_nb_cols(copy_g)) > nb_blank_cases ? 1 : min(game_nb_rows(copy_g), game_nb_cols(copy_g));
+	// else try brutforce with deepness going from ^ to the total number of blank cases on the game
+	for (; deep < nb_blank_cases && nb_solutions == 0; deep++) {
 		aux_game_solve(copy_g, deep, &move_played, alreadyDone, 0, nb_blank_cases * 2, true, &nb_solutions, &t_games, &size);
 	}
 	for (uint i = 0; i < nb_solutions; i++) {
