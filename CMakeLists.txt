@@ -14,7 +14,15 @@ set(CMAKE_C_FLAGS "-std=c99 -Wall")
 set(CMAKE_C_FLAGS_DEBUG "-g --coverage  -pthread -Wextra -Wunused-parameter -Wpedantic -Werror")    # use CMake option: -DCMAKE_BUILD_TYPE=DEBUG
 set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")   # use CMake option: -DCMAKE_BUILD_TYPE=RELEASE
 
-############################# SRC #############################
+## use a CMake3 package to solve SDL2 dependencies
+
+find_package(SDL2 REQUIRED)
+set(SDL2_ALL_INC ${SDL2_INCLUDE_DIRS})
+set(SDL2_ALL_LIBS ${SDL2_LIBRARIES} -lSDL2_ttf -lSDL2_image) # add extra SDL2 libraries
+
+## print this 
+message(STATUS "SDL2 include dir: ${SDL2_ALL_INC}")
+message(STATUS "SDL2 all libraries: ${SDL2_ALL_LIBS}")
 
 # game_text
 add_executable(game_text game_text.c)
@@ -27,6 +35,16 @@ target_link_libraries(game_test game)
 # game solve
 add_executable(game_solve game_solve.c)
 target_link_libraries(game_solve game)
+
+# game model
+include_directories(${SDL2_ALL_INC})
+add_executable(model model.c)
+target_link_libraries(model game ${SDL2_ALL_LIBS} m)
+
+## copy useful data files in build dir for the SDL
+foreach(file "black.png")
+  file(COPY ${file} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+endforeach(file)
 
 # libgame
 add_library (game game.c game_aux.c game_ext.c game_private.c history.c game_tools.c game_examples.c)
