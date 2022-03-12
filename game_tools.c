@@ -419,6 +419,7 @@ bool aux_game_solve(game g,
 								if (tmp == -2) {
 									game_undo(g);
 									game_play_move(g, i, j, S_MARK);
+									(*move_played)++;
 								} else
 									(*move_played) += tmp;
 								if (deep > 1) {
