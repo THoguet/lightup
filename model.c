@@ -11,8 +11,9 @@
 /* **************************************************************** */
 
 struct Env_t {
-	SDL_Texture* but_new_game_up;
-	SDL_Texture* but_new_game_down;
+	game g;
+	SDL_Texture* but_restart_up;
+	SDL_Texture* but_restart_down;
 	SDL_Texture* but_undo_up;
 	SDL_Texture* but_undo_down;
 	SDL_Texture* but_redo_up;
