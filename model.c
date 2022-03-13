@@ -11,7 +11,14 @@
 /* **************************************************************** */
 
 struct Env_t {
-	/* PUT YOUR VARIABLES HERE */
+	SDL_Texture* but_new_game_up;
+	SDL_Texture* but_new_game_down;
+	SDL_Texture* but_undo_up;
+	SDL_Texture* but_undo_down;
+	SDL_Texture* but_redo_up;
+	SDL_Texture* but_redo_down;
+	SDL_Texture* but_solve_up;
+	SDL_Texture* but_solve_down;
 };
 
 /* **************************************************************** */
@@ -32,12 +39,27 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) { /* PUT YOUR CODE HER
 /* **************************************************************** */
 
 bool process(SDL_Window* win, SDL_Renderer* ren, Env* env, SDL_Event* e) {
+	int w, h;
+	SDL_GetWindowSize(win, &w, &h);
+
 	if (e->type == SDL_QUIT) {
-		return true;
+    return true;
+  	}
+
+#ifdef _ANDROID_
+#else
+
+	else if (e->type == SDL_WINDOWEVENT){
+		init(win, ren , w, h/*(w, h) a changer*/);
 	}
-
-	/* PUT YOUR CODE HERE TO PROCESS EVENTS */
-
+	else if (e->type == SDL_SDL_MOUSEMOTION){
+		SDL_Point mouse;
+		SDL_GetMouseState(&mouse.x, &mouse.y);
+	}
+	else if (e->type == SDL_MOUSEBUTTONDOWN){
+		
+	}
+#endif
 	return false;
 }
 
