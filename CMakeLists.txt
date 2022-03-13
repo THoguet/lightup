@@ -9,6 +9,23 @@ enable_testing()
 set(MEMORYCHECK_COMMAND_OPTIONS "--error-exitcode=1 --leak-check=full")
 include(CTest)
 
+## use pkgconfig to solve SDL2 dependencies (Linux only)
+include(FindPkgConfig) # pkg-config --list-all  | grep -i sdl2
+pkg_search_module(SDL2 REQUIRED sdl2)
+pkg_search_module(SDL2_IMG REQUIRED SDL2_image)
+pkg_search_module(SDL2_TTF REQUIRED SDL2_ttf)
+set(SDL2_ALL_LIBS ${SDL2_LIBRARIES} ${SDL2_IMG_LIBRARIES} ${SDL2_TTF_LIBRARIES})
+set(SDL2_ALL_INC ${SDL2_INCLUDE_DIRS} ${SDL2_IMG_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS})
+
+## use a CMake3 package to solve SDL2 dependencies
+# find_package(SDL2 REQUIRED)
+# set(SDL2_ALL_INC ${SDL2_INCLUDE_DIRS})
+# set(SDL2_ALL_LIBS ${SDL2_LIBRARIES} -lSDL2_ttf -lSDL2_image) # add extra SDL2 libraries
+
+
+message(STATUS "SDL2 include dir: ${SDL2_ALL_INC}")
+message(STATUS "SDL2 all libraries: ${SDL2_ALL_LIBS}")
+
 #positionne la variable
 set(CMAKE_C_FLAGS "-std=c99 -Wall")
 set(CMAKE_C_FLAGS_DEBUG "-g --coverage  -pthread -Wextra -Wunused-parameter -Wpedantic -Werror")    # use CMake option: -DCMAKE_BUILD_TYPE=DEBUG
@@ -20,13 +37,18 @@ set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")   # use CMake option: -DCMAKE_BUILD_TY
 add_executable(game_text game_text.c)
 target_link_libraries(game_text game)
 
-# game tests
+# game_tests
 add_executable(game_test game_test.c)
 target_link_libraries(game_test game)
 
-# game solve
+# game_solve
 add_executable(game_solve game_solve.c)
 target_link_libraries(game_solve game)
+
+# game_sdl
+# include_directories(${SDL2_ALL_INC})
+# add_executable(game_sdl main.c model.c)
+# target_link_libraries(game_sdl game ${SDL2_ALL_LIBS} m)
 
 # libgame
 add_library (game game.c game_aux.c game_ext.c game_private.c history.c game_tools.c game_examples.c)
