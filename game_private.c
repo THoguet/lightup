@@ -13,6 +13,12 @@ unsigned int min(unsigned int a, unsigned int b) {
 	return b;
 }
 
+int int_min(int a, int b) {
+	if (a < b)
+		return a;
+	return b;
+}
+
 void checkPointer(void* p, char* errMessage) {
 	if (!p) {
 		fprintf(stderr, "%s", errMessage);

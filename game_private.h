@@ -31,6 +31,15 @@ unsigned int max(unsigned int a, unsigned int b);
 unsigned int min(unsigned int a, unsigned int b);
 
 /**
+ * @brief return the min between a and b
+ *
+ * @param a int to test
+ * @param b int to test
+ * @return the min between a and b
+ */
+int int_min(int a, int b);
+
+/**
  * @brief check if the pointer is NULL fprinf and exit else nothing
  *
  * @param p any pointer
