@@ -51,7 +51,6 @@ struct Env_t {
 	SDL_Rect* rec_restart;
 	SDL_Rect* rec_solve;
 	SDL_Rect* rec_game;  // rectangle of the grid
-	uint size_game;      // contain the number of squares in the game
 };
 
 /* **************************************************************** */
@@ -349,7 +348,7 @@ bool process(SDL_Window* win, SDL_Renderer* ren, Env* env, SDL_Event* e) {
 #else
 
 	else if (e->type == SDL_WINDOWEVENT) {
-		/*a changer en rapport avec le placement des boutons*/
+
 	} else if (e->type == SDL_MOUSEMOTION) {
 		SDL_Point mouse;
 		SDL_GetMouseState(&mouse.x, &mouse.y);
@@ -381,10 +380,19 @@ bool process(SDL_Window* win, SDL_Renderer* ren, Env* env, SDL_Event* e) {
 		} else if (SDL_PointInRect(&mouse, env->rec_game)) {
 			uint i = mouse.y - ((h - (env->rec_game->y)) / 2) / (env->g->height);
 			uint j = mouse.x - ((w - (env->rec_game->x)) / 2) / (env->g->width);
-			if (game_is_blank(env->g, i, j)) {
-				game_play_move(env->g, i, j, S_LIGHTBULB);
-			} else if (game_is_lightbulb(env->g, i, j)) {
-				game_play_move(env->g, i, j, S_BLANK);
+			if (e->button.button == SDL_BUTTON_LEFT) {
+				if (game_is_blank(env->g, i, j) || game_is_marked(env->g, i, j)) {
+					game_play_move(env->g, i, j, S_LIGHTBULB);
+				} else if (game_is_lightbulb(env->g, i, j)) {
+					game_play_move(env->g, i, j, S_BLANK);
+				}
+			}
+			if (e->button.button == SDL_BUTTON_RIGHT) {
+				if (game_is_blank(env->g, i, j) || game_is_lightbulb(env->g, i, j)) {
+					game_play_move(env->g, i, j, S_MARK);
+				} else if (game_is_marked(env->g, i, j)) {
+					game_play_move(env->g, i, j, S_BLANK);
+				}
 			}
 		}
 	}
