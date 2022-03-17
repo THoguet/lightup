@@ -15,6 +15,18 @@
 
 /* **************************************************************** */
 
+#define RESTART_UP "../img/restart_up.png"
+#define RESTART_DOWN "../img/restart_down.png"
+#define UNDO_UP "../img/undo_up.png"
+#define UNDO_DOWN "../img/undo_down.png"
+#define REDO_UP "../img/redo_up.png"
+#define REDO_DOWN "../img/redo_down.png"
+#define SOLVE_UP "../img/solve_up.png"
+#define SOLVE_DOWN "../img/solve_down.png"
+
+/* **************************************************************** */
+
+
 struct Env_t {
 	game g;
 	SDL_Texture** zero;  // array of two texture one white and one red for each number (red color = r:255 g:50 b:50)
@@ -23,14 +35,17 @@ struct Env_t {
 	SDL_Texture** three;
 	SDL_Texture** four;
 	SDL_Texture** lightbulb;  // array of the two lightbulb images first white second red
-	SDL_Texture* but_restart_up;
-	SDL_Texture* but_restart_down;
-	SDL_Texture* but_undo_up;
-	SDL_Texture* but_undo_down;
-	SDL_Texture* but_redo_up;
-	SDL_Texture* but_redo_down;
-	SDL_Texture* but_solve_up;
-	SDL_Texture* but_solve_down;
+	SDL_Texture* text_restart;
+	SDL_Texture* text_undo;
+	SDL_Texture* text_redo;
+	SDL_Texture* text_solve;
+	SDL_Rect* rec_redo;  //rectangle of each buttons
+	SDL_Rect* rec_undo;
+	SDL_Rect* rec_restart;
+	SDL_Rect* rec_solve;
+	SDL_Rect* rec_game;			//rectangle of the grid
+	SDL_Rect** tab_rec_game;	//array of rectangles containing each square of the grid
+	uint size_game;				//contain the number of squares in the game
 };
 
 /* **************************************************************** */
@@ -166,11 +181,62 @@ bool process(SDL_Window* win, SDL_Renderer* ren, Env* env, SDL_Event* e) {
 #else
 
 	else if (e->type == SDL_WINDOWEVENT) {
-		init(win, ren, w, h /*(w, h) a changer*/);
+		/*a changer en rapport avec le placement des boutons*/
 	} else if (e->type == SDL_MOUSEMOTION) {
 		SDL_Point mouse;
 		SDL_GetMouseState(&mouse.x, &mouse.y);
+		if(SDL_PointInRect(mouse, env->rec_restart)){
+			env->text_restart = IMG_LoadTexture(ren, RESTART_DOWN);
+			if (!env->text_restart) ERROR("IMG_LoadTexture: %s\n", RESTART_DOWN);
+		}
+		else if(SDL_PointInRect(mouse, env->rec_undo)){
+			env->text_undo = IMG_LoadTexture(ren, UNDO_DOWN);
+			if (!env->text_undo) ERROR("IMG_LoadTexture: %s\n", UNDO_DOWN);
+		}
+		else if(SDL_PointInRect(mouse, env->rec_redo)){
+			env->text_redo = IMG_LoadTexture(ren, REDO_DOWN);
+			if (!env->text_redo) ERROR("IMG_LoadTexture: %s\n", REDO_DOWN);
+		}
+		else if(SDL_PointInRect(mouse, env->rec_sove)){
+			env->text_solve = IMG_LoadTexture(ren, SOLVE_DOWN);
+			if (!env->text_solve) ERROR("IMG_LoadTexture: %s\n", SOLVE_DOWN);
+		}else{
+			env->text_restart = IMG_LoadTexture(ren, RESTART_UP);
+			if (!env->text_restart) ERROR("IMG_LoadTexture: %s\n", RESTART_UP);
+			env->text_undo = IMG_LoadTexture(ren, UNDO_UP);
+			if (!env->text_undo) ERROR("IMG_LoadTexture: %s\n", UNDO_UP);
+			env->text_redo = IMG_LoadTexture(ren, REDO_UP);
+			if (!env->text_redo) ERROR("IMG_LoadTexture: %s\n", REDO_UP);
+			env->text_solve = IMG_LoadTexture(ren, SOLVE_UP);
+			if (!env->text_solve) ERROR("IMG_LoadTexture: %s\n", SOLVE_UP);
+		}
 	} else if (e->type == SDL_MOUSEBUTTONDOWN) {
+		SDL_Point mouse;
+		SDL_GetMouseState(&mouse.x, &mouse.y);
+		if(SDL_PointInRect(mouse, env->rec_restart)){
+			game_restart(env->g);
+		}
+		else if(SDL_PointInRect(mouse, env->rec_undo)){
+			game_undo(env->g);
+		}
+		else if(SDL_PointInRect(mouse, env->rec_redo)){
+			game_redo(env->g);
+		}
+		else if(SDL_PointInRect(mouse, env->rec_sove)){
+			game_solve(env->g);
+		}else if (SDL_PointInRect(mouse, env->rec_game)){
+			for(uint ind = 0; i < env->size; ind++){
+				uint i = ind%(env->g->height);
+				uint j = ind/(env->g->width);
+				if(SDL_PointInRect(mouse, env->tab_rec_game[ind])){
+					if(game_is_blank(env->g, i, j)){
+						game_play_move(env->g, i, j, S_LIGHTBULB);
+					}else if(game_is_lightbulb(env->g, i, j)){
+						game_play_move(env->g, i, j, S_BLANK);
+					}
+				}
+			}
+		}
 	}
 #endif
 	return false;
