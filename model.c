@@ -23,7 +23,12 @@
 #define REDO_DOWN "../img/redo_down.png"
 #define SOLVE_UP "../img/solve_up.png"
 #define SOLVE_DOWN "../img/solve_down.png"
+#define LIGHTBULB_WHITE "../img/lightbulb_white.png"
+#define LIGHTBULB_BLACK "../img/lightbulb_black.png"
+#define FONT "arial.ttf"
 
+
+#define FONTSIZE 36
 /* **************************************************************** */
 
 struct Env_t {
@@ -63,58 +68,73 @@ Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 	int w, h;
 	SDL_GetWindowSize(win, &w, &h);
 
-	/* Select the color for drawing. It is set to red here. */
-	// SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
-
 	/* init game texture */
-	env->g = SDL_LoadTexture(ren, env->g);
+	env->g = SDL_Load(ren, env->g);
 	if (!env->g)
 		ERROR("SDL_LoadTexture: %s\n", env->g);
 
-	/* init zero texture */
-	env->zero = SDL_LoadTexture(ren, env->zero);
-	if (!env->zero)
-		ERROR("SDL_LoadTexture: %s\n", env->zero);
+    TTF_Font* font = TTF_OpenFont(FONT, FONTSIZE);
+	if (!font) ERROR("TTF_OpenFont: %s\n", FONT);
+	TTF_SetFontStyle(font, TTF_STYLE_BOLD);      
+	//color of 0 in black wall
+	SDL_Color color_w = {255, 255, 255, 255}; 
+	//color of 0 in black wall with error
+	SDL_Color color_r = {255, 0, 0, 255}; /* blue color in RGBA */
 
-	/* init one texture */
-	env->one = SDL_LoadTexture(ren, env->one);
-	if (!env->one)
-		ERROR("SDL_LoadTexture: %s\n", env->one);
+	/* init zero texture double tab*/
+	env->zero = malloc (sizeof(SDL_Texture*)*2);
+	if (env->zero==NULL)
+		ERROR("NOT ENOUGTH MEMORY\n");
+	//if the case has not error
+	env->zero[0]=TTF_RenderText_Blended(font, "0", color_w);
+	//if the case has error
+	env->zero[1]=TTF_RenderText_Blended(font, "0", color_r);
 
-	/* init two texture */
-	env->two = SDL_LoadTexture(ren, env->two);
-	if (!env->two)
-		ERROR("SDL_LoadTexture: %s\n", env->two);
+	/* init one texture double tab*/
+	env->one = malloc (sizeof(SDL_Texture*)*2);
+	if (env->one==NULL)
+		ERROR("NOT ENOUGTH MEMORY\n");
+	//if the case has not error
+	env->one[0]=TTF_RenderText_Blended(font, "1", color_w);
+	//if the case has error
+	env->one[1]=TTF_RenderText_Blended(font, "1", color_r);
 
-	/* init three texture */
-	env->three = SDL_LoadTexture(ren, env->three);
-	if (!env->three)
-		ERROR("SDL_LoadTexture: %s\n", env->three);
+	/* init two texture double tab*/
+	env->two = malloc (sizeof(SDL_Texture*)*2);
+	if (env->two==NULL)
+		ERROR("NOT ENOUGTH MEMORY\n");
+	//if the case has not error
+	env->two[0]=TTF_RenderText_Blended(font, "2", color_w);
+	//if the case has error
+	env->two[1]=TTF_RenderText_Blended(font, "2", color_r);
 
-	/* init four texture */
-	env->four = SDL_LoadTexture(ren, env->four);
-	if (!env->four)
-		ERROR("SDL_LoadTexture: %s\n", env->four);
+	/* init three texture double tab*/
+	env->three = malloc (sizeof(SDL_Texture*)*2);
+	if (env->three==NULL)
+		ERROR("NOT ENOUGTH MEMORY\n");
+	//if the case has not error
+	env->three[0]=TTF_RenderText_Blended(font, "3", color_w);
+	//if the case has error
+	env->three[1]=TTF_RenderText_Blended(font, "3", color_r);
 
-	/* init lightbulb texture */
-	env->lightbulb = SDL_LoadTexture(ren, env->lightbulb);
-	if (!env->lightbulb)
-		ERROR("SDL_LoadTexture: %s\n", env->lightbulb);
+	/* init four texture double tab*/
+	env->four = malloc (sizeof(SDL_Texture*)*2);
+	if (env->four==NULL)
+		ERROR("NOT ENOUGTH MEMORY\n");
+	//if the case has not error
+	env->four[0]=TTF_RenderText_Blended(font, "4", color_w);
+	//if the case has error
+	env->four[1]=TTF_RenderText_Blended(font, "4", color_r);
 
-	/* init text_restart texture */
-	env->text_restart = SDL_LoadTexture(ren, env->text_restart);
-	if (!env->text_restart)
-		ERROR("SDL_LoadTexture: %s\n", env->text_restart);
+	/* init lightbulb texture double tab*/
+	env->lightbulb = malloc (sizeof(SDL_Texture*)*2);
+	if (env->lightbulb==NULL)
+		ERROR("NOT ENOUGTH MEMORY\n");
+	//if the case has not error
+	env->four[0]=IMG_LoadTexture(ren, LIGHTBULB_WHITE);
+	//if the case has error
+	env->four[1]=IMG_LoadTexture(ren, LIGHTBULB_BLACK);
 
-	/* init text_undo texture */
-	env->text_undo = SDL_LoadTexture(ren, env->text_undo);
-	if (!env->text_undo)
-		ERROR("SDL_LoadTexture: %s\n", env->text_undo);
-
-	/* init text_solve texture */
-	env->text_solve = SDL_LoadTexture(ren, env->text_solve);
-	if (!env->text_solve)
-		ERROR("SDL_LoadTexture: %s\n", env->text_solve);
 
 	/* init but_undo_down texture */
 	// env->but_undo_down = SDL_LoadTexture(ren, env->but_undo_down);
