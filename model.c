@@ -43,13 +43,16 @@ struct Env_t {
 	SDL_Texture* text_undo;
 	SDL_Texture* text_redo;
 	SDL_Texture* text_solve;
+	bool pressed_restart;
+	bool pressed_undo;
+	bool pressed_redo;
+	bool pressed_solve;
 	SDL_Rect* rec_redo;  // rectangle of each buttons
 	SDL_Rect* rec_undo;
 	SDL_Rect* rec_restart;
 	SDL_Rect* rec_solve;
-	SDL_Rect* rec_game;       // rectangle of the grid
-	SDL_Rect** tab_rec_game;  // array of rectangles containing each square of the grid
-	uint size_game;           // contain the number of squares in the game
+	SDL_Rect* rec_game;  // rectangle of the grid
+	uint size_game;      // contain the number of squares in the game
 };
 
 /* **************************************************************** */
@@ -288,58 +291,38 @@ bool process(SDL_Window* win, SDL_Renderer* ren, Env* env, SDL_Event* e) {
 	} else if (e->type == SDL_MOUSEMOTION) {
 		SDL_Point mouse;
 		SDL_GetMouseState(&mouse.x, &mouse.y);
-		if (SDL_PointInRect(mouse, env->rec_restart)) {
-			env->text_restart = IMG_LoadTexture(ren, RESTART_DOWN);
-			if (!env->text_restart)
-				ERROR("IMG_LoadTexture: %s\n", RESTART_DOWN);
-		} else if (SDL_PointInRect(mouse, env->rec_undo)) {
-			env->text_undo = IMG_LoadTexture(ren, UNDO_DOWN);
-			if (!env->text_undo)
-				ERROR("IMG_LoadTexture: %s\n", UNDO_DOWN);
-		} else if (SDL_PointInRect(mouse, env->rec_redo)) {
-			env->text_redo = IMG_LoadTexture(ren, REDO_DOWN);
-			if (!env->text_redo)
-				ERROR("IMG_LoadTexture: %s\n", REDO_DOWN);
-		} else if (SDL_PointInRect(mouse, env->rec_sove)) {
-			env->text_solve = IMG_LoadTexture(ren, SOLVE_DOWN);
-			if (!env->text_solve)
-				ERROR("IMG_LoadTexture: %s\n", SOLVE_DOWN);
+		if (SDL_PointInRect(&mouse, env->rec_restart)) {
+			env->pressed_restart = true;
+		} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
+			env->pressed_undo = true;
+		} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
+			env->pressed_redo;
+		} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
+			env->pressed_solve = true;
 		} else {
-			env->text_restart = IMG_LoadTexture(ren, RESTART_UP);
-			if (!env->text_restart)
-				ERROR("IMG_LoadTexture: %s\n", RESTART_UP);
-			env->text_undo = IMG_LoadTexture(ren, UNDO_UP);
-			if (!env->text_undo)
-				ERROR("IMG_LoadTexture: %s\n", UNDO_UP);
-			env->text_redo = IMG_LoadTexture(ren, REDO_UP);
-			if (!env->text_redo)
-				ERROR("IMG_LoadTexture: %s\n", REDO_UP);
-			env->text_solve = IMG_LoadTexture(ren, SOLVE_UP);
-			if (!env->text_solve)
-				ERROR("IMG_LoadTexture: %s\n", SOLVE_UP);
+			env->pressed_restart = false;
+			env->pressed_undo = false;
+			env->pressed_redo = false;
+			env->pressed_solve = false;
 		}
 	} else if (e->type == SDL_MOUSEBUTTONDOWN) {
 		SDL_Point mouse;
 		SDL_GetMouseState(&mouse.x, &mouse.y);
-		if (SDL_PointInRect(mouse, env->rec_restart)) {
+		if (SDL_PointInRect(&mouse, env->rec_restart)) {
 			game_restart(env->g);
-		} else if (SDL_PointInRect(mouse, env->rec_undo)) {
+		} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
 			game_undo(env->g);
-		} else if (SDL_PointInRect(mouse, env->rec_redo)) {
+		} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
 			game_redo(env->g);
-		} else if (SDL_PointInRect(mouse, env->rec_sove)) {
+		} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
 			game_solve(env->g);
-		} else if (SDL_PointInRect(mouse, env->rec_game)) {
-			for (uint ind = 0; i < env->size; ind++) {
-				uint i = ind % (env->g->height);
-				uint j = ind / (env->g->width);
-				if (SDL_PointInRect(mouse, env->tab_rec_game[ind])) {
-					if (game_is_blank(env->g, i, j)) {
-						game_play_move(env->g, i, j, S_LIGHTBULB);
-					} else if (game_is_lightbulb(env->g, i, j)) {
-						game_play_move(env->g, i, j, S_BLANK);
-					}
-				}
+		} else if (SDL_PointInRect(&mouse, env->rec_game)) {
+			uint i = mouse.y - ((h - (env->rec_game->y)) / 2) / (env->g->height);
+			uint j = mouse.x - ((w - (env->rec_game->x)) / 2) / (env->g->width);
+			if (game_is_blank(env->g, i, j)) {
+				game_play_move(env->g, i, j, S_LIGHTBULB);
+			} else if (game_is_lightbulb(env->g, i, j)) {
+				game_play_move(env->g, i, j, S_BLANK);
 			}
 		}
 	}
