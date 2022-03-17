@@ -25,8 +25,7 @@
 #define SOLVE_DOWN "../img/solve_down.png"
 #define LIGHTBULB_WHITE "../img/lightbulb_white.png"
 #define LIGHTBULB_BLACK "../img/lightbulb_black.png"
-#define FONT "arial.ttf"
-
+#define FONT "../arial.ttf"
 
 #define FONTSIZE 36
 /* **************************************************************** */
@@ -38,8 +37,8 @@ struct Env_t {
 	SDL_Texture** two;
 	SDL_Texture** three;
 	SDL_Texture** four;
-	SDL_Texture** lightbulb;  // array of the two lightbulb images first white second red
-	SDL_Texture** text_restart;
+	SDL_Texture** lightbulb;     // array of the two lightbulb images first white second red
+	SDL_Texture** text_restart;  // up fist then down
 	SDL_Texture** text_undo;
 	SDL_Texture** text_redo;
 	SDL_Texture** text_solve;
@@ -56,6 +55,11 @@ struct Env_t {
 };
 
 /* **************************************************************** */
+void usage(char* argv[]) {
+	printf("Usage : %s            => Joue la partie par défaut\n", argv[0]);
+	printf("        %s <filename> => Charge la partie sur le fichier <filename>\n", argv[0]);
+	exit(EXIT_FAILURE);
+}
 
 Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 	Env* env = malloc(sizeof(struct Env_t));
@@ -64,104 +68,162 @@ Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 	PRINT(
 	    "All non-black squares are lit.\nNo light is lit by another light.\nEach numbered black square must be orthogonally adjacent to exactly the given "
 	    "number of lights.\nNon-numbered black squares may have any number of lights adjacent to them.\n");
+
 	/* get current window size */
 	int w, h;
 	SDL_GetWindowSize(win, &w, &h);
 
-	/* init game texture */
-	env->g = SDL_Load(ren, env->g);
-	if (!env->g)
-		ERROR("SDL_LoadTexture: %s\n", env->g);
+	if (argc == 1) {
+		// Create new game
+		env->g = game_default();
+	} else if (argc == 2) {
+		char* gameFile = argv[1];
+		env->g = game_load(gameFile);
+	} else {
+		usage(argv);
+	}
 
-    TTF_Font* font = TTF_OpenFont(FONT, FONTSIZE);
-	if (!font) ERROR("TTF_OpenFont: %s\n", FONT);
-	TTF_SetFontStyle(font, TTF_STYLE_BOLD);      
-	//color of 0 in black wall
-	SDL_Color color_w = {255, 255, 255, 255}; 
-	//color of 0 in black wall with error
+	TTF_Font* font = TTF_OpenFont(FONT, FONTSIZE);
+	if (!font)
+		ERROR("TTF_OpenFont: %s\n", FONT);
+	TTF_SetFontStyle(font, TTF_STYLE_BOLD);
+	// color of 0 in black wall
+	SDL_Color color_w = {255, 255, 255, 255};
+	// color of 0 in black wall with error
 	SDL_Color color_r = {255, 0, 0, 255}; /* blue color in RGBA */
 
 	/* init zero texture double tab*/
-	env->zero = malloc (sizeof(SDL_Texture*)*2);
-	if (env->zero==NULL)
+	env->zero = malloc(sizeof(SDL_Texture*) * 2);
+	if (env->zero == NULL)
 		ERROR("NOT ENOUGTH MEMORY\n");
-	//if the case has not error
-	env->zero[0]=TTF_RenderText_Blended(font, "0", color_w);
-	//if the case has error
-	env->zero[1]=TTF_RenderText_Blended(font, "0", color_r);
+	// if the case has not error
+	SDL_Surface* surf = TTF_RenderText_Blended(font, "0", color_w);
+	env->zero[0] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+	// if the case has error
+	surf = TTF_RenderText_Blended(font, "0", color_r);
+	env->zero[1] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
 
 	/* init one texture double tab*/
-	env->one = malloc (sizeof(SDL_Texture*)*2);
-	if (env->one==NULL)
+	env->one = malloc(sizeof(SDL_Texture*) * 2);
+	if (env->one == NULL)
 		ERROR("NOT ENOUGTH MEMORY\n");
-	//if the case has not error
-	env->one[0]=TTF_RenderText_Blended(font, "1", color_w);
-	//if the case has error
-	env->one[1]=TTF_RenderText_Blended(font, "1", color_r);
+	// if the case has not error
+	surf = TTF_RenderText_Blended(font, "1", color_w);
+	env->one[0] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+	// if the case has error
+	surf = TTF_RenderText_Blended(font, "1", color_r);
+	env->one[1] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
 
 	/* init two texture double tab*/
-	env->two = malloc (sizeof(SDL_Texture*)*2);
-	if (env->two==NULL)
+	env->two = malloc(sizeof(SDL_Texture*) * 2);
+	if (env->two == NULL)
 		ERROR("NOT ENOUGTH MEMORY\n");
-	//if the case has not error
-	env->two[0]=TTF_RenderText_Blended(font, "2", color_w);
-	//if the case has error
-	env->two[1]=TTF_RenderText_Blended(font, "2", color_r);
+	// if the case has not error
+	surf = TTF_RenderText_Blended(font, "2", color_w);
+	env->two[0] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+	// if the case has error
+	surf = TTF_RenderText_Blended(font, "2", color_r);
+	env->two[1] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
 
 	/* init three texture double tab*/
-	env->three = malloc (sizeof(SDL_Texture*)*2);
-	if (env->three==NULL)
+	env->three = malloc(sizeof(SDL_Texture*) * 2);
+	if (env->three == NULL)
 		ERROR("NOT ENOUGTH MEMORY\n");
-	//if the case has not error
-	env->three[0]=TTF_RenderText_Blended(font, "3", color_w);
-	//if the case has error
-	env->three[1]=TTF_RenderText_Blended(font, "3", color_r);
+	// if the case has not error
+	surf = TTF_RenderText_Blended(font, "3", color_w);
+	env->three[0] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+	// if the case has error
+	surf = TTF_RenderText_Blended(font, "3", color_r);
+	env->three[1] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
 
 	/* init four texture double tab*/
-	env->four = malloc (sizeof(SDL_Texture*)*2);
-	if (env->four==NULL)
+	env->four = malloc(sizeof(SDL_Texture*) * 2);
+	if (env->four == NULL)
 		ERROR("NOT ENOUGTH MEMORY\n");
-	//if the case has not error
-	env->four[0]=TTF_RenderText_Blended(font, "4", color_w);
-	//if the case has error
-	env->four[1]=TTF_RenderText_Blended(font, "4", color_r);
+	// if the case has not error
+	surf = TTF_RenderText_Blended(font, "4", color_w);
+	env->four[0] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+	// if the case has error
+	surf = TTF_RenderText_Blended(font, "4", color_r);
+	env->four[1] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
 
 	/* init lightbulb texture double tab*/
-	env->lightbulb = malloc (sizeof(SDL_Texture*)*2);
-	if (env->lightbulb==NULL)
+	env->lightbulb = malloc(sizeof(SDL_Texture*) * 2);
+	if (env->lightbulb == NULL)
 		ERROR("NOT ENOUGTH MEMORY\n");
-	//if the case has not error
-	env->four[0]=IMG_LoadTexture(ren, LIGHTBULB_WHITE);
-	//if the case has error
-	env->four[1]=IMG_LoadTexture(ren, LIGHTBULB_BLACK);
+	// if the case has not error
+	env->lightbulb[0] = IMG_LoadTexture(ren, LIGHTBULB_WHITE);
+	// if the case has error
+	env->lightbulb[1] = IMG_LoadTexture(ren, LIGHTBULB_BLACK);
 
+	/* init text_restart texture double tab*/
+	env->text_restart = malloc(sizeof(SDL_Texture*) * 2);
+	if (env->text_restart == NULL)
+		ERROR("NOT ENOUGTH MEMORY\n");
+	// if the case has not error
+	env->text_restart[0] = IMG_LoadTexture(ren, RESTART_UP);
+	// if the case has error
+	env->text_restart[1] = IMG_LoadTexture(ren, RESTART_DOWN);
 
-	/* init but_undo_down texture */
-	// env->but_undo_down = SDL_LoadTexture(ren, env->but_undo_down);
-	// if (!env->but_undo_down)
-	//	ERROR("SDL_LoadTexture: %s\n", env->but_undo_down);
+	/* init text_undo texture double tab*/
+	env->text_undo = malloc(sizeof(SDL_Texture*) * 2);
+	if (env->text_undo == NULL)
+		ERROR("NOT ENOUGTH MEMORY\n");
+	// if the case has not error
+	env->text_undo[0] = IMG_LoadTexture(ren, UNDO_UP);
+	// if the case has error
+	env->text_undo[1] = IMG_LoadTexture(ren, UNDO_DOWN);
 
-	/* init but_redo_up texture */
-	// env->but_redo_up = SDL_LoadTexture(ren, env->but_redo_up);
-	// if (!env->but_redo_up)
-	//	ERROR("SDL_LoadTexture: %s\n", env->but_redo_up);
+	/* init text_redo texture double tab*/
+	env->text_redo = malloc(sizeof(SDL_Texture*) * 2);
+	if (env->text_redo == NULL)
+		ERROR("NOT ENOUGTH MEMORY\n");
+	// if the case has not error
+	env->text_redo[0] = IMG_LoadTexture(ren, REDO_UP);
+	// if the case has error
+	env->text_redo[1] = IMG_LoadTexture(ren, REDO_DOWN);
 
-	/* init but_redo_down texture */
-	// env->but_redo_down = SDL_LoadTexture(ren, env->but_redo_down);
-	// if (!env->but_redo_down)
-	//	ERROR("SDL_LoadTexture: %s\n", env->but_redo_down);
+	/* init text_solve texture double tab*/
+	env->text_solve = malloc(sizeof(SDL_Texture*) * 2);
+	if (env->text_solve == NULL)
+		ERROR("NOT ENOUGTH MEMORY\n");
+	// if the case has not error
+	env->text_solve[0] = IMG_LoadTexture(ren, SOLVE_UP);
+	// if the case has error
+	env->text_solve[1] = IMG_LoadTexture(ren, SOLVE_DOWN);
 
-	/* init but_solve_up texture */
-	// env->but_solve_up = SDL_LoadTexture(ren, env->but_solve_up);
-	// if (!env->but_solve_up)
-	//	ERROR("SDL_LoadTexture: %s\n", env->but_solve_up);
+	env->rec_redo = malloc(sizeof(SDL_Rect));
+	if (env->rec_redo == NULL)
+		ERROR("NOT ENOUGTH MEMORY\n");
 
-	/* init but_solve_down texture */
-	// env->but_solve_down = SDL_LoadTexture(ren, env->but_solve_down);
-	// if (!env->but_solve_down)
-	//	ERROR("SDL_LoadTexture: %s\n", env->but_solve_down);
+	env->rec_game = malloc(sizeof(SDL_Rect));
+	if (env->rec_game == NULL)
+		ERROR("NOT ENOUGTH MEMORY\n");
 
-	// return env;
+	env->rec_restart = malloc(sizeof(SDL_Rect));
+	if (env->rec_restart == NULL)
+		ERROR("NOT ENOUGTH MEMORY\n");
+
+	env->rec_solve = malloc(sizeof(SDL_Rect));
+	if (env->rec_solve == NULL)
+		ERROR("NOT ENOUGTH MEMORY\n");
+
+	env->rec_undo = malloc(sizeof(SDL_Rect));
+	if (env->rec_undo == NULL)
+		ERROR("NOT ENOUGTH MEMORY\n");
+
+	TTF_CloseFont(font);
+	return env;
 }
 
 /* **************************************************************** */
