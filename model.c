@@ -98,47 +98,47 @@ Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 	if (!env->lightbulb)
 		ERROR("SDL_LoadTexture: %s\n", env->lightbulb);
 
-	/* init but_restart_up texture */
-	env->but_restart_up = SDL_LoadTexture(ren, env->but_restart_up);
-	if (!env->but_restart_up)
-		ERROR("SDL_LoadTexture: %s\n", env->but_restart_up);
+	/* init text_restart texture */
+	env->text_restart = SDL_LoadTexture(ren, env->text_restart);
+	if (!env->text_restart)
+		ERROR("SDL_LoadTexture: %s\n", env->text_restart);
 
-	/* init but_restart_down texture */
-	env->but_restart_down = SDL_LoadTexture(ren, env->but_restart_down);
-	if (!env->but_restart_down)
-		ERROR("SDL_LoadTexture: %s\n", env->but_restart_down);
+	/* init text_undo texture */
+	env->text_undo = SDL_LoadTexture(ren, env->text_undo);
+	if (!env->text_undo)
+		ERROR("SDL_LoadTexture: %s\n", env->text_undo);
 
-	/* init but_undo_up texture */
-	env->but_undo_up = SDL_LoadTexture(ren, env->but_undo_up);
-	if (!env->but_undo_up)
-		ERROR("SDL_LoadTexture: %s\n", env->but_undo_up);
+	/* init text_solve texture */
+	env->text_solve = SDL_LoadTexture(ren, env->text_solve);
+	if (!env->text_solve)
+		ERROR("SDL_LoadTexture: %s\n", env->text_solve);
 
 	/* init but_undo_down texture */
-	env->but_undo_down = SDL_LoadTexture(ren, env->but_undo_down);
-	if (!env->but_undo_down)
-		ERROR("SDL_LoadTexture: %s\n", env->but_undo_down);
+	// env->but_undo_down = SDL_LoadTexture(ren, env->but_undo_down);
+	// if (!env->but_undo_down)
+	//	ERROR("SDL_LoadTexture: %s\n", env->but_undo_down);
 
 	/* init but_redo_up texture */
-	env->but_redo_up = SDL_LoadTexture(ren, env->but_redo_up);
-	if (!env->but_redo_up)
-		ERROR("SDL_LoadTexture: %s\n", env->but_redo_up);
+	// env->but_redo_up = SDL_LoadTexture(ren, env->but_redo_up);
+	// if (!env->but_redo_up)
+	//	ERROR("SDL_LoadTexture: %s\n", env->but_redo_up);
 
 	/* init but_redo_down texture */
-	env->but_redo_down = SDL_LoadTexture(ren, env->but_redo_down);
-	if (!env->but_redo_down)
-		ERROR("SDL_LoadTexture: %s\n", env->but_redo_down);
+	// env->but_redo_down = SDL_LoadTexture(ren, env->but_redo_down);
+	// if (!env->but_redo_down)
+	//	ERROR("SDL_LoadTexture: %s\n", env->but_redo_down);
 
 	/* init but_solve_up texture */
-	env->but_solve_up = SDL_LoadTexture(ren, env->but_solve_up);
-	if (!env->but_solve_up)
-		ERROR("SDL_LoadTexture: %s\n", env->but_solve_up);
+	// env->but_solve_up = SDL_LoadTexture(ren, env->but_solve_up);
+	// if (!env->but_solve_up)
+	//	ERROR("SDL_LoadTexture: %s\n", env->but_solve_up);
 
 	/* init but_solve_down texture */
-	env->but_solve_down = SDL_LoadTexture(ren, env->but_solve_down);
-	if (!env->but_solve_down)
-		ERROR("SDL_LoadTexture: %s\n", env->but_solve_down);
+	// env->but_solve_down = SDL_LoadTexture(ren, env->but_solve_down);
+	// if (!env->but_solve_down)
+	//	ERROR("SDL_LoadTexture: %s\n", env->but_solve_down);
 
-	return env;
+	// return env;
 }
 
 /* **************************************************************** */
@@ -336,14 +336,14 @@ void clean(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	SDL_DestroyTexture(env->three);
 	SDL_DestroyTexture(env->four);
 	SDL_DestroyTexture(env->lightbulb);
-	SDL_DestroyTexture(env->but_restart_up);
-	SDL_DestroyTexture(env->but_restart_down);
-	SDL_DestroyTexture(env->but_undo_up);
-	SDL_DestroyTexture(env->but_undo_down);
-	SDL_DestroyTexture(env->but_redo_up);
+	SDL_DestroyTexture(env->text_restart);
+	SDL_DestroyTexture(env->text_undo);
+	SDL_DestroyTexture(env->text_redo);
+	SDL_DestroyTexture(env->text_solve);
+	/*SDL_DestroyTexture(env->but_redo_up);
 	SDL_DestroyTexture(env->but_redo_down);
 	SDL_DestroyTexture(env->but_solve_up);
-	SDL_DestroyTexture(env->but_solve_down);
+	SDL_DestroyTexture(env->but_solve_down);*/
 
 	free(env);
 }
