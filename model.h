@@ -42,10 +42,10 @@ typedef struct Env_t Env;
 
 /* **************************************************************** */
 
-Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]);
+Env* init(SDL_Renderer* ren, int argc, char* argv[]);
 void render(SDL_Window* win, SDL_Renderer* ren, Env* env);
-void clean(SDL_Window* win, SDL_Renderer* ren, Env* env);
-bool process(SDL_Window* win, SDL_Renderer* ren, Env* env, SDL_Event* e);
+void clean(Env* env);
+bool process(SDL_Window* win, Env* env, SDL_Event* e);
 
 /* **************************************************************** */
 

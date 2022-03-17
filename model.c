@@ -60,18 +60,13 @@ void usage(char* argv[]) {
 	exit(EXIT_FAILURE);
 }
 
-Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
+Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	Env* env = malloc(sizeof(struct Env_t));
 
-	PRINT("To win the game, you must satisfy the following conditions:\n");
-	PRINT(
+	printf("To win the game, you must satisfy the following conditions:\n");
+	printf(
 	    "All non-black squares are lit.\nNo light is lit by another light.\nEach numbered black square must be orthogonally adjacent to exactly the given "
 	    "number of lights.\nNon-numbered black squares may have any number of lights adjacent to them.\n");
-
-	/* get current window size */
-	int w, h;
-	SDL_GetWindowSize(win, &w, &h);
-
 	if (argc == 1) {
 		// Create new game
 		env->g = game_default();
@@ -84,7 +79,7 @@ Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 
 	TTF_Font* font = TTF_OpenFont(FONT, FONTSIZE);
 	if (!font)
-		ERROR("TTF_OpenFont: %s\n", FONT);
+		fprintf(stderr, "TTF_OpenFont: %s\n", FONT);
 	TTF_SetFontStyle(font, TTF_STYLE_BOLD);
 	// color of 0 in black wall
 	SDL_Color color_w = {255, 255, 255, 255};
@@ -94,7 +89,7 @@ Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init zero texture double tab*/
 	env->zero = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->zero == NULL)
-		ERROR("NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 	// if the case has not error
 	SDL_Surface* surf = TTF_RenderText_Blended(font, "0", color_w);
 	env->zero[0] = SDL_CreateTextureFromSurface(ren, surf);
@@ -107,7 +102,7 @@ Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init one texture double tab*/
 	env->one = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->one == NULL)
-		ERROR("NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 	// if the case has not error
 	surf = TTF_RenderText_Blended(font, "1", color_w);
 	env->one[0] = SDL_CreateTextureFromSurface(ren, surf);
@@ -120,7 +115,7 @@ Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init two texture double tab*/
 	env->two = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->two == NULL)
-		ERROR("NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 	// if the case has not error
 	surf = TTF_RenderText_Blended(font, "2", color_w);
 	env->two[0] = SDL_CreateTextureFromSurface(ren, surf);
@@ -133,7 +128,7 @@ Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init three texture double tab*/
 	env->three = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->three == NULL)
-		ERROR("NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 	// if the case has not error
 	surf = TTF_RenderText_Blended(font, "3", color_w);
 	env->three[0] = SDL_CreateTextureFromSurface(ren, surf);
@@ -146,7 +141,7 @@ Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init four texture double tab*/
 	env->four = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->four == NULL)
-		ERROR("NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 	// if the case has not error
 	surf = TTF_RenderText_Blended(font, "4", color_w);
 	env->four[0] = SDL_CreateTextureFromSurface(ren, surf);
@@ -159,7 +154,7 @@ Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init lightbulb texture double tab*/
 	env->lightbulb = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->lightbulb == NULL)
-		ERROR("NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 	// if the case has not error
 	env->lightbulb[0] = IMG_LoadTexture(ren, LIGHTBULB_WHITE);
 	// if the case has error
@@ -168,7 +163,7 @@ Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init text_restart texture double tab*/
 	env->text_restart = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->text_restart == NULL)
-		ERROR("NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 	// if the case has not error
 	env->text_restart[0] = IMG_LoadTexture(ren, RESTART_UP);
 	// if the case has error
@@ -177,7 +172,7 @@ Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init text_undo texture double tab*/
 	env->text_undo = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->text_undo == NULL)
-		ERROR("NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 	// if the case has not error
 	env->text_undo[0] = IMG_LoadTexture(ren, UNDO_UP);
 	// if the case has error
@@ -186,7 +181,7 @@ Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init text_redo texture double tab*/
 	env->text_redo = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->text_redo == NULL)
-		ERROR("NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 	// if the case has not error
 	env->text_redo[0] = IMG_LoadTexture(ren, REDO_UP);
 	// if the case has error
@@ -195,7 +190,7 @@ Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init text_solve texture double tab*/
 	env->text_solve = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->text_solve == NULL)
-		ERROR("NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 	// if the case has not error
 	env->text_solve[0] = IMG_LoadTexture(ren, SOLVE_UP);
 	// if the case has error
@@ -203,23 +198,23 @@ Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 
 	env->rec_redo = malloc(sizeof(SDL_Rect));
 	if (env->rec_redo == NULL)
-		ERROR("NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 
 	env->rec_game = malloc(sizeof(SDL_Rect));
 	if (env->rec_game == NULL)
-		ERROR("NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 
 	env->rec_restart = malloc(sizeof(SDL_Rect));
 	if (env->rec_restart == NULL)
-		ERROR("NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 
 	env->rec_solve = malloc(sizeof(SDL_Rect));
 	if (env->rec_solve == NULL)
-		ERROR("NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 
 	env->rec_undo = malloc(sizeof(SDL_Rect));
 	if (env->rec_undo == NULL)
-		ERROR("NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 
 	TTF_CloseFont(font);
 	return env;
@@ -336,7 +331,7 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 
 /* **************************************************************** */
 
-bool process(SDL_Window* win, SDL_Renderer* ren, Env* env, SDL_Event* e) {
+bool process(SDL_Window* win, Env* env, SDL_Event* e) {
 	int w, h;
 	SDL_GetWindowSize(win, &w, &h);
 
@@ -357,7 +352,7 @@ bool process(SDL_Window* win, SDL_Renderer* ren, Env* env, SDL_Event* e) {
 		} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
 			env->pressed_undo = true;
 		} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
-			env->pressed_redo;
+			env->pressed_redo = true;
 		} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
 			env->pressed_solve = true;
 		} else {
@@ -402,9 +397,11 @@ bool process(SDL_Window* win, SDL_Renderer* ren, Env* env, SDL_Event* e) {
 
 /* **************************************************************** */
 
-void clean(SDL_Window* win, SDL_Renderer* ren, Env* env) {
-	SDL_DestroyTexture(env->zero);
-	SDL_DestroyTexture(env->one);
+void clean(Env* env) {
+	SDL_DestroyTexture(env->zero[0]);
+	SDL_DestroyTexture(env->zero[1]);
+	free(env->zero);
+	/*SDL_DestroyTexture(env->one);
 	SDL_DestroyTexture(env->two);
 	SDL_DestroyTexture(env->three);
 	SDL_DestroyTexture(env->four);
@@ -413,10 +410,11 @@ void clean(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	SDL_DestroyTexture(env->text_undo);
 	SDL_DestroyTexture(env->text_redo);
 	SDL_DestroyTexture(env->text_solve);
-	/*SDL_DestroyTexture(env->but_redo_up);
+	SDL_DestroyTexture(env->but_redo_up);
 	SDL_DestroyTexture(env->but_redo_down);
 	SDL_DestroyTexture(env->but_solve_up);
-	SDL_DestroyTexture(env->but_solve_down);*/
+	SDL_DestroyTexture(env->but_solve_down);
+	*/
 
 	free(env);
 }

@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
 		ERROR("Error: SDL_CreateRenderer (%s)", SDL_GetError());
 
 	/* initialize your environment */
-	Env* env = init(win, ren, argc, argv);
+	Env* env = init(ren, argc, argv);
 
 	/* main render loop */
 	SDL_Event e;
@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
 		/* manage events */
 		while (SDL_PollEvent(&e)) {
 			/* process your events */
-			quit = process(win, ren, env, &e);
+			quit = process(win, env, &e);
 			if (quit)
 				break;
 		}
@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	/* clean your environment */
-	clean(win, ren, env);
+	clean(env);
 
 	SDL_DestroyRenderer(ren);
 	SDL_DestroyWindow(win);
