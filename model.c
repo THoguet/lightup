@@ -34,10 +34,10 @@ struct Env_t {
 	SDL_Texture** three;
 	SDL_Texture** four;
 	SDL_Texture** lightbulb;  // array of the two lightbulb images first white second red
-	SDL_Texture* text_restart;
-	SDL_Texture* text_undo;
-	SDL_Texture* text_redo;
-	SDL_Texture* text_solve;
+	SDL_Texture** text_restart;
+	SDL_Texture** text_undo;
+	SDL_Texture** text_redo;
+	SDL_Texture** text_solve;
 	bool pressed_restart;
 	bool pressed_undo;
 	bool pressed_redo;
