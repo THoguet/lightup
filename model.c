@@ -1,9 +1,9 @@
 // SDL2 Demo by aurelien.esnard@u-bordeaux.fr
 
 #include "model.h"
-#include <SDL.h>
-#include <SDL_image.h>  // required to load transparent texture from PNG
-#include <SDL_ttf.h>    // required to use TTF fonts
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>  // required to load transparent texture from PNG
+#include <SDL2/SDL_ttf.h>    // required to use TTF fonts
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,7 +38,91 @@ struct Env_t {
 Env* init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[]) {
 	Env* env = malloc(sizeof(struct Env_t));
 
-	/* PUT YOUR CODE HERE TO INIT TEXTURES, ... */
+	PRINT("To win the game, you must satisfy the following conditions:\n");
+	PRINT(
+	    "All non-black squares are lit.\nNo light is lit by another light.\nEach numbered black square must be orthogonally adjacent to exactly the given "
+	    "number of lights.\nNon-numbered black squares may have any number of lights adjacent to them.\n");
+	/* get current window size */
+	int w, h;
+	SDL_GetWindowSize(win, &w, &h);
+
+	/* Select the color for drawing. It is set to red here. */
+	// SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
+
+	/* init game texture */
+	env->g = SDL_LoadTexture(ren, env->g);
+	if (!env->g)
+		ERROR("SDL_LoadTexture: %s\n", env->g);
+
+	/* init zero texture */
+	env->zero = SDL_LoadTexture(ren, env->zero);
+	if (!env->zero)
+		ERROR("SDL_LoadTexture: %s\n", env->zero);
+
+	/* init one texture */
+	env->one = SDL_LoadTexture(ren, env->one);
+	if (!env->one)
+		ERROR("SDL_LoadTexture: %s\n", env->one);
+
+	/* init two texture */
+	env->two = SDL_LoadTexture(ren, env->two);
+	if (!env->two)
+		ERROR("SDL_LoadTexture: %s\n", env->two);
+
+	/* init three texture */
+	env->three = SDL_LoadTexture(ren, env->three);
+	if (!env->three)
+		ERROR("SDL_LoadTexture: %s\n", env->three);
+
+	/* init four texture */
+	env->four = SDL_LoadTexture(ren, env->four);
+	if (!env->four)
+		ERROR("SDL_LoadTexture: %s\n", env->four);
+
+	/* init lightbulb texture */
+	env->lightbulb = SDL_LoadTexture(ren, env->lightbulb);
+	if (!env->lightbulb)
+		ERROR("SDL_LoadTexture: %s\n", env->lightbulb);
+
+	/* init but_restart_up texture */
+	env->but_restart_up = SDL_LoadTexture(ren, env->but_restart_up);
+	if (!env->but_restart_up)
+		ERROR("SDL_LoadTexture: %s\n", env->but_restart_up);
+
+	/* init but_restart_down texture */
+	env->but_restart_down = SDL_LoadTexture(ren, env->but_restart_down);
+	if (!env->but_restart_down)
+		ERROR("SDL_LoadTexture: %s\n", env->but_restart_down);
+
+	/* init but_undo_up texture */
+	env->but_undo_up = SDL_LoadTexture(ren, env->but_undo_up);
+	if (!env->but_undo_up)
+		ERROR("SDL_LoadTexture: %s\n", env->but_undo_up);
+
+	/* init but_undo_down texture */
+	env->but_undo_down = SDL_LoadTexture(ren, env->but_undo_down);
+	if (!env->but_undo_down)
+		ERROR("SDL_LoadTexture: %s\n", env->but_undo_down);
+
+	/* init but_redo_up texture */
+	env->but_redo_up = SDL_LoadTexture(ren, env->but_redo_up);
+	if (!env->but_redo_up)
+		ERROR("SDL_LoadTexture: %s\n", env->but_redo_up);
+
+	/* init but_redo_down texture */
+	env->but_redo_down = SDL_LoadTexture(ren, env->but_redo_down);
+	if (!env->but_redo_down)
+		ERROR("SDL_LoadTexture: %s\n", env->but_redo_down);
+
+	/* init but_solve_up texture */
+	env->but_solve_up = SDL_LoadTexture(ren, env->but_solve_up);
+	if (!env->but_solve_up)
+		ERROR("SDL_LoadTexture: %s\n", env->but_solve_up);
+
+	/* init but_solve_down texture */
+	env->but_solve_down = SDL_LoadTexture(ren, env->but_solve_down);
+	if (!env->but_solve_down)
+		ERROR("SDL_LoadTexture: %s\n", env->but_solve_down);
 
 	return env;
 }
@@ -179,7 +263,20 @@ bool process(SDL_Window* win, SDL_Renderer* ren, Env* env, SDL_Event* e) {
 /* **************************************************************** */
 
 void clean(SDL_Window* win, SDL_Renderer* ren, Env* env) {
-	/* PUT YOUR CODE HERE TO CLEAN MEMORY */
+	SDL_DestroyTexture(env->zero);
+	SDL_DestroyTexture(env->one);
+	SDL_DestroyTexture(env->two);
+	SDL_DestroyTexture(env->three);
+	SDL_DestroyTexture(env->four);
+	SDL_DestroyTexture(env->lightbulb);
+	SDL_DestroyTexture(env->but_restart_up);
+	SDL_DestroyTexture(env->but_restart_down);
+	SDL_DestroyTexture(env->but_undo_up);
+	SDL_DestroyTexture(env->but_undo_down);
+	SDL_DestroyTexture(env->but_redo_up);
+	SDL_DestroyTexture(env->but_redo_down);
+	SDL_DestroyTexture(env->but_solve_up);
+	SDL_DestroyTexture(env->but_solve_down);
 
 	free(env);
 }
