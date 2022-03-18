@@ -157,8 +157,10 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 	// if the case has not error
 	env->lightbulb[0] = IMG_LoadTexture(ren, LIGHTBULB_WHITE);
+	if (!env->lightbulb[0]) ERROR("IMG_LoadTexture: %s\n", LIGHTBULB_WHITE);
 	// if the case has error
 	env->lightbulb[1] = IMG_LoadTexture(ren, LIGHTBULB_BLACK);
+	if (!env->lightbulb[1]) ERROR("IMG_LoadTexture: %s\n", LIGHTBULB_BLACK);
 
 	/* init text_restart texture double tab*/
 	env->text_restart = malloc(sizeof(SDL_Texture*) * 2);
@@ -166,8 +168,10 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 	// if the case has not error
 	env->text_restart[0] = IMG_LoadTexture(ren, RESTART_UP);
+	if (!env->text_restart[0]) ERROR("IMG_LoadTexture: %s\n", RESTART_UP);
 	// if the case has error
 	env->text_restart[1] = IMG_LoadTexture(ren, RESTART_DOWN);
+	if (!env->text_restart[1]) ERROR("IMG_LoadTexture: %s\n", RESTART_DOWN);
 
 	/* init text_undo texture double tab*/
 	env->text_undo = malloc(sizeof(SDL_Texture*) * 2);
@@ -175,8 +179,10 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 	// if the case has not error
 	env->text_undo[0] = IMG_LoadTexture(ren, UNDO_UP);
+	if (!env->text_undo[0]) ERROR("IMG_LoadTexture: %s\n", UNDO_UP);
 	// if the case has error
 	env->text_undo[1] = IMG_LoadTexture(ren, UNDO_DOWN);
+	if (!env->text_undo[1]) ERROR("IMG_LoadTexture: %s\n", UNDO_DOWN);
 
 	/* init text_redo texture double tab*/
 	env->text_redo = malloc(sizeof(SDL_Texture*) * 2);
@@ -184,8 +190,10 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 	// if the case has not error
 	env->text_redo[0] = IMG_LoadTexture(ren, REDO_UP);
+	if (!env->text_redo[0]) ERROR("IMG_LoadTexture: %s\n", REDO_UP);
 	// if the case has error
 	env->text_redo[1] = IMG_LoadTexture(ren, REDO_DOWN);
+	if (!env->text_redo[1]) ERROR("IMG_LoadTexture: %s\n", UNDO_DOWN);
 
 	/* init text_solve texture double tab*/
 	env->text_solve = malloc(sizeof(SDL_Texture*) * 2);
@@ -193,8 +201,10 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
 	// if the case has not error
 	env->text_solve[0] = IMG_LoadTexture(ren, SOLVE_UP);
+	if (!env->text_solve[0]) ERROR("IMG_LoadTexture: %s\n", SOLVE_UP);
 	// if the case has error
 	env->text_solve[1] = IMG_LoadTexture(ren, SOLVE_DOWN);
+	if (!env->text_solve[1]) ERROR("IMG_LoadTexture: %s\n", SOLVE_DOWN);
 
 	env->rec_redo = malloc(sizeof(SDL_Rect));
 	if (env->rec_redo == NULL)
@@ -401,6 +411,15 @@ void clean(Env* env) {
 	SDL_DestroyTexture(env->zero[0]);
 	SDL_DestroyTexture(env->zero[1]);
 	free(env->zero);
+	SDL_DestroyTexture(env->one[0]);
+	SDL_DestroyTexture(env->one[1]);
+	free(env->one);
+	SDL_DestroyTexture(env->three[0]);
+	SDL_DestroyTexture(env->three[1]);
+	free(env->three);
+	SDL_DestroyTexture(env->four[0]);
+	SDL_DestroyTexture(env->four[1]);
+	free(env->four);
 	/*SDL_DestroyTexture(env->one);
 	SDL_DestroyTexture(env->two);
 	SDL_DestroyTexture(env->three);
