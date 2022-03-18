@@ -62,7 +62,7 @@ target_link_libraries(game_solve game)
 # game_sdl
 include_directories(${SDL2_ALL_INC})
 add_executable(game_sdl main.c model.c)
-target_link_libraries(game_sdl game ${SDL2_ALL_LIBS} m)
+target_link_libraries(game_sdl game ${SDL2_ALL_LIBS})
 
 # libgame
 add_library (game game.c game_aux.c game_ext.c game_private.c history.c game_tools.c game_examples.c)

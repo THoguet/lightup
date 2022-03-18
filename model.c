@@ -392,17 +392,12 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 bool process(SDL_Window* win, Env* env, SDL_Event* e) {
 	int w, h;
 	SDL_GetWindowSize(win, &w, &h);
-
 	if (e->type == SDL_QUIT) {
 		return true;
 	}
-
 #ifdef _ANDROID_
 #else
-
-	else if (e->type == SDL_WINDOWEVENT) {
-
-	} else if (e->type == SDL_MOUSEMOTION) {
+	if (e->type == SDL_MOUSEMOTION) {
 		SDL_Point mouse;
 		SDL_GetMouseState(&mouse.x, &mouse.y);
 		if (SDL_PointInRect(&mouse, env->rec_restart)) {
@@ -477,6 +472,9 @@ void clean(Env* env) {
 	SDL_DestroyTexture(env->one[0]);
 	SDL_DestroyTexture(env->one[1]);
 	free(env->one);
+	SDL_DestroyTexture(env->two[0]);
+	SDL_DestroyTexture(env->two[1]);
+	free(env->two);
 	SDL_DestroyTexture(env->three[0]);
 	SDL_DestroyTexture(env->three[1]);
 	free(env->three);
