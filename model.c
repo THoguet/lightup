@@ -15,19 +15,19 @@
 
 /* **************************************************************** */
 
-#define RESTART_UP "./img/restart_up.png"
-#define RESTART_DOWN "./img/restart_down.png"
-#define UNDO_UP "./img/undo_up.png"
-#define UNDO_DOWN "./img/undo_down.png"
-#define REDO_UP "./img/redo_up.png"
-#define REDO_DOWN "./img/redo_down.png"
-#define SOLVE_UP "./img/solve_up.png"
-#define SOLVE_DOWN "./img/solve_down.png"
-#define LIGHTBULB_WHITE "./img/lightbulb_white.png"
-#define LIGHTBULB_BLACK "./img/lightbulb_black.png"
+#define RESTART_UP "./restart_up.png"
+#define RESTART_DOWN "./restart_down.png"
+#define UNDO_UP "./undo_up.png"
+#define UNDO_DOWN "./undo_down.png"
+#define REDO_UP "./redo_up.png"
+#define REDO_DOWN "./redo_down.png"
+#define SOLVE_UP "./solve_up.png"
+#define SOLVE_DOWN "./solve_down.png"
+#define LIGHTBULB_WHITE "./lightbulb_white.png"
+#define LIGHTBULB_RED "./lightbulb_red.png"
 #define FONT "./arial.ttf"
 
-#define FONTSIZE 36
+#define FONTSIZE 200
 /* **************************************************************** */
 
 struct Env_t {
@@ -62,7 +62,10 @@ void usage(char* argv[]) {
 
 Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	Env* env = malloc(sizeof(struct Env_t));
-
+	env->pressed_restart = false;
+	env->pressed_undo = false;
+	env->pressed_redo = false;
+	env->pressed_solve = false;
 	printf("To win the game, you must satisfy the following conditions:\n\n");
 	printf(
 	    "-All non-black squares are lit.\n-No light is lit by another light.\n-Each numbered black square must be orthogonally adjacent to exactly the given "
@@ -84,7 +87,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	// color of 0 in black wall
 	SDL_Color color_w = {255, 255, 255, 255};
 	// color of 0 in black wall with error
-	SDL_Color color_r = {255, 0, 0, 255}; /* blue color in RGBA */
+	SDL_Color color_r = {255, 50, 50, 255}; /* blue color in RGBA */
 
 	/* init zero texture double tab*/
 	env->zero = malloc(sizeof(SDL_Texture*) * 2);
@@ -160,9 +163,9 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	if (!env->lightbulb[0])
 		ERROR("IMG_LoadTexture: %s\n", LIGHTBULB_WHITE);
 	// if the case has error
-	env->lightbulb[1] = IMG_LoadTexture(ren, LIGHTBULB_BLACK);
+	env->lightbulb[1] = IMG_LoadTexture(ren, LIGHTBULB_RED);
 	if (!env->lightbulb[1])
-		ERROR("IMG_LoadTexture: %s\n", LIGHTBULB_BLACK);
+		ERROR("IMG_LoadTexture: %s\n", LIGHTBULB_RED);
 
 	/* init text_restart texture double tab*/
 	env->text_restart = malloc(sizeof(SDL_Texture*) * 2);
@@ -243,10 +246,12 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 /* **************************************************************** */
 
 void render_blank(SDL_Renderer* ren, SDL_Rect* rec, bool lighted) {
-	if (lighted) {
+	if (lighted)
 		SDL_SetRenderDrawColor(ren, 255, 255, 0, SDL_ALPHA_OPAQUE);
-		SDL_RenderFillRect(ren, rec);
-	}
+	else
+		SDL_SetRenderDrawColor(ren, 255, 255, 255, SDL_ALPHA_OPAQUE);
+	SDL_RenderFillRect(ren, rec);
+
 	SDL_SetRenderDrawColor(ren, 127, 127, 127, SDL_ALPHA_OPAQUE);
 	SDL_RenderDrawRect(ren, rec);
 }
@@ -258,32 +263,42 @@ void render_wall(SDL_Renderer* ren, Env* env, SDL_Rect* rec, int nb, bool error)
 	switch (nb) {
 		case 0:
 			SDL_QueryTexture(env->zero[error ? 1 : 0], NULL, NULL, &number.w, &number.h);
-			number.x = rec->x + rec->w / 2 - number.x / 2;
-			number.y = rec->y + rec->h / 2 - number.y / 2;
+			number.x = rec->x + rec->w / 4;
+			number.y = rec->y + rec->h / 4;
+			number.w = rec->w / 2;
+			number.h = rec->h / 2;
 			SDL_RenderCopy(ren, env->zero[error ? 1 : 0], NULL, &number);
 			break;
 		case 1:
 			SDL_QueryTexture(env->one[error ? 1 : 0], NULL, NULL, &number.w, &number.h);
-			number.x = rec->x + rec->w / 2 - number.x / 2;
-			number.y = rec->y + rec->h / 2 - number.y / 2;
+			number.x = rec->x + rec->w / 4;
+			number.y = rec->y + rec->h / 4;
+			number.w = rec->w / 2;
+			number.h = rec->h / 2;
 			SDL_RenderCopy(ren, env->one[error ? 1 : 0], NULL, &number);
 			break;
 		case 2:
 			SDL_QueryTexture(env->two[error ? 1 : 0], NULL, NULL, &number.w, &number.h);
-			number.x = rec->x + rec->w / 2 - number.x / 2;
-			number.y = rec->y + rec->h / 2 - number.y / 2;
+			number.x = rec->x + rec->w / 4;
+			number.y = rec->y + rec->h / 4;
+			number.w = rec->w / 2;
+			number.h = rec->h / 2;
 			SDL_RenderCopy(ren, env->two[error ? 1 : 0], NULL, &number);
 			break;
 		case 3:
 			SDL_QueryTexture(env->three[error ? 1 : 0], NULL, NULL, &number.w, &number.h);
-			number.x = rec->x + rec->w / 2 - number.x / 2;
-			number.y = rec->y + rec->h / 2 - number.y / 2;
+			number.x = rec->x + rec->w / 4;
+			number.y = rec->y + rec->h / 4;
+			number.w = rec->w / 2;
+			number.h = rec->h / 2;
 			SDL_RenderCopy(ren, env->three[error ? 1 : 0], NULL, &number);
 			break;
 		case 4:
 			SDL_QueryTexture(env->four[error ? 1 : 0], NULL, NULL, &number.w, &number.h);
-			number.x = rec->x + rec->w / 2 - number.x / 2;
-			number.y = rec->y + rec->h / 2 - number.y / 2;
+			number.x = rec->x + rec->w / 4;
+			number.y = rec->y + rec->h / 4;
+			number.w = rec->w / 2;
+			number.h = rec->h / 2;
 			SDL_RenderCopy(ren, env->four[error ? 1 : 0], NULL, &number);
 			break;
 	}
@@ -295,8 +310,8 @@ void render_lightbulb(SDL_Renderer* ren, SDL_Rect* rec, SDL_Texture* lightbulb_t
 	SDL_RenderFillRect(ren, rec);
 	SDL_SetRenderDrawColor(ren, 127, 127, 127, SDL_ALPHA_OPAQUE);
 	SDL_RenderDrawRect(ren, rec);
-	lightbulb.h = rec->h - rec->h / 10;
-	lightbulb.w = rec->w - rec->w / 10;
+	lightbulb.h = rec->h - rec->h / 4;
+	lightbulb.w = rec->w - rec->w / 4;
 	lightbulb.x = rec->x + rec->w / 2 - lightbulb.w / 2;
 	lightbulb.y = rec->y + rec->h / 2 - lightbulb.h / 2;
 	SDL_RenderCopy(ren, lightbulb_texture, NULL, &lightbulb);
@@ -320,19 +335,42 @@ void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted) {
 }
 
 void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
+	game_print(env->g);
 	int w, h;
 	SDL_GetWindowSize(win, &w, &h);
+	h = h - h / 10;
 	// set background color
-	SDL_SetRenderDrawColor(ren, 255, 255, 255, SDL_ALPHA_OPAQUE);
+	SDL_SetRenderDrawColor(ren, 24, 26, 27, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(ren);
 	SDL_Rect rec;
 	int size_rec = int_min(w / game_nb_cols(env->g), h / game_nb_rows(env->g));
 	rec.h = size_rec;
 	rec.w = size_rec;
 	int rec_x = w / 2 - size_rec * game_nb_cols(env->g) / 2;
-	int rec_y = h / 2 - size_rec * game_nb_rows(env->g) / 2;
+	int rec_y = h / 2 - size_rec * game_nb_rows(env->g) / 2 + h / 10;
 	rec.x = rec_x;
 	rec.y = rec_y;
+	env->rec_game->x = rec.x;
+	env->rec_game->y = rec.y;
+	env->rec_game->h = size_rec * game_nb_rows(env->g);
+	env->rec_game->w = size_rec * game_nb_cols(env->g);
+	SDL_Rect buttons;
+	buttons.w = w / 5;
+	buttons.h = h / 10 / 1.5;
+	buttons.y = (h / 10 - buttons.h) / 2;
+	buttons.x = (w / 4 - w / 5) / 2;
+	*(env->rec_undo) = buttons;
+	SDL_RenderCopy(ren, env->text_undo[env->pressed_undo ? 1 : 0], NULL, &buttons);
+	buttons.x = buttons.x + buttons.w + (w / 4 - w / 5);
+	*(env->rec_redo) = buttons;
+	SDL_RenderCopy(ren, env->text_redo[env->pressed_redo ? 1 : 0], NULL, &buttons);
+	buttons.x = buttons.x + buttons.w + (w / 4 - w / 5);
+	*(env->rec_restart) = buttons;
+	SDL_RenderCopy(ren, env->text_restart[env->pressed_restart ? 1 : 0], NULL, &buttons);
+	buttons.x = buttons.x + buttons.w + (w / 4 - w / 5);
+	*(env->rec_solve) = buttons;
+	SDL_RenderCopy(ren, env->text_solve[env->pressed_solve ? 1 : 0], NULL, &buttons);
+	// render cases
 	for (uint i = 0; i < game_nb_rows(env->g); i++) {
 		for (uint j = 0; j < game_nb_cols(env->g); j++) {
 			if (game_is_lightbulb(env->g, i, j))
@@ -370,12 +408,24 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e) {
 		SDL_GetMouseState(&mouse.x, &mouse.y);
 		if (SDL_PointInRect(&mouse, env->rec_restart)) {
 			env->pressed_restart = true;
+			env->pressed_undo = false;
+			env->pressed_redo = false;
+			env->pressed_solve = false;
 		} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
 			env->pressed_undo = true;
+			env->pressed_restart = false;
+			env->pressed_redo = false;
+			env->pressed_solve = false;
 		} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
 			env->pressed_redo = true;
+			env->pressed_undo = false;
+			env->pressed_restart = false;
+			env->pressed_solve = false;
 		} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
 			env->pressed_solve = true;
+			env->pressed_undo = false;
+			env->pressed_redo = false;
+			env->pressed_restart = false;
 		} else {
 			env->pressed_restart = false;
 			env->pressed_undo = false;
@@ -394,8 +444,10 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e) {
 		} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
 			game_solve(env->g);
 		} else if (SDL_PointInRect(&mouse, env->rec_game)) {
-			uint i = mouse.y - ((h - (env->rec_game->y)) / 2) / (env->g->height);
-			uint j = mouse.x - ((w - (env->rec_game->x)) / 2) / (env->g->width);
+			uint i = (((float)mouse.y - (float)env->rec_game->y) / (float)env->rec_game->h * game_nb_rows(env->g)) -
+			         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7*/;
+			uint j = (((float)mouse.x - (float)env->rec_game->x) / (float)env->rec_game->w * game_nb_cols(env->g)) -
+			         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7*/;
 			if (e->button.button == SDL_BUTTON_LEFT) {
 				if (game_is_blank(env->g, i, j) || game_is_marked(env->g, i, j)) {
 					game_play_move(env->g, i, j, S_LIGHTBULB);
