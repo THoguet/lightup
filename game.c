@@ -10,43 +10,11 @@
 #define INORMAL i + gap_position* tab[index_tab]
 
 game game_new(square* squares) {
-	game g = game_new_empty();
-	for (uint i = 0; i < game_nb_rows(g); i++) {
-		for (uint j = 0; j < game_nb_cols(g); j++) {
-			g->tab_cell[i][j] = squares[game_nb_cols(g) * i + j];
-		}
-	}
-	return g;
+	return game_new_ext(7, 7, squares, false);
 }
 
 game game_new_empty(void) {
-	// alloc struct
-	game g = (game)malloc(sizeof(struct game_s));
-	if (g == NULL) {
-		memoryError();
-	}
-	// set variable of struct
-	g->wrapping = false;
-	g->height = DEFAULT_SIZE;
-	g->width = DEFAULT_SIZE;
-	g->hist = history_create_empty();
-	// alloc the tab with variables set before
-	g->tab_cell = (square**)malloc(sizeof(square*) * game_nb_rows(g));
-	if (g->tab_cell == NULL) {
-		memoryError();
-	}
-	for (uint i = 0; i < game_nb_rows(g); i++) {
-		g->tab_cell[i] = (square*)malloc(sizeof(square) * game_nb_cols(g));
-		if (g->tab_cell[i] == NULL) {
-			memoryError();
-		}
-		for (uint j = 0; j < game_nb_cols(g); j++) {
-			g->tab_cell[i][j] = S_BLANK;
-		}
-	}
-	// init history with a cell to avoid falling off of g->hist (if there is only this cell we consider the history as empty)
-	g->hist = history_insert_first(g->hist, F_ERROR, 0, 0);
-	return g;
+	return game_new_empty_ext(7, 7, false);
 }
 
 game game_copy(cgame g1) {

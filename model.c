@@ -335,7 +335,6 @@ void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted) {
 }
 
 void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
-	game_print(env->g);
 	int w, h;
 	SDL_GetWindowSize(win, &w, &h);
 	h = h - h / 10;
