@@ -58,6 +58,31 @@
 			"preLaunchTask": "make_build"
 		},
 		{
+			"name": "(gdb) game_sdl",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/game_sdl",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "${fileDirname}",
+			"environment": [],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{
+					"description": "Set Disassembly Flavor to Intel",
+					"text": "-gdb-set disassembly-flavor intel",
+					"ignoreFailures": true
+				}
+			],
+			"preLaunchTask": "make_build"
+		},
+		{
 			"name": "(gdb) debug tests",
 			"type": "cppdbg",
 			"request": "launch",

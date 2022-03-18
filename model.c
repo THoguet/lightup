@@ -15,17 +15,17 @@
 
 /* **************************************************************** */
 
-#define RESTART_UP "../img/restart_up.png"
-#define RESTART_DOWN "../img/restart_down.png"
-#define UNDO_UP "../img/undo_up.png"
-#define UNDO_DOWN "../img/undo_down.png"
-#define REDO_UP "../img/redo_up.png"
-#define REDO_DOWN "../img/redo_down.png"
-#define SOLVE_UP "../img/solve_up.png"
-#define SOLVE_DOWN "../img/solve_down.png"
-#define LIGHTBULB_WHITE "../img/lightbulb_white.png"
-#define LIGHTBULB_BLACK "../img/lightbulb_black.png"
-#define FONT "../arial.ttf"
+#define RESTART_UP "./img/restart_up.png"
+#define RESTART_DOWN "./img/restart_down.png"
+#define UNDO_UP "./img/undo_up.png"
+#define UNDO_DOWN "./img/undo_down.png"
+#define REDO_UP "./img/redo_up.png"
+#define REDO_DOWN "./img/redo_down.png"
+#define SOLVE_UP "./img/solve_up.png"
+#define SOLVE_DOWN "./img/solve_down.png"
+#define LIGHTBULB_WHITE "./img/lightbulb_white.png"
+#define LIGHTBULB_BLACK "./img/lightbulb_black.png"
+#define FONT "./arial.ttf"
 
 #define FONTSIZE 36
 /* **************************************************************** */
@@ -333,10 +333,11 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 				render_blank(ren, &rec, game_is_lighted(env->g, i, j));
 			else if (game_is_marked(env->g, i, j))
 				render_mark(ren, &rec, game_is_lighted(env->g, i, j));
+			rec.x += size_rec;
 		}
+		rec.x = rec_x;
+		rec.y += size_rec;
 	}
-	rec.x = rec_x;
-	rec.y += size_rec;
 }
 
 /* **************************************************************** */
