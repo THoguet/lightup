@@ -10,7 +10,6 @@
 /* **************************************************************** */
 
 int main(int argc, char* argv[]) {
-	PRINT("CA MARCHE\n");
 	/* initialize SDL2 and some extensions */
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 		ERROR("Error: SDL_Init VIDEO (%s)", SDL_GetError());
