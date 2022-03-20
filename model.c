@@ -423,6 +423,13 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 
 /* **************************************************************** */
 
+void ToggleFullscreen(SDL_Window* Window) {
+	Uint32 FullscreenFlag = SDL_WINDOW_FULLSCREEN;
+	bool IsFullscreen = SDL_GetWindowFlags(Window) & FullscreenFlag;
+	SDL_SetWindowFullscreen(Window, IsFullscreen ? 0 : FullscreenFlag);
+	SDL_ShowCursor(IsFullscreen);
+}
+
 bool process(SDL_Window* win, Env* env, SDL_Event* e) {
 	int w, h;
 	SDL_GetWindowSize(win, &w, &h);
@@ -491,6 +498,10 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e) {
 				}
 			}
 		}
+	} else if (e->type == SDL_KEYDOWN) {
+		const Uint8* state = SDL_GetKeyboardState(NULL);
+		if (state[SDL_SCANCODE_F11])
+			ToggleFullscreen(win);
 	}
 #endif
 	return false;
