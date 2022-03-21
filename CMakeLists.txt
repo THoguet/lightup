@@ -10,17 +10,18 @@ set(MEMORYCHECK_COMMAND_OPTIONS "--error-exitcode=1 --leak-check=full")
 include(CTest)
 
 ## use pkgconfig to solve SDL2 dependencies (Linux only)
-include(FindPkgConfig) # pkg-config --list-all  | grep -i sdl2
-pkg_search_module(SDL2 REQUIRED sdl2)
-pkg_search_module(SDL2_IMG REQUIRED SDL2_image)
-pkg_search_module(SDL2_TTF REQUIRED SDL2_ttf)
-set(SDL2_ALL_LIBS ${SDL2_LIBRARIES} ${SDL2_IMG_LIBRARIES} ${SDL2_TTF_LIBRARIES})
-set(SDL2_ALL_INC ${SDL2_INCLUDE_DIRS} ${SDL2_IMG_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS})
+# include(FindPkgConfig) # pkg-config --list-all  | grep -i sdl2
+# pkg_search_module(SDL2 REQUIRED sdl2)
+# pkg_search_module(SDL2_IMG REQUIRED SDL2_image)
+# pkg_search_module(SDL2_TTF REQUIRED SDL2_ttf)
+# pkg_search_module(SDL2_MIXER REQUIRED SDL2_mixer)
+# set(SDL2_ALL_LIBS ${SDL2_LIBRARIES} ${SDL2_IMG_LIBRARIES} ${SDL2_TTF_LIBRARIES})
+# set(SDL2_ALL_INC ${SDL2_INCLUDE_DIRS} ${SDL2_IMG_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS})
 
 ## use a CMake3 package to solve SDL2 dependencies
-# find_package(SDL2 REQUIRED)
-# set(SDL2_ALL_INC ${SDL2_INCLUDE_DIRS})
-# set(SDL2_ALL_LIBS ${SDL2_LIBRARIES} -lSDL2_ttf -lSDL2_image) # add extra SDL2 libraries
+find_package(SDL2 REQUIRED)
+set(SDL2_ALL_INC ${SDL2_INCLUDE_DIRS})
+set(SDL2_ALL_LIBS ${SDL2_LIBRARIES} -lSDL2_ttf -lSDL2_image -lSDL2_mixer) # add extra SDL2 libraries
 
 
 message(STATUS "SDL2 include dir: ${SDL2_ALL_INC}")

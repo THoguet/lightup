@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>  // required to load transparent texture from PNG
 #include <SDL2/SDL_ttf.h>    // required to use TTF fonts
+#include <SDL_mixer.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,6 +27,15 @@
 #define LIGHTBULB_WHITE "./lightbulb_white.png"
 #define LIGHTBULB_RED "./lightbulb_red.png"
 #define FONT "./arial.ttf"
+#define LB1 "lb1.mp3"
+#define LB2 "lb2.mp3"
+#define LB3 "lb3.mp3"
+#define ERR1 "error1.mp3"
+#define ERR2 "error2.mp3"
+#define ERR3 "error3.mp3"
+#define MARK1 "mark1.wav"
+#define MARK2 "mark2.wav"
+#define MARK3 "mark3.wav"
 
 #define FONTSIZE 200
 /* **************************************************************** */
@@ -51,6 +61,12 @@ struct Env_t {
 	SDL_Rect* rec_restart;
 	SDL_Rect* rec_solve;
 	SDL_Rect* rec_game;  // rectangle of the grid
+	Mix_Music** lb_music;
+	uint lb_music_cpt;
+	Mix_Music** err_music;
+	uint err_music_cpt;
+	Mix_Music** mark_music;
+	uint mark_music_cpt;
 };
 
 /* **************************************************************** */
@@ -92,7 +108,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init zero texture double tab*/
 	env->zero = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->zero == NULL)
-		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGH MEMORY\n");
 	// if the case has not error
 	SDL_Surface* surf = TTF_RenderText_Blended(font, "0", color_w);
 	env->zero[0] = SDL_CreateTextureFromSurface(ren, surf);
@@ -105,7 +121,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init one texture double tab*/
 	env->one = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->one == NULL)
-		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGH MEMORY\n");
 	// if the case has not error
 	surf = TTF_RenderText_Blended(font, "1", color_w);
 	env->one[0] = SDL_CreateTextureFromSurface(ren, surf);
@@ -118,7 +134,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init two texture double tab*/
 	env->two = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->two == NULL)
-		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGH MEMORY\n");
 	// if the case has not error
 	surf = TTF_RenderText_Blended(font, "2", color_w);
 	env->two[0] = SDL_CreateTextureFromSurface(ren, surf);
@@ -131,7 +147,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init three texture double tab*/
 	env->three = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->three == NULL)
-		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGH MEMORY\n");
 	// if the case has not error
 	surf = TTF_RenderText_Blended(font, "3", color_w);
 	env->three[0] = SDL_CreateTextureFromSurface(ren, surf);
@@ -144,7 +160,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init four texture double tab*/
 	env->four = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->four == NULL)
-		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGH MEMORY\n");
 	// if the case has not error
 	surf = TTF_RenderText_Blended(font, "4", color_w);
 	env->four[0] = SDL_CreateTextureFromSurface(ren, surf);
@@ -157,7 +173,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init lightbulb texture double tab*/
 	env->lightbulb = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->lightbulb == NULL)
-		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGH MEMORY\n");
 	// if the case has not error
 	env->lightbulb[0] = IMG_LoadTexture(ren, LIGHTBULB_WHITE);
 	if (!env->lightbulb[0])
@@ -170,7 +186,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init text_restart texture double tab*/
 	env->text_restart = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->text_restart == NULL)
-		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGH MEMORY\n");
 	// if the case has not error
 	env->text_restart[0] = IMG_LoadTexture(ren, RESTART_UP);
 	if (!env->text_restart[0])
@@ -183,7 +199,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init text_undo texture double tab*/
 	env->text_undo = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->text_undo == NULL)
-		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGH MEMORY\n");
 	// if the case has not error
 	env->text_undo[0] = IMG_LoadTexture(ren, UNDO_UP);
 	if (!env->text_undo[0])
@@ -196,7 +212,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init text_redo texture double tab*/
 	env->text_redo = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->text_redo == NULL)
-		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGH MEMORY\n");
 	// if the case has not error
 	env->text_redo[0] = IMG_LoadTexture(ren, REDO_UP);
 	if (!env->text_redo[0])
@@ -209,7 +225,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	/* init text_solve texture double tab*/
 	env->text_solve = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->text_solve == NULL)
-		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGH MEMORY\n");
 	// if the case has not error
 	env->text_solve[0] = IMG_LoadTexture(ren, SOLVE_UP);
 	if (!env->text_solve[0])
@@ -221,11 +237,11 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 
 	env->rec_redo = malloc(sizeof(SDL_Rect));
 	if (env->rec_redo == NULL)
-		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGH MEMORY\n");
 
 	env->rec_game = malloc(sizeof(SDL_Rect));
 	if (env->rec_game == NULL)
-		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
+		fprintf(stderr, "NOT ENOUGH MEMORY\n");
 
 	env->rec_restart = malloc(sizeof(SDL_Rect));
 	if (env->rec_restart == NULL)
@@ -237,9 +253,54 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 
 	env->rec_undo = malloc(sizeof(SDL_Rect));
 	if (env->rec_undo == NULL)
-		fprintf(stderr, "NOT ENOUGTH MEMORY\n");
-
+		fprintf(stderr, "NOT ENOUGH MEMORY\n");
 	TTF_CloseFont(font);
+
+	// Musics lightbulb
+	env->lb_music = malloc(sizeof(Mix_Music*) * 3);
+	if (env->lb_music == NULL)
+		ERROR("%s", "NOT ENOUGH MEMORY\n");
+	env->lb_music[0] = Mix_LoadMUS(LB1);
+	if (env->lb_music[0] == NULL)
+		ERROR("Cannot load music %s\n", LB1);
+	env->lb_music[1] = Mix_LoadMUS(LB2);
+	if (env->lb_music[1] == NULL)
+		ERROR("Cannot load music %s\n", LB2);
+	env->lb_music[2] = Mix_LoadMUS(LB3);
+	if (env->lb_music[2] == NULL)
+		ERROR("Cannot load music %s\n", LB3);
+	env->lb_music_cpt = 0;
+
+	// Musics errors
+	env->err_music = malloc(sizeof(Mix_Music*) * 3);
+	if (env->err_music == NULL)
+		ERROR("%s", "NOT ENOUGH MEMORY\n");
+	env->err_music[0] = Mix_LoadMUS(ERR1);
+	if (env->err_music[0] == NULL)
+		ERROR("Cannot load music %s\n", ERR1);
+	env->err_music[1] = Mix_LoadMUS(ERR2);
+	if (env->err_music[1] == NULL)
+		ERROR("Cannot load music %s\n", ERR2);
+	env->err_music[2] = Mix_LoadMUS(ERR3);
+	if (env->err_music[2] == NULL)
+		ERROR("Cannot load music %s\n", ERR3);
+	env->err_music_cpt = 0;
+
+	// Musics marks
+	env->mark_music = malloc(sizeof(Mix_Music*) * 3);
+	if (env->mark_music == NULL)
+		ERROR("%s", "NOT ENOUGH MEMORY\n");
+	env->mark_music[0] = Mix_LoadMUS(MARK1);
+	if (env->mark_music[0] == NULL)
+		ERROR("Cannot load music %s\n", MARK1);
+	env->mark_music[1] = Mix_LoadMUS(MARK2);
+	if (env->mark_music[1] == NULL)
+		ERROR("Cannot load music %s\n", MARK2);
+	env->mark_music[2] = Mix_LoadMUS(MARK3);
+	if (env->mark_music[2] == NULL)
+		ERROR("Cannot load music %s\n", MARK3);
+	env->mark_music_cpt = 0;
+
 	return env;
 }
 
@@ -389,6 +450,19 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 
 /* **************************************************************** */
 
+void play_Music(Env* env, bool lightbulb, bool error, bool mark) {
+	if (error && game_has_error_general(env->g)) {
+		Mix_PlayMusic(env->err_music[env->err_music_cpt % 3], 1);
+		env->err_music_cpt++;
+	} else if (lightbulb) {
+		Mix_PlayMusic(env->lb_music[env->lb_music_cpt % 3], 1);
+		env->lb_music_cpt++;
+	} else if (mark) {
+		Mix_PlayMusic(env->mark_music[env->mark_music_cpt % 3], 1);
+		env->mark_music_cpt++;
+	}
+}
+
 bool process(SDL_Window* win, Env* env, SDL_Event* e) {
 	int w, h;
 	SDL_GetWindowSize(win, &w, &h);
@@ -445,15 +519,18 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e) {
 			if (e->button.button == SDL_BUTTON_LEFT) {
 				if (game_is_blank(env->g, i, j) || game_is_marked(env->g, i, j)) {
 					game_play_move(env->g, i, j, S_LIGHTBULB);
+					play_Music(env, true, true, false);
 				} else if (game_is_lightbulb(env->g, i, j)) {
 					game_play_move(env->g, i, j, S_BLANK);
+					play_Music(env, true, true, false);
 				}
-			}
-			if (e->button.button == SDL_BUTTON_RIGHT) {
+			} else if (e->button.button == SDL_BUTTON_RIGHT) {
 				if (game_is_blank(env->g, i, j) || game_is_lightbulb(env->g, i, j)) {
 					game_play_move(env->g, i, j, S_MARK);
+					play_Music(env, false, true, true);
 				} else if (game_is_marked(env->g, i, j)) {
 					game_play_move(env->g, i, j, S_BLANK);
+					play_Music(env, false, true, true);
 				}
 			}
 		}
@@ -501,6 +578,10 @@ void clean(Env* env) {
 	free(env->rec_restart);
 	free(env->rec_solve);
 	free(env->rec_game);
+	for (uint i = 0; i < 3; i++) {
+		Mix_FreeMusic(env->lb_music[i]);
+	}
+	free(env->lb_music);
 	free(env);
 }
 
