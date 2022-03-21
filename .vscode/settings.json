@@ -5,7 +5,8 @@
     "game.h": "c",
     "game_private.h": "c",
     "history.h": "c",
-    "game_tools.h": "c"
+    "game_tools.h": "c",
+    "model.h": "c"
   },
   "editor.formatOnSave": true,
   "C_Cpp.clang_format_path": "/usr/bin/clang-format",
