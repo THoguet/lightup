@@ -33,22 +33,22 @@
 static void copy_asset(char* src, char* dst) {
 	SDL_RWops* file = SDL_RWFromFile(src, "r");
 	if (!file)
-		ERROR("%s", "[ERROR] SDL_RWFromFile: %s\n", src);
+		ERROR("[ERROR] SDL_RWFromFile: %s\n", src);
 	int size = SDL_RWsize(file);
-	PRINT("%s", "copy file %s (%d bytes) into %s\n", src, size, dst);
+	PRINT("copy file %s (%d bytes) into %s\n", src, size, dst);
 	char* buf = (char*)malloc(size + 1);
 	if (!buf)
 		ERROR("%s", "[ERROR] malloc\n");
 	int r = SDL_RWread(file, buf, 1, size);
-	PRINT("%s", "read %d\n", r);
+	PRINT("read %d\n", r);
 	if (r != size)
-		ERROR("%s", "[ERROR] fail to read all file (%d bytes)\n", r);
+		ERROR("[ERROR] fail to read all file (%d bytes)\n", r);
 	FILE* out = fopen(dst, "w+");
 	if (!out)
-		ERROR("%s", "[ERROR] fail to create file %s\n", dst);
+		ERROR("[ERROR] fail to create file %s\n", dst);
 	int w = fwrite(buf, 1, r, out);
 	if (r != w)
-		ERROR("%s", "[ERROR] fail to write all file (%d bytes)\n", w);
+		ERROR("[ERROR] fail to write all file (%d bytes)\n", w);
 	fclose(out);
 	SDL_RWclose(file);
 	free(buf);
