@@ -28,7 +28,7 @@ void checkPointer(void* p, char* errMessage) {
 
 void test_output(int i, int excepted, char* message) {
 	if (i != excepted) {
-		fprintf(stderr, message);
+		fprintf(stderr, "%s", message);
 		exit(EXIT_FAILURE);
 	}
 }
