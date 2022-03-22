@@ -387,6 +387,7 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	env->rec_game->y = rec.y;
 	env->rec_game->h = size_rec * game_nb_rows(env->g);
 	env->rec_game->w = size_rec * game_nb_cols(env->g);
+	// buttons
 	SDL_Rect buttons;
 	buttons.w = w / 5;
 	buttons.h = h / 10 / 1.5;
