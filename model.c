@@ -97,7 +97,7 @@ void render_blended_text(SDL_Renderer* ren, Env* env) {
 	// color of 0 in black wall with error
 	SDL_Color color_r = {255, 50, 50, 255}; /* blue color in RGBA */
 
-	SDL_Color color_b = {0,0,0,255};
+	SDL_Color color_b = {0, 0, 0, 255};
 
 	/*rendu restart*/
 	SDL_Surface* surf = TTF_RenderText_Blended(font, "Restart", color_b);
@@ -134,7 +134,6 @@ void render_blended_text(SDL_Renderer* ren, Env* env) {
 	surf = TTF_RenderText_Blended(font, "Solve", color_w);
 	env->text_solve[1] = SDL_CreateTextureFromSurface(ren, surf);
 	SDL_FreeSurface(surf);
-
 
 	/* init zero texture double tab*/
 	// if the case has not error
@@ -264,7 +263,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->text_solve = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->text_solve == NULL)
 		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-	
+
 	render_blended_text(ren, env);
 
 	env->rec_redo = malloc(sizeof(SDL_Rect));
