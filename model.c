@@ -438,7 +438,7 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
 		return true;
 	}
 #ifdef _ANDROID_
-	if (e->type == SDL_FINGERDOWN){
+	if (e->type == SDL_FINGERDOWN) {
 		SDL_Point coord;
 		coord.x = e->x;
 		coord.y = e->y;
@@ -467,7 +467,7 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
 			env->pressed_undo = false;
 			env->pressed_redo = false;
 			env->pressed_solve = false;
-			if(e->type != prec_e->type){
+			if (e->type != prec_e->type) {
 				prec_e->type = e->type;
 				prec_e->timestamp = e->timestamp;
 			}
@@ -477,7 +477,7 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
 			env->pressed_redo = false;
 			env->pressed_solve = false;
 		}
-	}else if(e->type == SDL_FINGERUP){
+	} else if (e->type == SDL_FINGERUP) {
 		SDL_Point coord;
 		coord.x = e->x;
 		coord.y = e->y;
@@ -510,7 +510,7 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
 		}
 	}
 #else
-	if (prec_e != NULL){
+	if (prec_e != NULL) {
 		prec_e = NULL;
 	}
 	if (e->type == SDL_MOUSEMOTION) {
