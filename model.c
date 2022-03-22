@@ -430,14 +430,88 @@ void ToggleFullscreen(SDL_Window* Window) {
 	SDL_ShowCursor(IsFullscreen);
 }
 
-bool process(SDL_Window* win, Env* env, SDL_Event* e) {
+bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
 	int w, h;
 	SDL_GetWindowSize(win, &w, &h);
 	if (e->type == SDL_QUIT) {
 		return true;
 	}
 #ifdef _ANDROID_
+	if (e->type == SDL_FINGERDOWN){
+		SDL_Point coord;
+		coord.x = e->x;
+		coord.y = e->y;
+		if (SDL_PointInRect(&coord, env->rec_restart)) {
+			env->pressed_restart = true;
+			env->pressed_undo = false;
+			env->pressed_redo = false;
+			env->pressed_solve = false;
+		} else if (SDL_PointInRect(&coord, env->rec_undo)) {
+			env->pressed_undo = true;
+			env->pressed_restart = false;
+			env->pressed_redo = false;
+			env->pressed_solve = false;
+		} else if (SDL_PointInRect(&coord, env->rec_redo)) {
+			env->pressed_redo = true;
+			env->pressed_undo = false;
+			env->pressed_restart = false;
+			env->pressed_solve = false;
+		} else if (SDL_PointInRect(&coord, env->rec_solve)) {
+			env->pressed_solve = true;
+			env->pressed_undo = false;
+			env->pressed_redo = false;
+			env->pressed_restart = false;
+		} else if (SDL_PointInRect(&coord, env->rec_solve)) {
+			env->pressed_restart = false;
+			env->pressed_undo = false;
+			env->pressed_redo = false;
+			env->pressed_solve = false;
+			if(e->type != prec_e->type){
+				prec_e->type = e->type;
+				prec_e->timestamp = e->timestamp;
+			}
+		} else {
+			env->pressed_restart = false;
+			env->pressed_undo = false;
+			env->pressed_redo = false;
+			env->pressed_solve = false;
+		}
+	}else if(e->type == SDL_FINGERUP){
+		SDL_Point coord;
+		coord.x = e->x;
+		coord.y = e->y;
+		if (SDL_PointInRect(&coord, env->rec_restart)) {
+			game_restart(env->g);
+		} else if (SDL_PointInRect(&coord, env->rec_undo)) {
+			game_undo(env->g);
+		} else if (SDL_PointInRect(&coord, env->rec_redo)) {
+			game_redo(env->g);
+		} else if (SDL_PointInRect(&coord, env->rec_solve)) {
+			game_solve(env->g);
+		} else if (SDL_PointInRect(&coord, env->rec_game)) {
+			uint i = (((float)coord.y - (float)env->rec_game->y) / (float)env->rec_game->h * game_nb_rows(env->g)) -
+			         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7*/;
+			uint j = (((float)coord.x - (float)env->rec_game->x) / (float)env->rec_game->w * game_nb_cols(env->g)) -
+			         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7*/;
+			if ((e->timestamp - prec_e->timestamp) < 300) {
+				if (game_is_blank(env->g, i, j) || game_is_marked(env->g, i, j)) {
+					game_play_move(env->g, i, j, S_LIGHTBULB);
+				} else if (game_is_lightbulb(env->g, i, j)) {
+					game_play_move(env->g, i, j, S_BLANK);
+				}
+			} else {
+				if (game_is_blank(env->g, i, j) || game_is_lightbulb(env->g, i, j)) {
+					game_play_move(env->g, i, j, S_MARK);
+				} else if (game_is_marked(env->g, i, j)) {
+					game_play_move(env->g, i, j, S_BLANK);
+				}
+			}
+		}
+	}
 #else
+	if (prec_e != NULL){
+		prec_e = NULL;
+	}
 	if (e->type == SDL_MOUSEMOTION) {
 		SDL_Point mouse;
 		SDL_GetMouseState(&mouse.x, &mouse.y);
