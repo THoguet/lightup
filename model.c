@@ -15,17 +15,9 @@
 
 /* **************************************************************** */
 
-#define RESTART_UP "restart_up.png"
-#define RESTART_DOWN "restart_down.png"
-#define UNDO_UP "undo_up.png"
-#define UNDO_DOWN "undo_down.png"
-#define REDO_UP "redo_up.png"
-#define REDO_DOWN "redo_down.png"
-#define SOLVE_UP "solve_up.png"
-#define SOLVE_DOWN "solve_down.png"
 #define LIGHTBULB_WHITE "lightbulb_white.png"
 #define LIGHTBULB_RED "lightbulb_red.png"
-#define FONT "arial.ttf"
+#define FONT "Roboto-Regular.ttf"
 
 #define FONTSIZE 200
 
@@ -87,6 +79,115 @@ void usage(char* argv[]) {
 	exit(EXIT_FAILURE);
 }
 
+void render_blended_text(SDL_Renderer* ren, Env* env) {
+#ifdef __ANDROID__
+	const char* dir = SDL_AndroidGetInternalStoragePath();
+	char font_path[1024];
+	sprintf(font_path, "%s/%s", dir, FONT);
+	copy_asset(FONT, font_path);
+	TTF_Font* font = TTF_OpenFont(font_path, FONTSIZE);
+#else
+	TTF_Font* font = TTF_OpenFont(FONT, FONTSIZE);
+#endif
+	if (!font)
+		ERROR("TTF_OpenFont: %s\n", FONT);
+	TTF_SetFontStyle(font, TTF_STYLE_BOLD);
+	// color of 0 in black wall
+	SDL_Color color_w = {255, 255, 255, 255};
+	// color of 0 in black wall with error
+	SDL_Color color_r = {255, 50, 50, 255}; /* blue color in RGBA */
+
+	SDL_Color color_b = {0,0,0,255};
+
+	/*rendu restart*/
+	SDL_Surface* surf = TTF_RenderText_Blended(font, "Restart", color_b);
+	env->text_restart[0] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+
+	surf = TTF_RenderText_Blended(font, "Restart", color_w);
+	env->text_restart[1] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+
+	/*rendu undo*/
+	surf = TTF_RenderText_Blended(font, "Undo", color_b);
+	env->text_undo[0] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+
+	surf = TTF_RenderText_Blended(font, "Undo", color_w);
+	env->text_undo[1] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+
+	/*rerndu redo*/
+	surf = TTF_RenderText_Blended(font, "Redo", color_b);
+	env->text_redo[0] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+
+	surf = TTF_RenderText_Blended(font, "Redo", color_w);
+	env->text_redo[1] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+
+	/*rendu solve*/
+	surf = TTF_RenderText_Blended(font, "Solve", color_b);
+	env->text_solve[0] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+
+	surf = TTF_RenderText_Blended(font, "Solve", color_w);
+	env->text_solve[1] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+
+
+	/* init zero texture double tab*/
+	// if the case has not error
+	surf = TTF_RenderText_Blended(font, "0", color_w);
+	env->zero[0] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+	// if the case has error
+	surf = TTF_RenderText_Blended(font, "0", color_r);
+	env->zero[1] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+
+	/* init one texture double tab*/
+	// if the case has not error
+	surf = TTF_RenderText_Blended(font, "1", color_w);
+	env->one[0] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+	// if the case has error
+	surf = TTF_RenderText_Blended(font, "1", color_r);
+	env->one[1] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+
+	/* init two texture double tab*/
+	// if the case has not error
+	surf = TTF_RenderText_Blended(font, "2", color_w);
+	env->two[0] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+	// if the case has error
+	surf = TTF_RenderText_Blended(font, "2", color_r);
+	env->two[1] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+
+	/* init three texture double tab*/
+	// if the case has not error
+	surf = TTF_RenderText_Blended(font, "3", color_w);
+	env->three[0] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+	// if the case has error
+	surf = TTF_RenderText_Blended(font, "3", color_r);
+	env->three[1] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+
+	/* init four texture double tab*/
+	// if the case has not error
+	surf = TTF_RenderText_Blended(font, "4", color_w);
+	env->four[0] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+	// if the case has error
+	surf = TTF_RenderText_Blended(font, "4", color_r);
+	env->four[1] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+	TTF_CloseFont(font);
+}
+
 Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	Env* env = malloc(sizeof(struct Env_t));
 	env->pressed_restart = false;
@@ -106,87 +207,30 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	} else {
 		usage(argv);
 	}
-#ifdef __ANDROID__
-	const char* dir = SDL_AndroidGetInternalStoragePath();
-	char font_path[1024];
-	sprintf(font_path, "%s/%s", dir, FONT);
-	copy_asset(FONT, font_path);
-	TTF_Font* font = TTF_OpenFont(font_path, FONTSIZE);
-#else
-	TTF_Font* font = TTF_OpenFont(FONT, FONTSIZE);
-#endif
-	if (!font)
-		ERROR("TTF_OpenFont: %s\n", FONT);
-	TTF_SetFontStyle(font, TTF_STYLE_BOLD);
-	// color of 0 in black wall
-	SDL_Color color_w = {255, 255, 255, 255};
-	// color of 0 in black wall with error
-	SDL_Color color_r = {255, 50, 50, 255}; /* blue color in RGBA */
-
 	/* init zero texture double tab*/
 	env->zero = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->zero == NULL)
 		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-	// if the case has not error
-	SDL_Surface* surf = TTF_RenderText_Blended(font, "0", color_w);
-	env->zero[0] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-	// if the case has error
-	surf = TTF_RenderText_Blended(font, "0", color_r);
-	env->zero[1] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
 
 	/* init one texture double tab*/
 	env->one = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->one == NULL)
 		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-	// if the case has not error
-	surf = TTF_RenderText_Blended(font, "1", color_w);
-	env->one[0] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-	// if the case has error
-	surf = TTF_RenderText_Blended(font, "1", color_r);
-	env->one[1] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
 
 	/* init two texture double tab*/
 	env->two = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->two == NULL)
 		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-	// if the case has not error
-	surf = TTF_RenderText_Blended(font, "2", color_w);
-	env->two[0] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-	// if the case has error
-	surf = TTF_RenderText_Blended(font, "2", color_r);
-	env->two[1] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
 
 	/* init three texture double tab*/
 	env->three = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->three == NULL)
 		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-	// if the case has not error
-	surf = TTF_RenderText_Blended(font, "3", color_w);
-	env->three[0] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-	// if the case has error
-	surf = TTF_RenderText_Blended(font, "3", color_r);
-	env->three[1] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
 
 	/* init four texture double tab*/
 	env->four = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->four == NULL)
 		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-	// if the case has not error
-	surf = TTF_RenderText_Blended(font, "4", color_w);
-	env->four[0] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-	// if the case has error
-	surf = TTF_RenderText_Blended(font, "4", color_r);
-	env->four[1] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
 
 	/* init lightbulb texture double tab*/
 	env->lightbulb = malloc(sizeof(SDL_Texture*) * 2);
@@ -205,53 +249,23 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->text_restart = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->text_restart == NULL)
 		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-	// if the case has not error
-	env->text_restart[0] = IMG_LoadTexture(ren, RESTART_UP);
-	if (!env->text_restart[0])
-		ERROR("IMG_LoadTexture: %s\n", RESTART_UP);
-	// if the case has error
-	env->text_restart[1] = IMG_LoadTexture(ren, RESTART_DOWN);
-	if (!env->text_restart[1])
-		ERROR("IMG_LoadTexture: %s\n", RESTART_DOWN);
 
 	/* init text_undo texture double tab*/
 	env->text_undo = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->text_undo == NULL)
 		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-	// if the case has not error
-	env->text_undo[0] = IMG_LoadTexture(ren, UNDO_UP);
-	if (!env->text_undo[0])
-		ERROR("IMG_LoadTexture: %s\n", UNDO_UP);
-	// if the case has error
-	env->text_undo[1] = IMG_LoadTexture(ren, UNDO_DOWN);
-	if (!env->text_undo[1])
-		ERROR("IMG_LoadTexture: %s\n", UNDO_DOWN);
 
 	/* init text_redo texture double tab*/
 	env->text_redo = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->text_redo == NULL)
 		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-	// if the case has not error
-	env->text_redo[0] = IMG_LoadTexture(ren, REDO_UP);
-	if (!env->text_redo[0])
-		ERROR("IMG_LoadTexture: %s\n", REDO_UP);
-	// if the case has error
-	env->text_redo[1] = IMG_LoadTexture(ren, REDO_DOWN);
-	if (!env->text_redo[1])
-		ERROR("IMG_LoadTexture: %s\n", UNDO_DOWN);
 
 	/* init text_solve texture double tab*/
 	env->text_solve = malloc(sizeof(SDL_Texture*) * 2);
 	if (env->text_solve == NULL)
 		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-	// if the case has not error
-	env->text_solve[0] = IMG_LoadTexture(ren, SOLVE_UP);
-	if (!env->text_solve[0])
-		ERROR("IMG_LoadTexture: %s\n", SOLVE_UP);
-	// if the case has error
-	env->text_solve[1] = IMG_LoadTexture(ren, SOLVE_DOWN);
-	if (!env->text_solve[1])
-		ERROR("IMG_LoadTexture: %s\n", SOLVE_DOWN);
+	
+	render_blended_text(ren, env);
 
 	env->rec_redo = malloc(sizeof(SDL_Rect));
 	if (env->rec_redo == NULL)
@@ -273,7 +287,6 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	if (env->rec_undo == NULL)
 		ERROR("%s", "NOT ENOUGTH MEMORY\n");
 
-	TTF_CloseFont(font);
 	return env;
 }
 
@@ -369,8 +382,21 @@ void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted) {
 }
 
 void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
-	int w, h;
-	SDL_GetWindowSize(win, &w, &h);
+	int win_w, win_h, h, w;
+	SDL_GetWindowSize(win, &win_w, &win_h);
+
+	if (win_h >
+	    win_w) {  // sert a avoir un rapport de 1/1 pour la game et les boutons et ne pas avoir de compressions sur quelconques axes des images des boutons
+		h = win_w;
+		w = win_w;
+	} else {
+		h = win_h;
+		w = win_h;
+	}
+
+	int marge_h = (win_h - h) / 2;
+	int marge_w = (win_w - w) / 2;
+
 	h = h - h / 10;
 	// set background color
 	SDL_SetRenderDrawColor(ren, 24, 26, 27, SDL_ALPHA_OPAQUE);
@@ -379,8 +405,8 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	int size_rec = int_min(w / game_nb_cols(env->g), h / game_nb_rows(env->g));
 	rec.h = size_rec;
 	rec.w = size_rec;
-	int rec_x = w / 2 - size_rec * game_nb_cols(env->g) / 2;
-	int rec_y = h / 2 - size_rec * game_nb_rows(env->g) / 2 + h / 10;
+	int rec_x = w / 2 - size_rec * game_nb_cols(env->g) / 2 + marge_w;
+	int rec_y = h / 2 - size_rec * game_nb_rows(env->g) / 2 + h / 10 + marge_h;
 	rec.x = rec_x;
 	rec.y = rec_y;
 	env->rec_game->x = rec.x;
@@ -391,8 +417,8 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	SDL_Rect buttons;
 	buttons.w = w / 5;
 	buttons.h = h / 10 / 1.5;
-	buttons.y = (h / 10 - buttons.h) / 2;
-	buttons.x = (w / 4 - w / 5) / 2;
+	buttons.y = (h / 10 - buttons.h) / 2 + marge_h;
+	buttons.x = (w / 4 - w / 5) / 2 + marge_w;
 	*(env->rec_undo) = buttons;
 	SDL_RenderCopy(ren, env->text_undo[env->pressed_undo ? 1 : 0], NULL, &buttons);
 	buttons.x = buttons.x + buttons.w + (w / 4 - w / 5);
@@ -431,7 +457,7 @@ void ToggleFullscreen(SDL_Window* Window) {
 	SDL_ShowCursor(IsFullscreen);
 }
 
-bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
+bool process(SDL_Renderer* ren, SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
 	int w, h;
 	SDL_GetWindowSize(win, &w, &h);
 	if (e->type == SDL_QUIT) {
@@ -577,6 +603,8 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
 		const Uint8* state = SDL_GetKeyboardState(NULL);
 		if (state[SDL_SCANCODE_F11])
 			ToggleFullscreen(win);
+	} else if (e->type == SDL_WINDOWEVENT) {
+		render_blended_text(ren, env);
 	}
 #endif
 	return false;
