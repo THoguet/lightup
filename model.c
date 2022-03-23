@@ -27,6 +27,7 @@
 #define MARK1 "mark1.wav"
 #define MARK2 "mark2.wav"
 #define MARK3 "mark3.wav"
+#define WIN "win.mp3"
 #define FONT "Roboto-Regular.ttf"
 #define FONTSIZE 200
 
@@ -85,6 +86,7 @@ struct Env_t {
 	uint err_music_cpt;
 	Mix_Music** mark_music;
 	uint mark_music_cpt;
+	Mix_Music* win_music;
 };
 
 /* **************************************************************** */
@@ -344,6 +346,12 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	if (env->mark_music[2] == NULL)
 		ERROR("Cannot load music %s\n", MARK3);
 	env->mark_music_cpt = 0;
+
+	// Music win
+	env->win_music = Mix_LoadMUS(WIN);
+	if (env->mark_music[0] == NULL)
+		ERROR("Cannot load music %s\n", WIN);
+
 	return env;
 }
 
@@ -528,6 +536,9 @@ void ToggleFullscreen(SDL_Window* Window) {
 }
 
 bool process(SDL_Renderer* ren, SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
+	if (game_is_over(env->g)) {
+		Mix_PlayMusic(env->win_music, 0);
+	}
 	int w, h;
 	SDL_GetWindowSize(win, &w, &h);
 	if (e->type == SDL_QUIT) {
