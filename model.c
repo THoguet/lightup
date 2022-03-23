@@ -75,6 +75,8 @@ struct Env_t {
 	bool pressed_undo;
 	bool pressed_redo;
 	bool pressed_solve;
+	SDL_Texture* victory;
+	SDL_Texture* move_to_quit;
 	SDL_Rect* rec_redo;  // rectangle of each buttons
 	SDL_Rect* rec_undo;
 	SDL_Rect* rec_restart;
@@ -87,6 +89,8 @@ struct Env_t {
 	Mix_Music** mark_music;
 	uint mark_music_cpt;
 	Mix_Music* win_music;
+	bool won;
+	Uint32 won_timestamp;
 };
 
 /* **************************************************************** */
@@ -200,6 +204,12 @@ void render_blended_text(SDL_Renderer* ren, Env* env) {
 	// if the case has error
 	surf = TTF_RenderText_Blended(font, "4", color_r);
 	env->four[1] = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_FreeSurface(surf);
+	// init victory text
+	surf = TTF_RenderText_Blended(font, "Victory !", color_w);
+	env->victory = SDL_CreateTextureFromSurface(ren, surf);
+	surf = TTF_RenderText_Blended(font, "Touch to quit.", color_w);
+	env->move_to_quit = SDL_CreateTextureFromSurface(ren, surf);
 	SDL_FreeSurface(surf);
 	TTF_CloseFont(font);
 }
@@ -352,6 +362,9 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	if (env->mark_music[0] == NULL)
 		ERROR("Cannot load music %s\n", WIN);
 
+	env->won = false;
+	env->won_timestamp = 0;
+
 	return env;
 }
 
@@ -446,6 +459,29 @@ void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted) {
 	SDL_RenderFillRect(ren, &mark);
 }
 
+void render_victory(SDL_Window* win, SDL_Renderer* ren, Env* env) {
+	int h, w;
+	SDL_GetWindowSize(win, &w, &h);
+	SDL_SetRenderDrawColor(ren, 160, 160, 160, SDL_ALPHA_OPAQUE);
+	SDL_Rect victory_rec, move_to_quit_rec, big_rec;
+	SDL_QueryTexture(env->move_to_quit, NULL, NULL, &move_to_quit_rec.w, &move_to_quit_rec.h);
+	victory_rec.h = h / 5;
+	victory_rec.w = w;
+	victory_rec.x = 0;
+	victory_rec.y = h / 2 - victory_rec.h / 2;
+	move_to_quit_rec.h = victory_rec.h / 2;
+	move_to_quit_rec.w = victory_rec.w / 2;
+	move_to_quit_rec.x = w / 2 - move_to_quit_rec.w / 2;
+	move_to_quit_rec.y = victory_rec.y + victory_rec.h;
+	big_rec.x = victory_rec.x;
+	big_rec.y = victory_rec.y;
+	big_rec.h = victory_rec.h + move_to_quit_rec.h;
+	big_rec.w = victory_rec.w + move_to_quit_rec.w;
+	SDL_RenderFillRect(ren, &big_rec);
+	SDL_RenderCopy(ren, env->victory, NULL, &victory_rec);
+	SDL_RenderCopy(ren, env->move_to_quit, NULL, &move_to_quit_rec);
+}
+
 void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	int win_w, win_h, h, w;
 	SDL_GetWindowSize(win, &win_w, &win_h);
@@ -511,6 +547,8 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 		rec.x = rec_x;
 		rec.y += size_rec;
 	}
+	if (env->won)
+		render_victory(win, ren, env);
 }
 
 /* **************************************************************** */
@@ -536,13 +574,23 @@ void ToggleFullscreen(SDL_Window* Window) {
 }
 
 bool process(SDL_Renderer* ren, SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
-	if (game_is_over(env->g)) {
-		Mix_PlayMusic(env->win_music, 0);
-	}
 	int w, h;
 	SDL_GetWindowSize(win, &w, &h);
 	if (e->type == SDL_QUIT) {
 		return true;
+	}
+	if (e->type == SDL_KEYDOWN) {
+		const Uint8* state = SDL_GetKeyboardState(NULL);
+		if (state[SDL_SCANCODE_F11])
+			ToggleFullscreen(win);
+	}
+	if (game_is_over(env->g) && !env->won) {
+		Mix_PlayMusic(env->win_music, 1);
+		env->won = true;
+		env->won_timestamp = SDL_GetTicks();
+	} else if (env->won) {
+		if (SDL_GetTicks() - env->won_timestamp >= 5000)
+			return true;
 	}
 #ifdef _ANDROID_
 	if (e->type == SDL_FINGERDOWN) {
@@ -617,78 +665,76 @@ bool process(SDL_Renderer* ren, SDL_Window* win, Env* env, SDL_Event* e, SDL_Eve
 		}
 	}
 #else
-	if (prec_e != NULL) {
-		prec_e = NULL;
-	}
-	if (e->type == SDL_MOUSEMOTION) {
-		SDL_Point mouse;
-		SDL_GetMouseState(&mouse.x, &mouse.y);
-		if (SDL_PointInRect(&mouse, env->rec_restart)) {
-			env->pressed_restart = true;
-			env->pressed_undo = false;
-			env->pressed_redo = false;
-			env->pressed_solve = false;
-		} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
-			env->pressed_undo = true;
-			env->pressed_restart = false;
-			env->pressed_redo = false;
-			env->pressed_solve = false;
-		} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
-			env->pressed_redo = true;
-			env->pressed_undo = false;
-			env->pressed_restart = false;
-			env->pressed_solve = false;
-		} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
-			env->pressed_solve = true;
-			env->pressed_undo = false;
-			env->pressed_redo = false;
-			env->pressed_restart = false;
-		} else {
-			env->pressed_restart = false;
-			env->pressed_undo = false;
-			env->pressed_redo = false;
-			env->pressed_solve = false;
+	else {
+		if (prec_e != NULL) {
+			prec_e = NULL;
 		}
-	} else if (e->type == SDL_MOUSEBUTTONDOWN) {
-		SDL_Point mouse;
-		SDL_GetMouseState(&mouse.x, &mouse.y);
-		if (SDL_PointInRect(&mouse, env->rec_restart)) {
-			game_restart(env->g);
-		} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
-			game_undo(env->g);
-		} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
-			game_redo(env->g);
-		} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
-			game_solve(env->g);
-		} else if (SDL_PointInRect(&mouse, env->rec_game)) {
-			uint i = (((float)mouse.y - (float)env->rec_game->y) / (float)env->rec_game->h * game_nb_rows(env->g)) -
-			         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7*/;
-			uint j = (((float)mouse.x - (float)env->rec_game->x) / (float)env->rec_game->w * game_nb_cols(env->g)) -
-			         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7*/;
-			if (e->button.button == SDL_BUTTON_LEFT) {
-				if (game_is_blank(env->g, i, j) || game_is_marked(env->g, i, j)) {
-					game_play_move(env->g, i, j, S_LIGHTBULB);
-					play_Music(env, true, true, false);
-				} else if (game_is_lightbulb(env->g, i, j)) {
-					game_play_move(env->g, i, j, S_BLANK);
-					play_Music(env, true, true, false);
-				}
-			} else if (e->button.button == SDL_BUTTON_RIGHT) {
-				if (game_is_blank(env->g, i, j) || game_is_lightbulb(env->g, i, j)) {
-					game_play_move(env->g, i, j, S_MARK);
-					play_Music(env, false, true, true);
-				} else if (game_is_marked(env->g, i, j)) {
-					game_play_move(env->g, i, j, S_BLANK);
-					play_Music(env, false, true, true);
+		if (e->type == SDL_MOUSEMOTION) {
+			SDL_Point mouse;
+			SDL_GetMouseState(&mouse.x, &mouse.y);
+			if (SDL_PointInRect(&mouse, env->rec_restart)) {
+				env->pressed_restart = true;
+				env->pressed_undo = false;
+				env->pressed_redo = false;
+				env->pressed_solve = false;
+			} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
+				env->pressed_undo = true;
+				env->pressed_restart = false;
+				env->pressed_redo = false;
+				env->pressed_solve = false;
+			} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
+				env->pressed_redo = true;
+				env->pressed_undo = false;
+				env->pressed_restart = false;
+				env->pressed_solve = false;
+			} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
+				env->pressed_solve = true;
+				env->pressed_undo = false;
+				env->pressed_redo = false;
+				env->pressed_restart = false;
+			} else {
+				env->pressed_restart = false;
+				env->pressed_undo = false;
+				env->pressed_redo = false;
+				env->pressed_solve = false;
+			}
+		} else if (e->type == SDL_MOUSEBUTTONDOWN) {
+			SDL_Point mouse;
+			SDL_GetMouseState(&mouse.x, &mouse.y);
+			if (SDL_PointInRect(&mouse, env->rec_restart)) {
+				game_restart(env->g);
+			} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
+				game_undo(env->g);
+			} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
+				game_redo(env->g);
+			} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
+				game_solve(env->g);
+			} else if (SDL_PointInRect(&mouse, env->rec_game)) {
+				uint i = (((float)mouse.y - (float)env->rec_game->y) / (float)env->rec_game->h * game_nb_rows(env->g)) -
+				         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7*/;
+				uint j = (((float)mouse.x - (float)env->rec_game->x) / (float)env->rec_game->w * game_nb_cols(env->g)) -
+				         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7*/;
+				if (e->button.button == SDL_BUTTON_LEFT) {
+					if (game_is_blank(env->g, i, j) || game_is_marked(env->g, i, j)) {
+						game_play_move(env->g, i, j, S_LIGHTBULB);
+						play_Music(env, true, true, false);
+					} else if (game_is_lightbulb(env->g, i, j)) {
+						game_play_move(env->g, i, j, S_BLANK);
+						play_Music(env, true, true, false);
+					}
+				} else if (e->button.button == SDL_BUTTON_RIGHT) {
+					if (game_is_blank(env->g, i, j) || game_is_lightbulb(env->g, i, j)) {
+						game_play_move(env->g, i, j, S_MARK);
+						play_Music(env, false, true, true);
+					} else if (game_is_marked(env->g, i, j)) {
+						game_play_move(env->g, i, j, S_BLANK);
+						play_Music(env, false, true, true);
+					}
 				}
 			}
+		} else if (e->type == SDL_WINDOWEVENT) {
+			render_blended_text(ren, env);
 		}
-	} else if (e->type == SDL_KEYDOWN) {
-		const Uint8* state = SDL_GetKeyboardState(NULL);
-		if (state[SDL_SCANCODE_F11])
-			ToggleFullscreen(win);
-	} else if (e->type == SDL_WINDOWEVENT) {
-		render_blended_text(ren, env);
 	}
 #endif
 	return false;
