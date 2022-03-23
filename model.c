@@ -16,19 +16,20 @@
 
 /* **************************************************************** */
 
-#define LIGHTBULB_WHITE "lightbulb_white.png"
-#define LIGHTBULB_RED "lightbulb_red.png"
-#define LB1 "lb1.mp3"
-#define LB2 "lb2.mp3"
-#define LB3 "lb3.mp3"
-#define ERR1 "error1.mp3"
-#define ERR2 "error2.mp3"
-#define ERR3 "error3.mp3"
-#define MARK1 "mark1.wav"
-#define MARK2 "mark2.wav"
-#define MARK3 "mark3.wav"
-#define WIN "win.mp3"
-#define FONT "Roboto-Regular.ttf"
+#define LIGHTBULB_WHITE "/home/nessar/lightup-07c/build/lightbulb_white.png"
+#define LIGHTBULB_RED "/home/nessar/lightup-07c/build/lightbulb_red.png"
+#define LB1 "/home/nessar/lightup-07c/build/lb1.mp3"
+#define LB2 "/home/nessar/lightup-07c/build/lb2.mp3"
+#define LB3 "/home/nessar/lightup-07c/build/lb3.mp3"
+#define ERR1 "/home/nessar/lightup-07c/build/error1.mp3"
+#define ERR2 "/home/nessar/lightup-07c/build/error2.mp3"
+#define ERR3 "/home/nessar/lightup-07c/build/error3.mp3"
+#define MARK1 "/home/nessar/lightup-07c/build/mark1.wav"
+#define MARK2 "/home/nessar/lightup-07c/build/mark2.wav"
+#define MARK3 "/home/nessar/lightup-07c/build/mark3.wav"
+#define WIN "/home/nessar/lightup-07c/build/win.mp3"
+#define FONT "/home/nessar/lightup-07c/build/Roboto-Regular.ttf"
+#define NB_MUSIC 9
 #define FONTSIZE 200
 
 #ifdef __ANDROID__
@@ -214,8 +215,34 @@ void render_blended_text(SDL_Renderer* ren, Env* env) {
 	TTF_CloseFont(font);
 }
 
+void init_musics(Mix_Music*** music_to_load, char** path_to_musics, uint nb_music, uint nb_music_per_array) {
+	for (uint i = 0; i < nb_music / nb_music_per_array; i++) {
+		music_to_load[i] = malloc(sizeof(Mix_Music*) * nb_music_per_array);
+		for (uint j = 0; j < nb_music_per_array; j++) {
+			music_to_load[i][j] = Mix_LoadMUS(path_to_musics[i * nb_music_per_array + j]);
+			if (music_to_load[i][j] == NULL)
+				ERROR("Cannot load music %s\n", path_to_musics[i * nb_music_per_array + j]);
+		}
+	}
+}
+
 Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	Env* env = malloc(sizeof(struct Env_t));
+	Mix_Music** music_to_load[] = {env->lb_music, env->err_music, env->mark_music};
+#ifdef __ANDROID__
+	char* path_musics_base[NB_MUSIC] = {LB1, LB2, LB3, ERR1, ERR2, ERR3, MARK1, MARK2, MARK3};
+	char* path_musics[NB_MUSIC];
+	const char* dir = SDL_AndroidGetInternalStoragePath();
+	char new_music_path[1024];
+	for (uint i = 0; i < NB_MUSIC; i++) {
+		path_musics[i] = malloc(sizeof(char) * 1024);
+		sprintf(new_music_path, "%s/%s", dir, path_musics_base[i]);
+		copy_asset(path_musics_base[i], new_music_path);
+		strcpy(path_musics[i], new_music_path);
+	}
+#else
+	char* path_musics[NB_MUSIC] = {LB1, LB2, LB3, ERR1, ERR2, ERR3, MARK1, MARK2, MARK3};
+#endif
 	env->pressed_restart = false;
 	env->pressed_undo = false;
 	env->pressed_redo = false;
@@ -326,38 +353,11 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->lb_music_cpt = 0;
 
 	// Musics errors
-	env->err_music = malloc(sizeof(Mix_Music*) * 3);
-	if (env->err_music == NULL)
-		ERROR("%s", "NOT ENOUGH MEMORY\n");
-	env->err_music[0] = Mix_LoadMUS(ERR1);
-	if (env->err_music[0] == NULL)
-		ERROR("Cannot load music %s\n", ERR1);
-	env->err_music[1] = Mix_LoadMUS(ERR2);
-	if (env->err_music[1] == NULL)
-		ERROR("Cannot load music %s\n", ERR2);
-	env->err_music[2] = Mix_LoadMUS(ERR3);
-	if (env->err_music[2] == NULL)
-		ERROR("Cannot load music %s\n", ERR3);
-	env->err_music_cpt = 0;
-
-	// Musics marks
-	env->mark_music = malloc(sizeof(Mix_Music*) * 3);
-	if (env->mark_music == NULL)
-		ERROR("%s", "NOT ENOUGH MEMORY\n");
-	env->mark_music[0] = Mix_LoadMUS(MARK1);
-	if (env->mark_music[0] == NULL)
-		ERROR("Cannot load music %s\n", MARK1);
-	env->mark_music[1] = Mix_LoadMUS(MARK2);
-	if (env->mark_music[1] == NULL)
-		ERROR("Cannot load music %s\n", MARK2);
-	env->mark_music[2] = Mix_LoadMUS(MARK3);
-	if (env->mark_music[2] == NULL)
-		ERROR("Cannot load music %s\n", MARK3);
-	env->mark_music_cpt = 0;
+	init_musics(music_to_load, path_musics, NB_MUSIC, 3);
 
 	// Music win
 	env->win_music = Mix_LoadMUS(WIN);
-	if (env->mark_music[0] == NULL)
+	if (env->win_music == NULL)
 		ERROR("Cannot load music %s\n", WIN);
 
 	env->won = false;
@@ -365,6 +365,11 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 
 	render_blended_text(ren, env);
 
+#ifdef __ANDROID__
+	for (uint i = 0; i < NB_MUSIC; i++) {
+		free(path_musics[i]);
+	}
+#endif
 	return env;
 }
 
