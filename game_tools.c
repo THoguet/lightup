@@ -96,23 +96,6 @@ void game_save(cgame g, char* filename) {
 }
 
 /**
- * @brief Test if there is any error on the entire game
- *
- * @param g the game to analyze
- * @return true if there is 1 or more error on the game g
- * @return false if there is no one error on the game g
- */
-bool game_has_error_general(cgame g) {
-	for (uint i = 0; i < game_nb_rows(g); i++) {
-		for (uint j = 0; j < game_nb_cols(g); j++) {
-			if (game_has_error(g, i, j))
-				return true;
-		}
-	}
-	return false;
-}
-
-/**
  * @brief Change the array diagToTest who must containt coordinate i,j of a case else -1 if the cases are not on the same row / column take the cross point of
  * the two points
  * // clang off
