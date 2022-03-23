@@ -300,9 +300,6 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->rec_undo = malloc(sizeof(SDL_Rect));
 	if (env->rec_undo == NULL)
 		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-
-	TTF_CloseFont(font);
-
 	// Musics lightbulb
 	env->lb_music = malloc(sizeof(Mix_Music*) * 3);
 	if (env->lb_music == NULL)
