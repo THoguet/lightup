@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
 		/* manage events */
 		while (SDL_PollEvent(&e)) {
 			/* process your events */
-			quit = process(ren, win, env, &e, &prec_e);
+			quit = process(win, env, &e, &prec_e);
 			if (quit)
 				break;
 		}

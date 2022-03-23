@@ -121,38 +121,38 @@ void render_blended_text(SDL_Renderer* ren, Env* env) {
 	SDL_Color color_b = {0, 0, 0, 255};
 
 	/*rendu restart*/
-	SDL_Surface* surf = TTF_RenderText_Blended(font, "Restart", color_b);
+	SDL_Surface* surf = TTF_RenderText_Blended(font, "Restart", color_w);
 	env->text_restart[0] = SDL_CreateTextureFromSurface(ren, surf);
 	SDL_FreeSurface(surf);
 
-	surf = TTF_RenderText_Blended(font, "Restart", color_w);
+	surf = TTF_RenderText_Blended(font, "Restart", color_b);
 	env->text_restart[1] = SDL_CreateTextureFromSurface(ren, surf);
 	SDL_FreeSurface(surf);
 
 	/*rendu undo*/
-	surf = TTF_RenderText_Blended(font, "Undo", color_b);
+	surf = TTF_RenderText_Blended(font, "Undo", color_w);
 	env->text_undo[0] = SDL_CreateTextureFromSurface(ren, surf);
 	SDL_FreeSurface(surf);
 
-	surf = TTF_RenderText_Blended(font, "Undo", color_w);
+	surf = TTF_RenderText_Blended(font, "Undo", color_b);
 	env->text_undo[1] = SDL_CreateTextureFromSurface(ren, surf);
 	SDL_FreeSurface(surf);
 
 	/*rerndu redo*/
-	surf = TTF_RenderText_Blended(font, "Redo", color_b);
+	surf = TTF_RenderText_Blended(font, "Redo", color_w);
 	env->text_redo[0] = SDL_CreateTextureFromSurface(ren, surf);
 	SDL_FreeSurface(surf);
 
-	surf = TTF_RenderText_Blended(font, "Redo", color_w);
+	surf = TTF_RenderText_Blended(font, "Redo", color_b);
 	env->text_redo[1] = SDL_CreateTextureFromSurface(ren, surf);
 	SDL_FreeSurface(surf);
 
 	/*rendu solve*/
-	surf = TTF_RenderText_Blended(font, "Solve", color_b);
+	surf = TTF_RenderText_Blended(font, "Solve", color_w);
 	env->text_solve[0] = SDL_CreateTextureFromSurface(ren, surf);
 	SDL_FreeSurface(surf);
 
-	surf = TTF_RenderText_Blended(font, "Solve", color_w);
+	surf = TTF_RenderText_Blended(font, "Solve", color_b);
 	env->text_solve[1] = SDL_CreateTextureFromSurface(ren, surf);
 	SDL_FreeSurface(surf);
 
@@ -291,8 +291,6 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	if (env->text_solve == NULL)
 		ERROR("%s", "NOT ENOUGTH MEMORY\n");
 
-	render_blended_text(ren, env);
-
 	env->rec_redo = malloc(sizeof(SDL_Rect));
 	if (env->rec_redo == NULL)
 		ERROR("%s", "NOT ENOUGTH MEMORY\n");
@@ -364,6 +362,8 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 
 	env->won = false;
 	env->won_timestamp = 0;
+
+	render_blended_text(ren, env);
 
 	return env;
 }
@@ -573,7 +573,7 @@ void ToggleFullscreen(SDL_Window* Window) {
 	SDL_ShowCursor(IsFullscreen);
 }
 
-bool process(SDL_Renderer* ren, SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
+bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
 	int w, h;
 	SDL_GetWindowSize(win, &w, &h);
 	if (e->type == SDL_QUIT) {
@@ -732,8 +732,6 @@ bool process(SDL_Renderer* ren, SDL_Window* win, Env* env, SDL_Event* e, SDL_Eve
 					}
 				}
 			}
-		} else if (e->type == SDL_WINDOWEVENT) {
-			render_blended_text(ren, env);
 		}
 	}
 #endif
@@ -783,6 +781,9 @@ void clean(Env* env) {
 		Mix_FreeMusic(env->lb_music[i]);
 	}
 	free(env->lb_music);
+	Mix_FreeMusic(env->win_music);
+	SDL_DestroyTexture(env->victory);
+	SDL_DestroyTexture(env->move_to_quit);
 	free(env);
 }
 
