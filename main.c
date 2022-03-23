@@ -38,11 +38,12 @@ int main(int argc, char* argv[]) {
 	/* main render loop */
 	SDL_Event e;
 	bool quit = false;
+	SDL_Event prec_e;
 	while (!quit) {
 		/* manage events */
 		while (SDL_PollEvent(&e)) {
 			/* process your events */
-			quit = process(win, env, &e);
+			quit = process(ren, win, env, &e, &prec_e);
 			if (quit)
 				break;
 		}
