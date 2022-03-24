@@ -481,6 +481,14 @@ void play_mark(uint i, uint j, Env* env) {
 	}
 }
 
+void update_pressed(Env* env, bool undo, bool redo, bool restart, bool solve, bool save) {
+	env->pressed_undo = undo;
+	env->pressed_redo = redo;
+	env->pressed_restart = restart;
+	env->pressed_solve = solve;
+	env->pressed_save = save;
+}
+
 bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb_coups, int* nb_undo) {
 	int w, h;
 	SDL_GetWindowSize(win, &w, &h);
@@ -492,13 +500,17 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 		if (state[SDL_SCANCODE_F11]) {
 			ToggleFullscreen(win);
 		} else if (state[SDL_SCANCODE_Z]) {
-			game_undo(env->g);
-			(*nb_undo)++;
-			(*nb_coups)--;
+			if ((*nb_coups) <= 0) {
+				game_undo(env->g);
+				(*nb_undo)++;
+				(*nb_coups)--;
+			}
 		} else if (state[SDL_SCANCODE_Y]) {
-			game_redo(env->g);
-			(*nb_undo)--;
-			(*nb_coups)++;
+			if ((*nb_undo) <= 0) {
+				game_redo(env->g);
+				(*nb_undo)--;
+				(*nb_coups)++;
+			}
 		} else if (state[SDL_SCANCODE_S]) {
 			game_solve(env->g);
 			(*nb_undo) = 0;
@@ -528,34 +540,23 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 				mouse.y = e->tfinger.y;
 			}
 			if (SDL_PointInRect(&mouse, env->rec_restart)) {
-				env->pressed_restart = true;
-				env->pressed_undo = false;
-				env->pressed_redo = false;
-				env->pressed_solve = false;
+				update_pressed(env, false, false, true, false, false);
 			} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
-				if ((*nb_coups) <= 0) {
-					env->pressed_undo = true;
-					env->pressed_restart = false;
-					env->pressed_redo = false;
-					env->pressed_solve = false;
-				}
+				if ((*nb_coups) <= 0)
+					update_pressed(env, true, false, false, false, false);
+				update_pressed(env, false, false, false, false, false);
 			} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
-				if ((*nb_undo) <= 0) {
-					env->pressed_redo = true;
-					env->pressed_undo = false;
-					env->pressed_restart = false;
-					env->pressed_solve = false;
-				}
+				if ((*nb_undo) <= 0)
+					update_pressed(env, false, true, false, false, false);
+				update_pressed(env, false, false, false, false, false);
+
 			} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
-				env->pressed_solve = true;
-				env->pressed_undo = false;
-				env->pressed_redo = false;
-				env->pressed_restart = false;
+				update_pressed(env, false, false, false, true, false);
+
+			} else if (SDL_PointInRect(&mouse, env->rec_save)) {
+				update_pressed(env, false, false, false, false, true);
 			} else {
-				env->pressed_restart = false;
-				env->pressed_undo = false;
-				env->pressed_redo = false;
-				env->pressed_solve = false;
+				update_pressed(env, false, false, false, false, false);
 			}
 #ifdef _ANDROID_
 			if (SDL_PointInRect(&mouse, env->rec_game)) {
