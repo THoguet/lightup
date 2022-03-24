@@ -116,110 +116,18 @@ void usage(char* argv[]) {
 	exit(EXIT_FAILURE);
 }
 
-void render_blended_text(SDL_Renderer* ren, Env* env) {
+SDL_Texture* render_blended_text(SDL_Renderer* ren, SDL_Color color, char* text) {
 	TTF_Font* font = TTF_OpenFont(FONT, FONTSIZE);  // TO EDIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (ANDROID)
 	if (!font)
 		ERROR("TTF_OpenFont: %s\n", FONT);
 	TTF_SetFontStyle(font, TTF_STYLE_BOLD);
-	// color of 0 in black wall
-	SDL_Color color_w = {255, 255, 255, 255};
-	// color of 0 in black wall with error
-	SDL_Color color_r = {255, 50, 50, 255}; /* blue color in RGBA */
 
-	SDL_Color color_b = {0, 0, 0, 255};
-
-	/*rendu restart*/
-	SDL_Surface* surf = TTF_RenderText_Blended(font, "Restart", color_w);
-	env->text_restart[0] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-
-	surf = TTF_RenderText_Blended(font, "Restart", color_b);
-	env->text_restart[1] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-
-	/*rendu undo*/
-	surf = TTF_RenderText_Blended(font, "Undo", color_w);
-	env->text_undo[0] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-
-	surf = TTF_RenderText_Blended(font, "Undo", color_b);
-	env->text_undo[1] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-
-	/*rerndu redo*/
-	surf = TTF_RenderText_Blended(font, "Redo", color_w);
-	env->text_redo[0] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-
-	surf = TTF_RenderText_Blended(font, "Redo", color_b);
-	env->text_redo[1] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-
-	/*rendu solve*/
-	surf = TTF_RenderText_Blended(font, "Solve", color_w);
-	env->text_solve[0] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-
-	surf = TTF_RenderText_Blended(font, "Solve", color_b);
-	env->text_solve[1] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-
-	/* init zero texture double tab*/
-	// if the case has not error
-	surf = TTF_RenderText_Blended(font, "0", color_w);
-	env->zero[0] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-	// if the case has error
-	surf = TTF_RenderText_Blended(font, "0", color_r);
-	env->zero[1] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-
-	/* init one texture double tab*/
-	// if the case has not error
-	surf = TTF_RenderText_Blended(font, "1", color_w);
-	env->one[0] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-	// if the case has error
-	surf = TTF_RenderText_Blended(font, "1", color_r);
-	env->one[1] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-
-	/* init two texture double tab*/
-	// if the case has not error
-	surf = TTF_RenderText_Blended(font, "2", color_w);
-	env->two[0] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-	// if the case has error
-	surf = TTF_RenderText_Blended(font, "2", color_r);
-	env->two[1] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-
-	/* init three texture double tab*/
-	// if the case has not error
-	surf = TTF_RenderText_Blended(font, "3", color_w);
-	env->three[0] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-	// if the case has error
-	surf = TTF_RenderText_Blended(font, "3", color_r);
-	env->three[1] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-
-	/* init four texture double tab*/
-	// if the case has not error
-	surf = TTF_RenderText_Blended(font, "4", color_w);
-	env->four[0] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-	// if the case has error
-	surf = TTF_RenderText_Blended(font, "4", color_r);
-	env->four[1] = SDL_CreateTextureFromSurface(ren, surf);
-	SDL_FreeSurface(surf);
-	// init victory text
-	surf = TTF_RenderText_Blended(font, "Victory !", color_w);
-	env->victory = SDL_CreateTextureFromSurface(ren, surf);
-	surf = TTF_RenderText_Blended(font, "Touch to quit.", color_w);
-	env->move_to_quit = SDL_CreateTextureFromSurface(ren, surf);
+	SDL_Surface* surf = TTF_RenderText_Blended(font, text, color);
+	SDL_Texture* tmp = SDL_CreateTextureFromSurface(ren, surf);
 	SDL_FreeSurface(surf);
 	TTF_CloseFont(font);
+
+	return tmp;
 }
 
 void init_malloc(void** tab[], unsigned long* sizeof_tab, uint size_tab) {
@@ -278,11 +186,13 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	void** env_tab[] = {(void**)&(env->zero),        (void**)&(env->one),       (void**)&(env->two),       (void**)&(env->three),
 	                    (void**)&(env->four),        (void**)&(env->lightbulb), (void**)&(env->text_redo), (void**)&(env->text_restart),
 	                    (void**)&(env->text_solve),  (void**)&(env->text_undo), (void**)&(env->rec_game),  (void**)&(env->rec_redo),
-	                    (void**)&(env->rec_restart), (void**)&(env->rec_solve), (void**)&(env->rec_undo)};
+	                    (void**)&(env->rec_restart), (void**)&(env->rec_solve), (void**)&(env->rec_undo),  (void**)&(env->victory),
+	                    (void**)&(env->move_to_quit)};
 	unsigned long sizeof_env_tab[] = {sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2,
 	                                  sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2,
 	                                  sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Rect),         sizeof(SDL_Rect),
-	                                  sizeof(SDL_Rect),         sizeof(SDL_Rect),         sizeof(SDL_Rect)};
+	                                  sizeof(SDL_Rect),         sizeof(SDL_Rect),         sizeof(SDL_Rect),         sizeof(SDL_Texture*),
+	                                  sizeof(SDL_Texture*)};
 	init_malloc(env_tab, sizeof_env_tab, sizeof(env_tab) / sizeof(env_tab[0]));
 	// if the case has not error
 	env->lightbulb[0] = IMG_LoadTexture(ren, LIGHTBULB_WHITE);
@@ -304,13 +214,34 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->won = false;
 	env->won_timestamp = 0;
 
-	render_blended_text(ren, env);
-
 #ifdef __ANDROID__
 	for (uint i = 0; i < NB_MUSIC; i++) {
 		free(paths[i]);
 	}
 #endif
+
+	/*Creation of the differents textures and place them in env*/
+	SDL_Color color_w = {255, 255, 255, 255};  // color of 0 in black wall with error
+	SDL_Color color_r = {255, 50, 50, 255};    /* blue color in RGBA */
+	SDL_Color color_b = {0, 0, 0, 255};        /* black color in RGBA*/
+
+	char* tab_texts_double[] = {"0", "1", "2", "3", "4", "Restart", "Undo", "Redo", "Solve"};
+
+	SDL_Texture** tab_textures_double[] = {env->zero,         env->one,       env->two,       env->three,     env->four,
+	                                       env->text_restart, env->text_undo, env->text_redo, env->text_solve};
+
+	SDL_Color color_tab[] = {color_w, color_r};
+	for (uint i = 0; i < 9; i++) {
+		if (i > 4) {
+			color_tab[1] = color_b;
+		}
+		for (int j = 0; j < 2; j++) {
+			tab_textures_double[i][j] = render_blended_text(ren, color_tab[j], tab_texts_double[i]);
+		}
+	}
+	env->victory = render_blended_text(ren, color_w, "Victory");
+	env->move_to_quit = render_blended_text(ren, color_w, "Touch to quit");
+
 	return env;
 }
 
@@ -562,19 +493,15 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
 				env->pressed_redo = false;
 				env->pressed_solve = false;
 			} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
-				if (can_undo(env->g)) {
-					env->pressed_undo = true;
-					env->pressed_restart = false;
-					env->pressed_redo = false;
-					env->pressed_solve = false;
-				}
+				env->pressed_undo = true;
+				env->pressed_restart = false;
+				env->pressed_redo = false;
+				env->pressed_solve = false;
 			} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
-				if (can_redo(env->g)) {
-					env->pressed_redo = true;
-					env->pressed_undo = false;
-					env->pressed_restart = false;
-					env->pressed_solve = false;
-				}
+				env->pressed_redo = true;
+				env->pressed_undo = false;
+				env->pressed_restart = false;
+				env->pressed_solve = false;
 			} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
 				env->pressed_solve = true;
 				env->pressed_undo = false;

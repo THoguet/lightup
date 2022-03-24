@@ -85,8 +85,6 @@ void game_undo(game g);
  **/
 void game_redo(game g);
 
-bool can_undo(game g);
-bool can_redo(game g);
 /**
  * @}
  */
