@@ -179,6 +179,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->pressed_undo = false;
 	env->pressed_redo = false;
 	env->pressed_solve = false;
+	env->pressed_save = false;
 	PRINT("%s", "To win the game, you must satisfy the following conditions:\n\n");
 	PRINT("%s",
 	      "-All non-black squares are lit.\n-No light is lit by another light.\n-Each numbered black square must be orthogonally adjacent to exactly the given "
@@ -192,16 +193,16 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	} else {
 		usage(argv);
 	}
-	void** env_tab[] = {(void**)&(env->zero),        (void**)&(env->one),       (void**)&(env->two),       (void**)&(env->three),
-	                    (void**)&(env->four),        (void**)&(env->lightbulb), (void**)&(env->text_redo), (void**)&(env->text_restart),
-	                    (void**)&(env->text_solve),  (void**)&(env->text_undo), (void**)&(env->rec_game),  (void**)&(env->rec_redo),
-	                    (void**)&(env->rec_restart), (void**)&(env->rec_solve), (void**)&(env->rec_undo),  (void**)&(env->victory),
-	                    (void**)&(env->move_to_quit)};
+	void** env_tab[] = {(void**)&(env->zero),       (void**)&(env->one),          (void**)&(env->two),       (void**)&(env->three),
+	                    (void**)&(env->four),       (void**)&(env->lightbulb),    (void**)&(env->text_redo), (void**)&(env->text_restart),
+	                    (void**)&(env->text_solve), (void**)&(env->text_undo),    (void**)&(env->text_save), (void**)&(env->rec_game),
+	                    (void**)&(env->rec_redo),   (void**)&(env->rec_restart),  (void**)&(env->rec_solve), (void**)&(env->rec_undo),
+	                    (void**)&(env->victory),    (void**)&(env->move_to_quit), (void**)&(env->rec_save)};
 	unsigned long sizeof_env_tab[] = {sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2,
 	                                  sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2,
-	                                  sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Rect),         sizeof(SDL_Rect),
-	                                  sizeof(SDL_Rect),         sizeof(SDL_Rect),         sizeof(SDL_Rect),         sizeof(SDL_Texture*),
-	                                  sizeof(SDL_Texture*)};
+	                                  sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Rect),
+	                                  sizeof(SDL_Rect),         sizeof(SDL_Rect),         sizeof(SDL_Rect),         sizeof(SDL_Rect),
+	                                  sizeof(SDL_Texture*),     sizeof(SDL_Texture*),     sizeof(SDL_Rect)};
 	init_malloc(env_tab, sizeof_env_tab, sizeof(env_tab) / sizeof(env_tab[0]));
 	// if the case has not error
 	env->lightbulb[0] = IMG_LoadTexture(ren, LIGHTBULB_WHITE);
