@@ -15,19 +15,19 @@
 
 /* **************************************************************** */
 
-#define LIGHTBULB_WHITE "lightbulb_white.png"
-#define LIGHTBULB_RED "lightbulb_red.png"
-#define LB1 "lb1.mp3"
-#define LB2 "lb2.mp3"
-#define LB3 "lb3.mp3"
-#define ERR1 "error1.mp3"
-#define ERR2 "error2.mp3"
-#define ERR3 "error3.mp3"
-#define MARK1 "mark1.wav"
-#define MARK2 "mark2.wav"
-#define MARK3 "mark3.wav"
-#define WIN "win.mp3"
-#define FONT "Roboto-Regular.ttf"
+#define LIGHTBULB_WHITE "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/lightbulb_white.png"
+#define LIGHTBULB_RED "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/lightbulb_red.png"
+#define LB1 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/lb1.mp3"
+#define LB2 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/lb2.mp3"
+#define LB3 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/lb3.mp3"
+#define ERR1 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/error1.mp3"
+#define ERR2 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/error2.mp3"
+#define ERR3 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/error3.mp3"
+#define MARK1 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/mark1.wav"
+#define MARK2 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/mark2.wav"
+#define MARK3 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/mark3.wav"
+#define WIN "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/win.mp3"
+#define FONT "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/Roboto-Regular.ttf"
 #define NB_MUSIC 10
 #define NB_BUTTONS 5
 #define FONTSIZE 200
@@ -532,19 +532,19 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 				env->pressed_redo = false;
 				env->pressed_solve = false;
 			} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
-				if ((*nb_coups) > 0) {
+				if ((*nb_coups) <= 0) {
 					env->pressed_undo = true;
+					env->pressed_restart = false;
+					env->pressed_redo = false;
+					env->pressed_solve = false;
 				}
-				env->pressed_restart = false;
-				env->pressed_redo = false;
-				env->pressed_solve = false;
 			} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
-				if ((*nb_undo) > 0) {
+				if ((*nb_undo) <= 0) {
 					env->pressed_redo = true;
+					env->pressed_undo = false;
+					env->pressed_restart = false;
+					env->pressed_solve = false;
 				}
-				env->pressed_undo = false;
-				env->pressed_restart = false;
-				env->pressed_solve = false;
 			} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
 				env->pressed_solve = true;
 				env->pressed_undo = false;
@@ -619,44 +619,44 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 }
 
 /* **************************************************************** */
+/*
+void init_musics(Mix_Music**** music_to_load, char** path_to_musics, uint nb_music, uint nb_music_per_array) {
+    for (uint i = 0; i < nb_music / nb_music_per_array; i++) {
+        *(music_to_load[i]) = malloc(sizeof(Mix_Music*) * nb_music_per_array);
+        for (uint j = 0; j < nb_music_per_array; j++) {
+            (*(music_to_load[i]))[j] = Mix_LoadMUS(path_to_musics[i * nb_music_per_array + j]);
+            if ((*(music_to_load[i]))[j] == NULL)
+                ERROR("Cannot load music %s\n", path_to_musics[i * nb_music_per_array + j]);
+        }
+    }
+}*/
+void clean_destroy(SDL_Texture** tab[], uint sizePerArray, uint size_tab) {
+	for (uint i = 0; i < size_tab; i++) {
+		for (uint j = 0; j < sizePerArray; j++) {
+			SDL_DestroyTexture(tab[i][j]);
+		}
+		free(tab[i]);
+	}
+}
+
+void freeall(SDL_Rect* tab[], uint size_tab) {
+	for (uint i = 0; i < size_tab; i++) {
+		free(tab[i]);
+	}
+}
 
 void clean(Env* env) {
 	game_delete(env->g);
-	SDL_DestroyTexture(env->zero[0]);
-	SDL_DestroyTexture(env->zero[1]);
-	free(env->zero);
-	SDL_DestroyTexture(env->one[0]);
-	SDL_DestroyTexture(env->one[1]);
-	free(env->one);
-	SDL_DestroyTexture(env->two[0]);
-	SDL_DestroyTexture(env->two[1]);
-	free(env->two);
-	SDL_DestroyTexture(env->three[0]);
-	SDL_DestroyTexture(env->three[1]);
-	free(env->three);
-	SDL_DestroyTexture(env->four[0]);
-	SDL_DestroyTexture(env->four[1]);
-	free(env->four);
-	SDL_DestroyTexture(env->lightbulb[0]);
-	SDL_DestroyTexture(env->lightbulb[1]);
-	free(env->lightbulb);
-	SDL_DestroyTexture(env->text_restart[0]);
-	SDL_DestroyTexture(env->text_restart[1]);
-	free(env->text_restart);
-	SDL_DestroyTexture(env->text_undo[0]);
-	SDL_DestroyTexture(env->text_undo[1]);
-	free(env->text_undo);
-	SDL_DestroyTexture(env->text_redo[0]);
-	SDL_DestroyTexture(env->text_redo[1]);
-	free(env->text_redo);
-	SDL_DestroyTexture(env->text_solve[0]);
-	SDL_DestroyTexture(env->text_solve[1]);
-	free(env->text_solve);
-	free(env->rec_redo);
-	free(env->rec_undo);
-	free(env->rec_restart);
-	free(env->rec_solve);
-	free(env->rec_game);
+	// destroy all array of array
+	SDL_Texture** env_tab[] = {env->zero,      env->one,       env->two,          env->three,      env->four,
+	                           env->lightbulb, env->text_redo, env->text_restart, env->text_solve, env->text_undo};
+
+	clean_destroy(env_tab, 2, sizeof(env_tab) / sizeof(env_tab[0]));
+
+	SDL_Rect* free_tab[] = {env->rec_game, env->rec_redo, env->rec_restart, env->rec_solve, env->rec_undo};
+
+	freeall(free_tab, sizeof(free_tab) / sizeof(free_tab[0]));
+
 	for (uint i = 0; i < 3; i++) {
 		Mix_FreeMusic(env->lb_music[i]);
 	}
