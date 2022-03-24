@@ -616,15 +616,19 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
 				env->pressed_redo = false;
 				env->pressed_solve = false;
 			} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
-				env->pressed_undo = true;
-				env->pressed_restart = false;
-				env->pressed_redo = false;
-				env->pressed_solve = false;
+				if (!(env->g->hist == NULL || history_is_empty(history_prev(env->g->hist)))) {
+					env->pressed_undo = true;
+					env->pressed_restart = false;
+					env->pressed_redo = false;
+					env->pressed_solve = false;
+				}
 			} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
-				env->pressed_redo = true;
-				env->pressed_undo = false;
-				env->pressed_restart = false;
-				env->pressed_solve = false;
+				if (!(env->g->hist == NULL || history_next(env->g->hist) == NULL)) {
+					env->pressed_redo = true;
+					env->pressed_undo = false;
+					env->pressed_restart = false;
+					env->pressed_solve = false;
+				}
 			} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
 				env->pressed_solve = true;
 				env->pressed_undo = false;
@@ -655,9 +659,13 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
 			if (SDL_PointInRect(&mouse, env->rec_restart)) {
 				game_restart(env->g);
 			} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
-				game_undo(env->g);
+				if (env->pressed_undo == true) {
+					game_undo(env->g);
+				}
 			} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
-				game_redo(env->g);
+				if (env->pressed_redo == true) {
+					game_redo(env->g);
+				}
 			} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
 				game_solve(env->g);
 			} else if (SDL_PointInRect(&mouse, env->rec_game)) {
