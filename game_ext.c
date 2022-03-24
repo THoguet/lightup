@@ -59,7 +59,7 @@ bool game_is_wrapping(cgame g) {
 
 void game_undo(game g) {
 	// check if g->hist is not empty or if it is possible to undo
-	if (g->hist == NULL || history_is_empty(history_prev(g->hist))) {
+	if (!can_undo(g)) {
 		printf("you are at your first move\n");
 	} else {
 		square tmp = game_get_state(g, history_i(g->hist), history_j(g->hist));
@@ -70,9 +70,16 @@ void game_undo(game g) {
 	}
 }
 
+bool can_undo(game g) {
+	if (g->hist == NULL || history_is_empty(history_prev(g->hist))) {
+		return false;
+	}
+	return true;
+}
+
 void game_redo(game g) {
 	// check if g->hist is not empty or if it is possible to redo
-	if (g->hist == NULL || history_next(g->hist) == NULL) {
+	if (!can_redo(g)) {
 		printf("you are at your last move\n");
 	} else {
 		g->hist = history_next(g->hist);
@@ -81,4 +88,11 @@ void game_redo(game g) {
 		game_update_flags(g);
 		g->hist->state = tmp;
 	}
+}
+
+bool can_redo(game g) {
+	if (g->hist == NULL || history_next(g->hist) == NULL) {
+		return false;
+	}
+	return true;
 }

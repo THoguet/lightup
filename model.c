@@ -547,14 +547,14 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
 				env->pressed_redo = false;
 				env->pressed_solve = false;
 			} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
-				if (!(env->g->hist == NULL || history_is_empty(history_prev(env->g->hist)))) {
+				if (can_undo(env->g)) {
 					env->pressed_undo = true;
 					env->pressed_restart = false;
 					env->pressed_redo = false;
 					env->pressed_solve = false;
 				}
 			} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
-				if (!(env->g->hist == NULL || history_next(env->g->hist) == NULL)) {
+				if (can_redo(env->g)) {
 					env->pressed_redo = true;
 					env->pressed_undo = false;
 					env->pressed_restart = false;
