@@ -58,11 +58,6 @@ static void copy_asset(char* src, char* dst) {
 #endif
 
 /* **************************************************************** */
-int int_max(int a, int b) {
-	if (a < b)
-		return b;
-	return a;
-}
 
 int int_min_intero(int a, int b) {
 	if (a < b)
@@ -245,7 +240,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 		}
 	}
 	env->victory = render_blended_text(ren, color_w, "Victory !");
-	env->move_to_quit = render_blended_text(ren, color_w, "Touch to quit.");
+	env->move_to_quit = render_blended_text(ren, color_w, "Touch to quit");
 
 	return env;
 }
@@ -341,22 +336,24 @@ void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted) {
 	SDL_RenderFillRect(ren, &mark);
 }
 
-void render_victory(SDL_Renderer* ren, Env* env, int w, int h, int marge_w, int marge_h) {
+void render_victory(SDL_Window* win, SDL_Renderer* ren, Env* env) {
+	int h, w;
+	SDL_GetWindowSize(win, &w, &h);
 	SDL_SetRenderDrawColor(ren, 160, 160, 160, SDL_ALPHA_OPAQUE);
 	SDL_Rect victory_rec, move_to_quit_rec, big_rec;
 	SDL_QueryTexture(env->move_to_quit, NULL, NULL, &move_to_quit_rec.w, &move_to_quit_rec.h);
 	victory_rec.h = h / 5;
 	victory_rec.w = w;
-	victory_rec.x = marge_w;
-	victory_rec.y = (h / 2 - victory_rec.h / 2) + marge_h;
+	victory_rec.x = 0;
+	victory_rec.y = h / 2 - victory_rec.h / 2;
 	move_to_quit_rec.h = victory_rec.h / 2;
 	move_to_quit_rec.w = victory_rec.w / 2;
-	move_to_quit_rec.x = w / 2 - move_to_quit_rec.w / 2 + marge_w;
+	move_to_quit_rec.x = w / 2 - move_to_quit_rec.w / 2;
 	move_to_quit_rec.y = victory_rec.y + victory_rec.h;
 	big_rec.x = victory_rec.x;
 	big_rec.y = victory_rec.y;
 	big_rec.h = victory_rec.h + move_to_quit_rec.h;
-	big_rec.w = int_max(victory_rec.w, move_to_quit_rec.w);
+	big_rec.w = victory_rec.w + move_to_quit_rec.w;
 	SDL_RenderFillRect(ren, &big_rec);
 	SDL_RenderCopy(ren, env->victory, NULL, &victory_rec);
 	SDL_RenderCopy(ren, env->move_to_quit, NULL, &move_to_quit_rec);
@@ -366,8 +363,8 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	int win_w, win_h, h, w;
 	SDL_GetWindowSize(win, &win_w, &win_h);
 
-	// sert a avoir un rapport de 1/1 pour la game et les boutons et ne pas avoir de compressions sur quelconques axes des images des boutons
-	if (win_h > win_w) {
+	if (win_h >
+	    win_w) {  // sert a avoir un rapport de 1/1 pour la game et les boutons et ne pas avoir de compressions sur quelconques axes des images des boutons
 		h = win_w;
 		w = win_w;
 	} else {
@@ -428,7 +425,7 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 		rec.y += size_rec;
 	}
 	if (env->won)
-		render_victory(ren, env, w, h, marge_w, marge_h);
+		render_victory(win, ren, env);
 }
 
 /* **************************************************************** */
@@ -499,6 +496,8 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 			game_restart(env->g);
 			(*nb_undo) = 0;
 			(*nb_coups) = 0;
+		} else if (state[SDL_SCANCODE_W]) {
+			game_save(env->g, "save.txt");
 		}
 	}
 	if (game_is_over(env->g) && !env->won) {
@@ -519,6 +518,7 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 				mouse.x = e->tfinger.x;
 				mouse.y = e->tfinger.y;
 			}
+
 			if (SDL_PointInRect(&mouse, env->rec_restart)) {
 				env->pressed_restart = true;
 				env->pressed_undo = false;
