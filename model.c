@@ -16,19 +16,20 @@
 
 /* **************************************************************** */
 
-#define LIGHTBULB_WHITE "lightbulb_white.png"
-#define LIGHTBULB_RED "lightbulb_red.png"
-#define LB1 "lb1.mp3"
-#define LB2 "lb2.mp3"
-#define LB3 "lb3.mp3"
-#define ERR1 "error1.mp3"
-#define ERR2 "error2.mp3"
-#define ERR3 "error3.mp3"
-#define MARK1 "mark1.wav"
-#define MARK2 "mark2.wav"
-#define MARK3 "mark3.wav"
-#define WIN "win.mp3"
-#define FONT "Roboto-Regular.ttf"
+#define LIGHTBULB_WHITE "/home/nessar/lightup-07c/build/lightbulb_white.png"
+#define LIGHTBULB_RED "/home/nessar/lightup-07c/build/lightbulb_red.png"
+#define LB1 "/home/nessar/lightup-07c/build/lb1.mp3"
+#define LB2 "/home/nessar/lightup-07c/build/lb2.mp3"
+#define LB3 "/home/nessar/lightup-07c/build/lb3.mp3"
+#define ERR1 "/home/nessar/lightup-07c/build/error1.mp3"
+#define ERR2 "/home/nessar/lightup-07c/build/error2.mp3"
+#define ERR3 "/home/nessar/lightup-07c/build/error3.mp3"
+#define MARK1 "/home/nessar/lightup-07c/build/mark1.wav"
+#define MARK2 "/home/nessar/lightup-07c/build/mark2.wav"
+#define MARK3 "/home/nessar/lightup-07c/build/mark3.wav"
+#define WIN "/home/nessar/lightup-07c/build/win.mp3"
+#define FONT "/home/nessar/lightup-07c/build/Roboto-Regular.ttf"
+#define NB_MUSIC 10
 #define FONTSIZE 200
 
 #ifdef __ANDROID__
@@ -101,15 +102,7 @@ void usage(char* argv[]) {
 }
 
 void render_blended_text(SDL_Renderer* ren, Env* env) {
-#ifdef __ANDROID__
-	const char* dir = SDL_AndroidGetInternalStoragePath();
-	char font_path[1024];
-	sprintf(font_path, "%s/%s", dir, FONT);
-	copy_asset(FONT, font_path);
-	TTF_Font* font = TTF_OpenFont(font_path, FONTSIZE);
-#else
-	TTF_Font* font = TTF_OpenFont(FONT, FONTSIZE);
-#endif
+	TTF_Font* font = TTF_OpenFont(FONT, FONTSIZE);  // TO EDIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (ANDROID)
 	if (!font)
 		ERROR("TTF_OpenFont: %s\n", FONT);
 	TTF_SetFontStyle(font, TTF_STYLE_BOLD);
@@ -214,8 +207,42 @@ void render_blended_text(SDL_Renderer* ren, Env* env) {
 	TTF_CloseFont(font);
 }
 
+void init_malloc(void** tab[], unsigned long* sizeof_tab, uint size_tab) {
+	for (uint i = 0; i < size_tab; i++) {
+		*(tab[i]) = malloc(sizeof_tab[i]);
+		if (*(tab[i]) == NULL)
+			ERROR("%s", "Not enough memory.\n");
+	}
+}
+
+void init_musics(Mix_Music**** music_to_load, char** path_to_musics, uint nb_music, uint nb_music_per_array) {
+	for (uint i = 0; i < nb_music / nb_music_per_array; i++) {
+		*(music_to_load[i]) = malloc(sizeof(Mix_Music*) * nb_music_per_array);
+		for (uint j = 0; j < nb_music_per_array; j++) {
+			(*(music_to_load[i]))[j] = Mix_LoadMUS(path_to_musics[i * nb_music_per_array + j]);
+			if ((*(music_to_load[i]))[j] == NULL)
+				ERROR("Cannot load music %s\n", path_to_musics[i * nb_music_per_array + j]);
+		}
+	}
+}
+
 Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	Env* env = malloc(sizeof(struct Env_t));
+	Mix_Music*** music_to_load[] = {&(env->lb_music), &(env->err_music), &(env->mark_music)};
+#ifdef __ANDROID__
+	char* path_to_get[NB_MUSIC] = {LB1, LB2, LB3, ERR1, ERR2, ERR3, MARK1, MARK2, MARK3, WIN};
+	char* paths[NB_MUSIC];
+	const char* dir = SDL_AndroidGetInternalStoragePath();
+	char new_path[1024];
+	for (uint i = 0; i < NB_MUSIC; i++) {
+		paths[i] = malloc(sizeof(char) * 1024);
+		sprintf(new_path, "%s/%s", dir, path_to_get[i]);
+		copy_asset(path_to_get[i], new_path);
+		strcpy(paths[i], new_path);
+	}
+#else
+	char* paths[NB_MUSIC] = {LB1, LB2, LB3, ERR1, ERR2, ERR3, MARK1, MARK2, MARK3, WIN};
+#endif
 	env->pressed_restart = false;
 	env->pressed_undo = false;
 	env->pressed_redo = false;
@@ -233,35 +260,15 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	} else {
 		usage(argv);
 	}
-	/* init zero texture double tab*/
-	env->zero = malloc(sizeof(SDL_Texture*) * 2);
-	if (env->zero == NULL)
-		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-
-	/* init one texture double tab*/
-	env->one = malloc(sizeof(SDL_Texture*) * 2);
-	if (env->one == NULL)
-		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-
-	/* init two texture double tab*/
-	env->two = malloc(sizeof(SDL_Texture*) * 2);
-	if (env->two == NULL)
-		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-
-	/* init three texture double tab*/
-	env->three = malloc(sizeof(SDL_Texture*) * 2);
-	if (env->three == NULL)
-		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-
-	/* init four texture double tab*/
-	env->four = malloc(sizeof(SDL_Texture*) * 2);
-	if (env->four == NULL)
-		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-
-	/* init lightbulb texture double tab*/
-	env->lightbulb = malloc(sizeof(SDL_Texture*) * 2);
-	if (env->lightbulb == NULL)
-		ERROR("%s", "NOT ENOUGTH MEMORY\n");
+	void** env_tab[] = {(void**)&(env->zero),        (void**)&(env->one),       (void**)&(env->two),       (void**)&(env->three),
+	                    (void**)&(env->four),        (void**)&(env->lightbulb), (void**)&(env->text_redo), (void**)&(env->text_restart),
+	                    (void**)&(env->text_solve),  (void**)&(env->text_undo), (void**)&(env->rec_game),  (void**)&(env->rec_redo),
+	                    (void**)&(env->rec_restart), (void**)&(env->rec_solve), (void**)&(env->rec_undo)};
+	unsigned long sizeof_env_tab[] = {sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2,
+	                                  sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2,
+	                                  sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Rect),         sizeof(SDL_Rect),
+	                                  sizeof(SDL_Rect),         sizeof(SDL_Rect),         sizeof(SDL_Rect)};
+	init_malloc(env_tab, sizeof_env_tab, sizeof(env_tab) / sizeof(env_tab[0]));
 	// if the case has not error
 	env->lightbulb[0] = IMG_LoadTexture(ren, LIGHTBULB_WHITE);
 	if (!env->lightbulb[0])
@@ -270,94 +277,13 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->lightbulb[1] = IMG_LoadTexture(ren, LIGHTBULB_RED);
 	if (!env->lightbulb[1])
 		ERROR("IMG_LoadTexture: %s\n", LIGHTBULB_RED);
-
-	/* init text_restart texture double tab*/
-	env->text_restart = malloc(sizeof(SDL_Texture*) * 2);
-	if (env->text_restart == NULL)
-		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-
-	/* init text_undo texture double tab*/
-	env->text_undo = malloc(sizeof(SDL_Texture*) * 2);
-	if (env->text_undo == NULL)
-		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-
-	/* init text_redo texture double tab*/
-	env->text_redo = malloc(sizeof(SDL_Texture*) * 2);
-	if (env->text_redo == NULL)
-		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-
-	/* init text_solve texture double tab*/
-	env->text_solve = malloc(sizeof(SDL_Texture*) * 2);
-	if (env->text_solve == NULL)
-		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-
-	env->rec_redo = malloc(sizeof(SDL_Rect));
-	if (env->rec_redo == NULL)
-		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-
-	env->rec_game = malloc(sizeof(SDL_Rect));
-	if (env->rec_game == NULL)
-		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-
-	env->rec_restart = malloc(sizeof(SDL_Rect));
-	if (env->rec_restart == NULL)
-		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-
-	env->rec_solve = malloc(sizeof(SDL_Rect));
-	if (env->rec_solve == NULL)
-		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-
-	env->rec_undo = malloc(sizeof(SDL_Rect));
-	if (env->rec_undo == NULL)
-		ERROR("%s", "NOT ENOUGTH MEMORY\n");
-	// Musics lightbulb
-	env->lb_music = malloc(sizeof(Mix_Music*) * 3);
-	if (env->lb_music == NULL)
-		ERROR("%s", "NOT ENOUGH MEMORY\n");
-	env->lb_music[0] = Mix_LoadMUS(LB1);
-	if (env->lb_music[0] == NULL)
-		ERROR("Cannot load music %s\n", LB1);
-	env->lb_music[1] = Mix_LoadMUS(LB2);
-	if (env->lb_music[1] == NULL)
-		ERROR("Cannot load music %s\n", LB2);
-	env->lb_music[2] = Mix_LoadMUS(LB3);
-	if (env->lb_music[2] == NULL)
-		ERROR("Cannot load music %s\n", LB3);
+	init_musics(music_to_load, paths, NB_MUSIC, 3);
 	env->lb_music_cpt = 0;
-
-	// Musics errors
-	env->err_music = malloc(sizeof(Mix_Music*) * 3);
-	if (env->err_music == NULL)
-		ERROR("%s", "NOT ENOUGH MEMORY\n");
-	env->err_music[0] = Mix_LoadMUS(ERR1);
-	if (env->err_music[0] == NULL)
-		ERROR("Cannot load music %s\n", ERR1);
-	env->err_music[1] = Mix_LoadMUS(ERR2);
-	if (env->err_music[1] == NULL)
-		ERROR("Cannot load music %s\n", ERR2);
-	env->err_music[2] = Mix_LoadMUS(ERR3);
-	if (env->err_music[2] == NULL)
-		ERROR("Cannot load music %s\n", ERR3);
 	env->err_music_cpt = 0;
-
-	// Musics marks
-	env->mark_music = malloc(sizeof(Mix_Music*) * 3);
-	if (env->mark_music == NULL)
-		ERROR("%s", "NOT ENOUGH MEMORY\n");
-	env->mark_music[0] = Mix_LoadMUS(MARK1);
-	if (env->mark_music[0] == NULL)
-		ERROR("Cannot load music %s\n", MARK1);
-	env->mark_music[1] = Mix_LoadMUS(MARK2);
-	if (env->mark_music[1] == NULL)
-		ERROR("Cannot load music %s\n", MARK2);
-	env->mark_music[2] = Mix_LoadMUS(MARK3);
-	if (env->mark_music[2] == NULL)
-		ERROR("Cannot load music %s\n", MARK3);
 	env->mark_music_cpt = 0;
-
 	// Music win
 	env->win_music = Mix_LoadMUS(WIN);
-	if (env->mark_music[0] == NULL)
+	if (env->win_music == NULL)
 		ERROR("Cannot load music %s\n", WIN);
 
 	env->won = false;
@@ -365,6 +291,11 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 
 	render_blended_text(ren, env);
 
+#ifdef __ANDROID__
+	for (uint i = 0; i < NB_MUSIC; i++) {
+		free(paths[i]);
+	}
+#endif
 	return env;
 }
 
