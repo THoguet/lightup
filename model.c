@@ -11,7 +11,6 @@
 #include "game.h"
 #include "game_aux.h"
 #include "game_ext.h"
-#include "game_private.h"
 #include "game_tools.h"
 
 /* **************************************************************** */
@@ -59,6 +58,22 @@ static void copy_asset(char* src, char* dst) {
 #endif
 
 /* **************************************************************** */
+
+int int_min_intero(int a, int b) {
+	if (a < b)
+		return a;
+	return b;
+}
+
+bool game_has_error_general_intero(cgame g) {
+	for (uint i = 0; i < game_nb_rows(g); i++) {
+		for (uint j = 0; j < game_nb_cols(g); j++) {
+			if (game_has_error(g, i, j))
+				return true;
+		}
+	}
+	return false;
+}
 
 struct Env_t {
 	game g;
@@ -434,7 +449,7 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	SDL_SetRenderDrawColor(ren, 24, 26, 27, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(ren);
 	SDL_Rect rec;
-	int size_rec = int_min(w / game_nb_cols(env->g), h / game_nb_rows(env->g));
+	int size_rec = int_min_intero(w / game_nb_cols(env->g), h / game_nb_rows(env->g));
 	rec.h = size_rec;
 	rec.w = size_rec;
 	int rec_x = w / 2 - size_rec * game_nb_cols(env->g) / 2 + marge_w;
@@ -485,7 +500,7 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 /* **************************************************************** */
 
 void play_Music(Env* env, bool lightbulb, bool error, bool mark) {
-	if (error && game_has_error_general(env->g)) {
+	if (error && game_has_error_general_intero(env->g)) {
 		Mix_PlayMusic(env->err_music[env->err_music_cpt % 3], 1);
 		env->err_music_cpt++;
 	} else if (lightbulb) {
