@@ -39,11 +39,12 @@ int main(int argc, char* argv[]) {
 	SDL_Event e;
 	bool quit = false;
 	SDL_Event prec_e;
+	int nb_coups = 0, nb_undo = 0;
 	while (!quit) {
 		/* manage events */
 		while (SDL_PollEvent(&e)) {
 			/* process your events */
-			quit = process(win, env, &e, &prec_e);
+			quit = process(win, env, &e, &prec_e, &nb_coups, &nb_undo);
 			if (quit)
 				break;
 		}
