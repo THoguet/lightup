@@ -245,7 +245,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 		}
 	}
 	env->victory = render_blended_text(ren, color_w, "Victory !");
-	env->move_to_quit = render_blended_text(ren, color_w, "Touch to quit");
+	env->move_to_quit = render_blended_text(ren, color_w, "Touch to quit.");
 
 	return env;
 }
@@ -366,8 +366,8 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	int win_w, win_h, h, w;
 	SDL_GetWindowSize(win, &win_w, &win_h);
 
-	if (win_h >
-	    win_w) {  // sert a avoir un rapport de 1/1 pour la game et les boutons et ne pas avoir de compressions sur quelconques axes des images des boutons
+	// sert a avoir un rapport de 1/1 pour la game et les boutons et ne pas avoir de compressions sur quelconques axes des images des boutons
+	if (win_h > win_w) {
 		h = win_w;
 		w = win_w;
 	} else {
