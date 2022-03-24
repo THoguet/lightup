@@ -16,19 +16,19 @@
 
 /* **************************************************************** */
 
-#define LIGHTBULB_WHITE "/home/nessar/lightup-07c/build/lightbulb_white.png"
-#define LIGHTBULB_RED "/home/nessar/lightup-07c/build/lightbulb_red.png"
-#define LB1 "/home/nessar/lightup-07c/build/lb1.mp3"
-#define LB2 "/home/nessar/lightup-07c/build/lb2.mp3"
-#define LB3 "/home/nessar/lightup-07c/build/lb3.mp3"
-#define ERR1 "/home/nessar/lightup-07c/build/error1.mp3"
-#define ERR2 "/home/nessar/lightup-07c/build/error2.mp3"
-#define ERR3 "/home/nessar/lightup-07c/build/error3.mp3"
-#define MARK1 "/home/nessar/lightup-07c/build/mark1.wav"
-#define MARK2 "/home/nessar/lightup-07c/build/mark2.wav"
-#define MARK3 "/home/nessar/lightup-07c/build/mark3.wav"
-#define WIN "/home/nessar/lightup-07c/build/win.mp3"
-#define FONT "/home/nessar/lightup-07c/build/Roboto-Regular.ttf"
+#define LIGHTBULB_WHITE "lightbulb_white.png"
+#define LIGHTBULB_RED "lightbulb_red.png"
+#define LB1 "lb1.mp3"
+#define LB2 "lb2.mp3"
+#define LB3 "lb3.mp3"
+#define ERR1 "error1.mp3"
+#define ERR2 "error2.mp3"
+#define ERR3 "error3.mp3"
+#define MARK1 "mark1.wav"
+#define MARK2 "mark2.wav"
+#define MARK3 "mark3.wav"
+#define WIN "win.mp3"
+#define FONT "Roboto-Regular.ttf"
 #define NB_MUSIC 10
 #define FONTSIZE 200
 
