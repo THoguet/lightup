@@ -397,22 +397,22 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	env->rec_game->w = size_rec * game_nb_cols(env->g);
 	// buttons
 	SDL_Rect buttons;
-	buttons.w = w / NB_BUTTONS + 1;
+	buttons.w = w / (NB_BUTTONS + 1);
 	buttons.h = h / 10 / 1.5;  // 1.5 = use to keep margin around buttons
 	buttons.y = (h / 10 - buttons.h) / 2 + marge_h;
-	buttons.x = (w / NB_BUTTONS - w / NB_BUTTONS + 1) / 2 + marge_w;
+	buttons.x = (w / NB_BUTTONS - w / (NB_BUTTONS + 1)) / 2 + marge_w;
 	*(env->rec_undo) = buttons;
 	SDL_RenderCopy(ren, env->text_undo[env->pressed_undo ? 1 : 0], NULL, &buttons);
-	buttons.x += buttons.w + (w / NB_BUTTONS - w / NB_BUTTONS + 1);
+	buttons.x += buttons.w + (w / NB_BUTTONS - w / (NB_BUTTONS + 1));
 	*(env->rec_redo) = buttons;
 	SDL_RenderCopy(ren, env->text_redo[env->pressed_redo ? 1 : 0], NULL, &buttons);
-	buttons.x += buttons.w + (w / NB_BUTTONS - w / NB_BUTTONS + 1);
+	buttons.x += buttons.w + (w / NB_BUTTONS - w / (NB_BUTTONS + 1));
 	*(env->rec_restart) = buttons;
 	SDL_RenderCopy(ren, env->text_restart[env->pressed_restart ? 1 : 0], NULL, &buttons);
-	buttons.x += buttons.w + (w / NB_BUTTONS - w / NB_BUTTONS + 1);
+	buttons.x += buttons.w + (w / NB_BUTTONS - w / (NB_BUTTONS + 1));
 	*(env->rec_solve) = buttons;
 	SDL_RenderCopy(ren, env->text_solve[env->pressed_solve ? 1 : 0], NULL, &buttons);
-	buttons.x += buttons.w + (w / NB_BUTTONS - w / NB_BUTTONS + 1);
+	buttons.x += buttons.w + (w / NB_BUTTONS - w / (NB_BUTTONS + 1));
 	*(env->rec_save) = buttons;
 	SDL_RenderCopy(ren, env->text_save[env->pressed_save ? 1 : 0], NULL, &buttons);
 	// render cases
