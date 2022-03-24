@@ -29,6 +29,7 @@
 #define WIN "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/win.mp3"
 #define FONT "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/Roboto-Regular.ttf"
 #define NB_MUSIC 10
+#define NB_BUTTONS 5
 #define FONTSIZE 200
 
 #ifdef __ANDROID__
@@ -58,6 +59,11 @@ static void copy_asset(char* src, char* dst) {
 #endif
 
 /* **************************************************************** */
+int int_max(int a, int b) {
+	if (a < b)
+		return b;
+	return a;
+}
 
 int int_min_intero(int a, int b) {
 	if (a < b)
@@ -87,17 +93,20 @@ struct Env_t {
 	SDL_Texture** text_undo;
 	SDL_Texture** text_redo;
 	SDL_Texture** text_solve;
+	SDL_Texture** text_save;
 	bool pressed_restart;
 	bool pressed_undo;
 	bool pressed_redo;
 	bool pressed_solve;
+	bool pressed_save;
 	SDL_Texture* victory;
 	SDL_Texture* move_to_quit;
+	SDL_Rect* rec_game;  // rectangle of the grid
 	SDL_Rect* rec_redo;  // rectangle of each buttons
 	SDL_Rect* rec_undo;
 	SDL_Rect* rec_restart;
 	SDL_Rect* rec_solve;
-	SDL_Rect* rec_game;  // rectangle of the grid
+	SDL_Rect* rec_save;
 	Mix_Music** lb_music;
 	uint lb_music_cpt;
 	Mix_Music** err_music;
@@ -240,7 +249,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 		}
 	}
 	env->victory = render_blended_text(ren, color_w, "Victory !");
-	env->move_to_quit = render_blended_text(ren, color_w, "Touch to quit");
+	env->move_to_quit = render_blended_text(ren, color_w, "Touch to quit.");
 
 	return env;
 }
@@ -336,24 +345,22 @@ void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted) {
 	SDL_RenderFillRect(ren, &mark);
 }
 
-void render_victory(SDL_Window* win, SDL_Renderer* ren, Env* env) {
-	int h, w;
-	SDL_GetWindowSize(win, &w, &h);
+void render_victory(SDL_Renderer* ren, Env* env, int w, int h, int marge_w, int marge_h) {
 	SDL_SetRenderDrawColor(ren, 160, 160, 160, SDL_ALPHA_OPAQUE);
 	SDL_Rect victory_rec, move_to_quit_rec, big_rec;
 	SDL_QueryTexture(env->move_to_quit, NULL, NULL, &move_to_quit_rec.w, &move_to_quit_rec.h);
 	victory_rec.h = h / 5;
 	victory_rec.w = w;
-	victory_rec.x = 0;
-	victory_rec.y = h / 2 - victory_rec.h / 2;
+	victory_rec.x = marge_w;
+	victory_rec.y = (h / 2 - victory_rec.h / 2) + marge_h;
 	move_to_quit_rec.h = victory_rec.h / 2;
 	move_to_quit_rec.w = victory_rec.w / 2;
-	move_to_quit_rec.x = w / 2 - move_to_quit_rec.w / 2;
+	move_to_quit_rec.x = w / 2 - move_to_quit_rec.w / 2 + marge_w;
 	move_to_quit_rec.y = victory_rec.y + victory_rec.h;
 	big_rec.x = victory_rec.x;
 	big_rec.y = victory_rec.y;
 	big_rec.h = victory_rec.h + move_to_quit_rec.h;
-	big_rec.w = victory_rec.w + move_to_quit_rec.w;
+	big_rec.w = int_max(victory_rec.w, move_to_quit_rec.w);
 	SDL_RenderFillRect(ren, &big_rec);
 	SDL_RenderCopy(ren, env->victory, NULL, &victory_rec);
 	SDL_RenderCopy(ren, env->move_to_quit, NULL, &move_to_quit_rec);
@@ -363,8 +370,8 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	int win_w, win_h, h, w;
 	SDL_GetWindowSize(win, &win_w, &win_h);
 
-	if (win_h >
-	    win_w) {  // sert a avoir un rapport de 1/1 pour la game et les boutons et ne pas avoir de compressions sur quelconques axes des images des boutons
+	// sert a avoir un rapport de 1/1 pour la game et les boutons et ne pas avoir de compressions sur quelconques axes des images des boutons
+	if (win_h > win_w) {
 		h = win_w;
 		w = win_w;
 	} else {
@@ -393,21 +400,24 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	env->rec_game->w = size_rec * game_nb_cols(env->g);
 	// buttons
 	SDL_Rect buttons;
-	buttons.w = w / 5;
-	buttons.h = h / 10 / 1.5;
+	buttons.w = w / NB_BUTTONS + 1;
+	buttons.h = h / 10 / 1.5;  // 1.5 = use to keep margin around buttons
 	buttons.y = (h / 10 - buttons.h) / 2 + marge_h;
-	buttons.x = (w / 4 - w / 5) / 2 + marge_w;
+	buttons.x = (w / NB_BUTTONS - w / NB_BUTTONS + 1) / 2 + marge_w;
 	*(env->rec_undo) = buttons;
 	SDL_RenderCopy(ren, env->text_undo[env->pressed_undo ? 1 : 0], NULL, &buttons);
-	buttons.x = buttons.x + buttons.w + (w / 4 - w / 5);
+	buttons.x += buttons.w + (w / NB_BUTTONS - w / NB_BUTTONS + 1);
 	*(env->rec_redo) = buttons;
 	SDL_RenderCopy(ren, env->text_redo[env->pressed_redo ? 1 : 0], NULL, &buttons);
-	buttons.x = buttons.x + buttons.w + (w / 4 - w / 5);
+	buttons.x += buttons.w + (w / NB_BUTTONS - w / NB_BUTTONS + 1);
 	*(env->rec_restart) = buttons;
 	SDL_RenderCopy(ren, env->text_restart[env->pressed_restart ? 1 : 0], NULL, &buttons);
-	buttons.x = buttons.x + buttons.w + (w / 4 - w / 5);
+	buttons.x += buttons.w + (w / NB_BUTTONS - w / NB_BUTTONS + 1);
 	*(env->rec_solve) = buttons;
 	SDL_RenderCopy(ren, env->text_solve[env->pressed_solve ? 1 : 0], NULL, &buttons);
+	buttons.x += buttons.w + (w / NB_BUTTONS - w / NB_BUTTONS + 1);
+	*(env->rec_save) = buttons;
+	SDL_RenderCopy(ren, env->text_save[env->pressed_save ? 1 : 0], NULL, &buttons);
 	// render cases
 	for (uint i = 0; i < game_nb_rows(env->g); i++) {
 		for (uint j = 0; j < game_nb_cols(env->g); j++) {
@@ -425,7 +435,7 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 		rec.y += size_rec;
 	}
 	if (env->won)
-		render_victory(win, ren, env);
+		render_victory(ren, env, w, h, marge_w, marge_h);
 }
 
 /* **************************************************************** */
