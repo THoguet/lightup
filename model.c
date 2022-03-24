@@ -620,17 +620,7 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 }
 
 /* **************************************************************** */
-/*
-void init_musics(Mix_Music**** music_to_load, char** path_to_musics, uint nb_music, uint nb_music_per_array) {
-    for (uint i = 0; i < nb_music / nb_music_per_array; i++) {
-        *(music_to_load[i]) = malloc(sizeof(Mix_Music*) * nb_music_per_array);
-        for (uint j = 0; j < nb_music_per_array; j++) {
-            (*(music_to_load[i]))[j] = Mix_LoadMUS(path_to_musics[i * nb_music_per_array + j]);
-            if ((*(music_to_load[i]))[j] == NULL)
-                ERROR("Cannot load music %s\n", path_to_musics[i * nb_music_per_array + j]);
-        }
-    }
-}*/
+
 void clean_destroy(SDL_Texture** tab[], uint sizePerArray, uint size_tab) {
 	for (uint i = 0; i < size_tab; i++) {
 		for (uint j = 0; j < sizePerArray; j++) {
