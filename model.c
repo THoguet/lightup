@@ -247,7 +247,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 
 void render_blank(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory) {
 	if (victory)
-		SDL_SetRenderDrawColor(ren, 50, 255, 50, SDL_ALPHA_OPAQUE);  // green
+		SDL_SetRenderDrawColor(ren, 0, 150, 0, SDL_ALPHA_OPAQUE);  // green
 	else if (lighted)
 		SDL_SetRenderDrawColor(ren, 255, 255, 0, SDL_ALPHA_OPAQUE);  // yellow
 	else
@@ -309,7 +309,7 @@ void render_wall(SDL_Renderer* ren, Env* env, SDL_Rect* rec, int nb, bool error)
 void render_lightbulb(SDL_Renderer* ren, SDL_Rect* rec, SDL_Texture* lightbulb_texture, bool victory) {
 	SDL_Rect lightbulb;
 	if (victory)
-		SDL_SetRenderDrawColor(ren, 50, 255, 50, SDL_ALPHA_OPAQUE);
+		SDL_SetRenderDrawColor(ren, 0, 150, 0, SDL_ALPHA_OPAQUE);
 	else
 		SDL_SetRenderDrawColor(ren, 255, 255, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderFillRect(ren, rec);
@@ -324,7 +324,7 @@ void render_lightbulb(SDL_Renderer* ren, SDL_Rect* rec, SDL_Texture* lightbulb_t
 
 void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory) {
 	if (victory)
-		SDL_SetRenderDrawColor(ren, 50, 255, 50, SDL_ALPHA_OPAQUE);  // green
+		SDL_SetRenderDrawColor(ren, 0, 150, 0, SDL_ALPHA_OPAQUE);  // green
 	else if (lighted)
 		SDL_SetRenderDrawColor(ren, 255, 255, 0, SDL_ALPHA_OPAQUE);  // yellow
 	else
