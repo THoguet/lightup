@@ -15,19 +15,19 @@
 
 /* **************************************************************** */
 
-#define LIGHTBULB_WHITE "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/lightbulb_white.png"
-#define LIGHTBULB_RED "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/lightbulb_red.png"
-#define LB1 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/lb1.mp3"
-#define LB2 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/lb2.mp3"
-#define LB3 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/lb3.mp3"
-#define ERR1 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/error1.mp3"
-#define ERR2 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/error2.mp3"
-#define ERR3 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/error3.mp3"
-#define MARK1 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/mark1.wav"
-#define MARK2 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/mark2.wav"
-#define MARK3 "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/mark3.wav"
-#define WIN "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/win.mp3"
-#define FONT "/autofs/unitytravail/travail/mfatih001/projets2/lightup-07c/build/Roboto-Regular.ttf"
+#define LIGHTBULB_WHITE "lightbulb_white.png"
+#define LIGHTBULB_RED "lightbulb_red.png"
+#define LB1 "lb1.mp3"
+#define LB2 "lb2.mp3"
+#define LB3 "lb3.mp3"
+#define ERR1 "error1.mp3"
+#define ERR2 "error2.mp3"
+#define ERR3 "error3.mp3"
+#define MARK1 "mark1.wav"
+#define MARK2 "mark2.wav"
+#define MARK3 "mark3.wav"
+#define WIN "win.mp3"
+#define FONT "Roboto-Regular.ttf"
 #define NB_MUSIC 10
 #define NB_BUTTONS 5
 #define FONTSIZE 200
@@ -235,13 +235,13 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	SDL_Color color_r = {255, 50, 50, 255};    /* blue color in RGBA */
 	SDL_Color color_b = {0, 0, 0, 255};        /* black color in RGBA*/
 
-	char* tab_texts_double[] = {"0", "1", "2", "3", "4", "Restart", "Undo", "Redo", "Solve"};
+	char* tab_texts_double[] = {"0", "1", "2", "3", "4", "Restart", "Undo", "Redo", "Solve", "Save"};
 
-	SDL_Texture** tab_textures_double[] = {env->zero,         env->one,       env->two,       env->three,     env->four,
-	                                       env->text_restart, env->text_undo, env->text_redo, env->text_solve};
+	SDL_Texture** tab_textures_double[] = {env->zero,         env->one,       env->two,       env->three,      env->four,
+	                                       env->text_restart, env->text_undo, env->text_redo, env->text_solve, env->text_save};
 
 	SDL_Color color_tab[] = {color_w, color_r};
-	for (uint i = 0; i < 9; i++) {
+	for (uint i = 0; i < sizeof(tab_textures_double) / sizeof(tab_textures_double[0]); i++) {
 		if (i > 4) {
 			color_tab[1] = color_b;
 		}
