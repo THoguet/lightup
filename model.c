@@ -522,19 +522,19 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 				env->pressed_redo = false;
 				env->pressed_solve = false;
 			} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
-				if ((*nb_coups) <= 0) {
+				if ((*nb_coups) > 0) {
 					env->pressed_undo = true;
-					env->pressed_restart = false;
-					env->pressed_redo = false;
-					env->pressed_solve = false;
 				}
+				env->pressed_restart = false;
+				env->pressed_redo = false;
+				env->pressed_solve = false;
 			} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
-				if ((*nb_undo) <= 0) {
+				if ((*nb_undo) > 0) {
 					env->pressed_redo = true;
-					env->pressed_undo = false;
-					env->pressed_restart = false;
-					env->pressed_solve = false;
 				}
+				env->pressed_undo = false;
+				env->pressed_restart = false;
+				env->pressed_solve = false;
 			} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
 				env->pressed_solve = true;
 				env->pressed_undo = false;
