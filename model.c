@@ -478,21 +478,21 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 	}
 	if (e->type == SDL_KEYDOWN) {
 		const Uint8* state = SDL_GetKeyboardState(NULL);
-		if (state[SDL_SCANCODE_F11]){
+		if (state[SDL_SCANCODE_F11]) {
 			ToggleFullscreen(win);
-		}else if (state[SDL_SCANCODE_Z]){
+		} else if (state[SDL_SCANCODE_Z]) {
 			game_undo(env->g);
-			(*nb_undo) ++;
-			(*nb_coups) --;
-		}else if (state[SDL_SCANCODE_Y]){
+			(*nb_undo)++;
+			(*nb_coups)--;
+		} else if (state[SDL_SCANCODE_Y]) {
 			game_redo(env->g);
-			(*nb_undo) --;
-			(*nb_coups) ++;
-		}else if (state[SDL_SCANCODE_S]){
+			(*nb_undo)--;
+			(*nb_coups)++;
+		} else if (state[SDL_SCANCODE_S]) {
 			game_solve(env->g);
 			(*nb_undo) = 0;
-			(*nb_coups) ++;
-		}else if (state[SDL_SCANCODE_R] || state[SDL_SCANCODE_F5]){
+			(*nb_coups)++;
+		} else if (state[SDL_SCANCODE_R] || state[SDL_SCANCODE_F5]) {
 			game_restart(env->g);
 			(*nb_undo) = 0;
 			(*nb_coups) = 0;
@@ -522,14 +522,14 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 				env->pressed_redo = false;
 				env->pressed_solve = false;
 			} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
-				if((*nb_coups) <= 0){
+				if ((*nb_coups) <= 0) {
 					env->pressed_undo = true;
 					env->pressed_restart = false;
 					env->pressed_redo = false;
 					env->pressed_solve = false;
 				}
 			} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
-				if((*nb_undo) <= 0){
+				if ((*nb_undo) <= 0) {
 					env->pressed_redo = true;
 					env->pressed_undo = false;
 					env->pressed_restart = false;
@@ -570,19 +570,19 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 			} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
 				if (env->pressed_undo == true) {
 					game_undo(env->g);
-					(*nb_undo) ++;
-					(*nb_coups) --;
+					(*nb_undo)++;
+					(*nb_coups)--;
 				}
 			} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
 				if (env->pressed_redo == true) {
 					game_redo(env->g);
-					(*nb_undo) --;
-					(*nb_coups) ++;
+					(*nb_undo)--;
+					(*nb_coups)++;
 				}
 			} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
 				game_solve(env->g);
 				(*nb_undo) = 0;
-				(*nb_coups) ++;
+				(*nb_coups)++;
 			} else if (SDL_PointInRect(&mouse, env->rec_game)) {
 				uint i = (((float)mouse.y - (float)env->rec_game->y) / (float)env->rec_game->h * game_nb_rows(env->g)) -
 				         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7*/;
@@ -601,7 +601,7 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 					play_mark(i, j, env);
 				}
 				(*nb_undo) = 0;
-				(*nb_coups) ++;
+				(*nb_coups)++;
 			}
 		}
 	}
