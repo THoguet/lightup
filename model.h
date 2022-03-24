@@ -47,6 +47,8 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env);
 void clean(Env* env);
 bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e);
 void render_blended_numbered_wall(SDL_Renderer* ren, Env* env);
+void play_light(unsigned int i, unsigned int j, Env* env);
+void play_mark(unsigned int i, unsigned int j, Env* env);
 
 /* **************************************************************** */
 

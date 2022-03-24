@@ -583,95 +583,33 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
 		const Uint8* state = SDL_GetKeyboardState(NULL);
 		if (state[SDL_SCANCODE_F11])
 			ToggleFullscreen(win);
+		if (state[SDL_SCANCODE_Z])
+			game_undo(env->g);
+		if (state[SDL_SCANCODE_Y])
+			game_redo(env->g);
+		if (state[SDL_SCANCODE_S])
+			game_solve(env->g);
+		if (state[SDL_SCANCODE_R] || state[SDL_SCANCODE_F5])
+			game_restart(env->g);
 	}
 	if (game_is_over(env->g) && !env->won) {
 		Mix_PlayMusic(env->win_music, 1);
 		env->won = true;
 		env->won_timestamp = SDL_GetTicks();
+
 	} else if (env->won) {
 		if (SDL_GetTicks() - env->won_timestamp >= 5000)
 			return true;
-	}
-#ifdef _ANDROID_
-	if (e->type == SDL_FINGERDOWN) {
-		SDL_Point coord;
-		coord.x = e->x;
-		coord.y = e->y;
-		if (SDL_PointInRect(&coord, env->rec_restart)) {
-			env->pressed_restart = true;
-			env->pressed_undo = false;
-			env->pressed_redo = false;
-			env->pressed_solve = false;
-		} else if (SDL_PointInRect(&coord, env->rec_undo)) {
-			env->pressed_undo = true;
-			env->pressed_restart = false;
-			env->pressed_redo = false;
-			env->pressed_solve = false;
-		} else if (SDL_PointInRect(&coord, env->rec_redo)) {
-			env->pressed_redo = true;
-			env->pressed_undo = false;
-			env->pressed_restart = false;
-			env->pressed_solve = false;
-		} else if (SDL_PointInRect(&coord, env->rec_solve)) {
-			env->pressed_solve = true;
-			env->pressed_undo = false;
-			env->pressed_redo = false;
-			env->pressed_restart = false;
-		} else if (SDL_PointInRect(&coord, env->rec_solve)) {
-			env->pressed_restart = false;
-			env->pressed_undo = false;
-			env->pressed_redo = false;
-			env->pressed_solve = false;
-			if (e->type != prec_e->type) {
-				prec_e->type = e->type;
-				prec_e->timestamp = e->timestamp;
-			}
-		} else {
-			env->pressed_restart = false;
-			env->pressed_undo = false;
-			env->pressed_redo = false;
-			env->pressed_solve = false;
-		}
-	} else if (e->type == SDL_FINGERUP) {
-		SDL_Point coord;
-		coord.x = e->x;
-		coord.y = e->y;
-		if (SDL_PointInRect(&coord, env->rec_restart)) {
-			game_restart(env->g);
-		} else if (SDL_PointInRect(&coord, env->rec_undo)) {
-			game_undo(env->g);
-		} else if (SDL_PointInRect(&coord, env->rec_redo)) {
-			game_redo(env->g);
-		} else if (SDL_PointInRect(&coord, env->rec_solve)) {
-			game_solve(env->g);
-		} else if (SDL_PointInRect(&coord, env->rec_game)) {
-			uint i = (((float)coord.y - (float)env->rec_game->y) / (float)env->rec_game->h * game_nb_rows(env->g)) -
-			         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7*/;
-			uint j = (((float)coord.x - (float)env->rec_game->x) / (float)env->rec_game->w * game_nb_cols(env->g)) -
-			         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7*/;
-			if ((e->timestamp - prec_e->timestamp) < 300) {
-				if (game_is_blank(env->g, i, j) || game_is_marked(env->g, i, j)) {
-					game_play_move(env->g, i, j, S_LIGHTBULB);
-				} else if (game_is_lightbulb(env->g, i, j)) {
-					game_play_move(env->g, i, j, S_BLANK);
-				}
-			} else {
-				if (game_is_blank(env->g, i, j) || game_is_lightbulb(env->g, i, j)) {
-					game_play_move(env->g, i, j, S_MARK);
-				} else if (game_is_marked(env->g, i, j)) {
-					game_play_move(env->g, i, j, S_BLANK);
-				}
-			}
-		}
-	}
-#else
-	else {
-		if (prec_e != NULL) {
-			prec_e = NULL;
-		}
-		if (e->type == SDL_MOUSEMOTION) {
+
+	} else {
+		if (e->type == SDL_MOUSEMOTION || e->type == SDL_FINGERDOWN) {
 			SDL_Point mouse;
-			SDL_GetMouseState(&mouse.x, &mouse.y);
+			if (e->type == SDL_MOUSEMOTION) {
+				SDL_GetMouseState(&mouse.x, &mouse.y);
+			} else {
+				mouse.x = e->tfinger.x;
+				mouse.y = e->tfinger.y;
+			}
 			if (SDL_PointInRect(&mouse, env->rec_restart)) {
 				env->pressed_restart = true;
 				env->pressed_undo = false;
@@ -698,9 +636,22 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
 				env->pressed_redo = false;
 				env->pressed_solve = false;
 			}
-		} else if (e->type == SDL_MOUSEBUTTONDOWN) {
+#ifdef _ANDROID_
+			if (SDL_PointInRect(&mouse, env->rec_game)) {
+				if (e->type != prec_e->type) {
+					prec_e->type = e->type;
+					prec_e->tfinger.timestamp = e->tfinger.timestamp;
+				}
+			}
+#endif
+		} else if (e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_FINGERUP) {
 			SDL_Point mouse;
-			SDL_GetMouseState(&mouse.x, &mouse.y);
+			if (e->type == SDL_MOUSEBUTTONDOWN) {
+				SDL_GetMouseState(&mouse.x, &mouse.y);
+			} else {
+				mouse.x = e->tfinger.x;
+				mouse.y = e->tfinger.y;
+			}
 			if (SDL_PointInRect(&mouse, env->rec_restart)) {
 				game_restart(env->g);
 			} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
@@ -714,30 +665,43 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e) {
 				         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7*/;
 				uint j = (((float)mouse.x - (float)env->rec_game->x) / (float)env->rec_game->w * game_nb_cols(env->g)) -
 				         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7*/;
-				if (e->button.button == SDL_BUTTON_LEFT) {
-					if (game_is_blank(env->g, i, j) || game_is_marked(env->g, i, j)) {
-						game_play_move(env->g, i, j, S_LIGHTBULB);
-						play_Music(env, true, true, false);
-					} else if (game_is_lightbulb(env->g, i, j)) {
-						game_play_move(env->g, i, j, S_BLANK);
-						play_Music(env, true, true, false);
-					}
-				} else if (e->button.button == SDL_BUTTON_RIGHT) {
-					if (game_is_blank(env->g, i, j) || game_is_lightbulb(env->g, i, j)) {
-						game_play_move(env->g, i, j, S_MARK);
-						play_Music(env, false, true, true);
-					} else if (game_is_marked(env->g, i, j)) {
-						game_play_move(env->g, i, j, S_BLANK);
-						play_Music(env, false, true, true);
-					}
+
+				if (e->type == SDL_MOUSEBUTTONDOWN && e->button.button == SDL_BUTTON_LEFT) {  // only execute when type == SDL_MOUSEBUTTONDOWN
+					play_light(i, j, env);
+				} else if (e->type == SDL_MOUSEBUTTONDOWN && e->button.button == SDL_BUTTON_RIGHT) {
+					play_mark(i, j, env);
+				}
+
+				if (e->type == SDL_FINGERUP && (e->tfinger.timestamp - prec_e->tfinger.timestamp) < 300) {  // only execute when type == SDL_FINGERUP
+					play_light(i, j, env);
+				} else if (e->type == SDL_FINGERUP) {
+					play_mark(i, j, env);
 				}
 			}
 		}
 	}
-#endif
 	return false;
 }
 
+void play_light(uint i, uint j, Env* env) {
+	if (game_is_blank(env->g, i, j) || game_is_marked(env->g, i, j)) {
+		game_play_move(env->g, i, j, S_LIGHTBULB);
+		play_Music(env, true, true, false);
+	} else if (game_is_lightbulb(env->g, i, j)) {
+		game_play_move(env->g, i, j, S_BLANK);
+		play_Music(env, true, true, false);
+	}
+}
+
+void play_mark(uint i, uint j, Env* env) {
+	if (game_is_blank(env->g, i, j) || game_is_lightbulb(env->g, i, j)) {
+		game_play_move(env->g, i, j, S_MARK);
+		play_Music(env, false, true, true);
+	} else if (game_is_marked(env->g, i, j)) {
+		game_play_move(env->g, i, j, S_BLANK);
+		play_Music(env, false, true, true);
+	}
+}
 /* **************************************************************** */
 
 void clean(Env* env) {
