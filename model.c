@@ -239,7 +239,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 			tab_textures_double[i][j] = render_blended_text(ren, color_tab[j], tab_texts_double[i]);
 		}
 	}
-	env->victory = render_blended_text(ren, color_w, "Victory");
+	env->victory = render_blended_text(ren, color_w, "Victory !");
 	env->move_to_quit = render_blended_text(ren, color_w, "Touch to quit");
 
 	return env;
