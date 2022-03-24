@@ -58,6 +58,11 @@ static void copy_asset(char* src, char* dst) {
 #endif
 
 /* **************************************************************** */
+int int_max(int a, int b) {
+	if (a < b)
+		return b;
+	return a;
+}
 
 int int_min_intero(int a, int b) {
 	if (a < b)
@@ -336,24 +341,22 @@ void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted) {
 	SDL_RenderFillRect(ren, &mark);
 }
 
-void render_victory(SDL_Window* win, SDL_Renderer* ren, Env* env) {
-	int h, w;
-	SDL_GetWindowSize(win, &w, &h);
+void render_victory(SDL_Renderer* ren, Env* env, int w, int h, int marge_w, int marge_h) {
 	SDL_SetRenderDrawColor(ren, 160, 160, 160, SDL_ALPHA_OPAQUE);
 	SDL_Rect victory_rec, move_to_quit_rec, big_rec;
 	SDL_QueryTexture(env->move_to_quit, NULL, NULL, &move_to_quit_rec.w, &move_to_quit_rec.h);
 	victory_rec.h = h / 5;
 	victory_rec.w = w;
-	victory_rec.x = 0;
-	victory_rec.y = h / 2 - victory_rec.h / 2;
+	victory_rec.x = marge_w;
+	victory_rec.y = (h / 2 - victory_rec.h / 2) + marge_h;
 	move_to_quit_rec.h = victory_rec.h / 2;
 	move_to_quit_rec.w = victory_rec.w / 2;
-	move_to_quit_rec.x = w / 2 - move_to_quit_rec.w / 2;
+	move_to_quit_rec.x = w / 2 - move_to_quit_rec.w / 2 + marge_w;
 	move_to_quit_rec.y = victory_rec.y + victory_rec.h;
 	big_rec.x = victory_rec.x;
 	big_rec.y = victory_rec.y;
 	big_rec.h = victory_rec.h + move_to_quit_rec.h;
-	big_rec.w = victory_rec.w + move_to_quit_rec.w;
+	big_rec.w = int_max(victory_rec.w, move_to_quit_rec.w);
 	SDL_RenderFillRect(ren, &big_rec);
 	SDL_RenderCopy(ren, env->victory, NULL, &victory_rec);
 	SDL_RenderCopy(ren, env->move_to_quit, NULL, &move_to_quit_rec);
@@ -425,7 +428,7 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 		rec.y += size_rec;
 	}
 	if (env->won)
-		render_victory(win, ren, env);
+		render_victory(ren, env, w, h, marge_w, marge_h);
 }
 
 /* **************************************************************** */
