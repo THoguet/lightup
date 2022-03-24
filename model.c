@@ -29,6 +29,7 @@
 #define WIN "win.mp3"
 #define FONT "Roboto-Regular.ttf"
 #define NB_MUSIC 10
+#define NB_BUTTONS 5
 #define FONTSIZE 200
 
 #ifdef __ANDROID__
@@ -87,17 +88,20 @@ struct Env_t {
 	SDL_Texture** text_undo;
 	SDL_Texture** text_redo;
 	SDL_Texture** text_solve;
+	SDL_Texture** text_save;
 	bool pressed_restart;
 	bool pressed_undo;
 	bool pressed_redo;
 	bool pressed_solve;
+	bool pressed_save;
 	SDL_Texture* victory;
 	SDL_Texture* move_to_quit;
+	SDL_Rect* rec_game;  // rectangle of the grid
 	SDL_Rect* rec_redo;  // rectangle of each buttons
 	SDL_Rect* rec_undo;
 	SDL_Rect* rec_restart;
 	SDL_Rect* rec_solve;
-	SDL_Rect* rec_game;  // rectangle of the grid
+	SDL_Rect* rec_save;
 	Mix_Music** lb_music;
 	uint lb_music_cpt;
 	Mix_Music** err_music;
@@ -393,21 +397,24 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	env->rec_game->w = size_rec * game_nb_cols(env->g);
 	// buttons
 	SDL_Rect buttons;
-	buttons.w = w / 5;
-	buttons.h = h / 10 / 1.5;
+	buttons.w = w / NB_BUTTONS + 1;
+	buttons.h = h / 10 / 1.5;  // 1.5 = use to keep margin around buttons
 	buttons.y = (h / 10 - buttons.h) / 2 + marge_h;
-	buttons.x = (w / 4 - w / 5) / 2 + marge_w;
+	buttons.x = (w / NB_BUTTONS - w / NB_BUTTONS + 1) / 2 + marge_w;
 	*(env->rec_undo) = buttons;
 	SDL_RenderCopy(ren, env->text_undo[env->pressed_undo ? 1 : 0], NULL, &buttons);
-	buttons.x = buttons.x + buttons.w + (w / 4 - w / 5);
+	buttons.x += buttons.w + (w / NB_BUTTONS - w / NB_BUTTONS + 1);
 	*(env->rec_redo) = buttons;
 	SDL_RenderCopy(ren, env->text_redo[env->pressed_redo ? 1 : 0], NULL, &buttons);
-	buttons.x = buttons.x + buttons.w + (w / 4 - w / 5);
+	buttons.x += buttons.w + (w / NB_BUTTONS - w / NB_BUTTONS + 1);
 	*(env->rec_restart) = buttons;
 	SDL_RenderCopy(ren, env->text_restart[env->pressed_restart ? 1 : 0], NULL, &buttons);
-	buttons.x = buttons.x + buttons.w + (w / 4 - w / 5);
+	buttons.x += buttons.w + (w / NB_BUTTONS - w / NB_BUTTONS + 1);
 	*(env->rec_solve) = buttons;
 	SDL_RenderCopy(ren, env->text_solve[env->pressed_solve ? 1 : 0], NULL, &buttons);
+	buttons.x += buttons.w + (w / NB_BUTTONS - w / NB_BUTTONS + 1);
+	*(env->rec_save) = buttons;
+	SDL_RenderCopy(ren, env->text_save[env->pressed_save ? 1 : 0], NULL, &buttons);
 	// render cases
 	for (uint i = 0; i < game_nb_rows(env->g); i++) {
 		for (uint j = 0; j < game_nb_cols(env->g); j++) {
