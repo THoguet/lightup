@@ -103,6 +103,7 @@ struct Env_t {
 	bool pressed_solve;
 	bool pressed_save;
 	bool pressed_savED;
+	bool win;
 
 	SDL_Rect* rec_game;  // rectangle of the grid
 	SDL_Rect* rec_redo;  // rectangle of each buttons
@@ -112,13 +113,13 @@ struct Env_t {
 	SDL_Rect* rec_save;
 
 	Mix_Music** lb_music;
-	uint lb_music_cpt;
 	Mix_Music** err_music;
-	uint err_music_cpt;
 	Mix_Music** mark_music;
-	uint mark_music_cpt;
 	Mix_Music* win_music;
-	bool win;
+
+	uint lb_music_cpt;
+	uint err_music_cpt;
+	uint mark_music_cpt;
 };
 
 /* **************************************************************** */
