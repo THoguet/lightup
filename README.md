@@ -14,3 +14,13 @@ Projet Techno
 :warning: <b>LE PREMIER QUI COMMIT DU CODE QUI COMPILE PAS JE L'ATTRAPE </b> :warning:
 
 FONCTIONNEMENT INTERFACE GRAPHIQUE:
+
+nous avons choisi tout simplement de créer des boutons, dans la partie supérieure de la fenêtre, sur lesquels vous pourrez cliquer pour exécuter les instructions UNDO, REDO, RESTART, SOLVE et SAVE.
+Mais vous pouvez également jouer avec le clavier en tapant sur les raccourcis suivants:
+-r ou F5 pour restart
+-z pour undo
+-y pour redo
+-w pour save
+-s pour solve
+-F11 pour Fullscreen
+-ESC pour quit 

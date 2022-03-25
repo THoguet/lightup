@@ -668,7 +668,7 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 }
 
 /* **************************************************************** */
-
+//fonction created to destroy all array of texture and free it
 void clean_destroy(SDL_Texture** tab[], uint* sizePerArray, uint size_tab) {
 	for (uint i = 0; i < size_tab; i++) {
 		for (uint j = 0; j < sizePerArray[i]; j++) {
@@ -677,7 +677,7 @@ void clean_destroy(SDL_Texture** tab[], uint* sizePerArray, uint size_tab) {
 		free(tab[i]);
 	}
 }
-
+//fonction created to free 
 void freeall(SDL_Rect* tab[], uint size_tab) {
 	for (uint i = 0; i < size_tab; i++) {
 		free(tab[i]);
@@ -687,17 +687,21 @@ void freeall(SDL_Rect* tab[], uint size_tab) {
 void clean(Env* env) {
 	SIZE_ARRAY;
 	game_delete(env->g);
-	// destroy all array of texture
-	SDL_Texture** env_tab[] = {env->zero,      env->one,       env->two,        env->three,     env->four,     env->text_restart,
-	                           env->text_undo, env->text_redo, env->text_solve, env->text_save, env->lightbulb};
-	clean_destroy(env_tab, sizeof_array, sizeof(env_tab) / sizeof(env_tab[0]));
+	// array with all the array of textures
+	SDL_Texture** ArrayOfTextures_tab[] = {env->zero,      env->one,       env->two,        env->three,     env->four,     env->text_restart,
+	                                       env->text_undo, env->text_redo, env->text_solve, env->text_save, env->lightbulb};
+	//destroy all array of texture and free it
+	clean_destroy(ArrayOfTextures_tab, sizeof_array, sizeof(ArrayOfTextures_tab) / sizeof(ArrayOfTextures_tab[0]));
+	//free everything that is not array of texture
 	SDL_Rect* free_tab[] = {env->rec_game, env->rec_redo, env->rec_restart, env->rec_solve, env->rec_undo};
 	freeall(free_tab, sizeof(free_tab) / sizeof(free_tab[0]));
+
 	for (uint i = 0; i < NB_MUSIC_PER_ARRAY; i++) {
 		Mix_FreeMusic(env->lb_music[i]);
 		Mix_FreeMusic(env->mark_music[i]);
 		Mix_FreeMusic(env->err_music[i]);
 	}
+
 	Mix_FreeMusic(env->win_music);
 	free(env->lb_music);
 	free(env->mark_music);
