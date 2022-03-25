@@ -29,8 +29,11 @@
 #define WIN "win.mp3"
 #define FONT "Roboto-Regular.ttf"
 #define NB_MUSIC 10
+#define NB_MUSIC_PER_ARRAY 3
 #define NB_BUTTONS 5
 #define FONTSIZE 200
+// size of each array (except musics) to allocate
+#define SIZE_ARRAY uint sizeof_array[] = {2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 1, 1, 1, 1, 1, 1}
 
 #ifdef __ANDROID__
 static void copy_asset(char* src, char* dst) {
@@ -187,8 +190,9 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	} else {
 		usage(argv);
 	}
-	uint sizeof_array[] = {2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 1, 1, 1, 1, 1, 1};  // size of each element to allocate
+	SIZE_ARRAY;
 	uint cpt = 0;
+	uint index_rec = 11;
 	void** env_tab[] = {(void**)&(env->zero),       (void**)&(env->one),          (void**)&(env->two),       (void**)&(env->three),
 	                    (void**)&(env->four),       (void**)&(env->text_restart), (void**)&(env->text_undo), (void**)&(env->text_redo),
 	                    (void**)&(env->text_solve), (void**)&(env->text_save),    (void**)&(env->lightbulb), (void**)&(env->rec_game),
@@ -202,6 +206,12 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	    sizeof(SDL_Rect) * sizeof_array[cpt++],     sizeof(SDL_Rect) * sizeof_array[cpt++],     sizeof(SDL_Rect) * sizeof_array[cpt++],
 	    sizeof(SDL_Rect) * sizeof_array[cpt++],     sizeof(SDL_Rect) * sizeof_array[cpt++]};
 	init_malloc(env_tab, sizeof_env_tab, sizeof(env_tab) / sizeof(env_tab[0]));
+	for (uint i = index_rec; i < sizeof(env_tab) / sizeof(env_tab[0]); i++) {
+		((SDL_Rect*)(*(env_tab[i])))->h = 0;
+		((SDL_Rect*)(*(env_tab[i])))->w = 0;
+		((SDL_Rect*)(*(env_tab[i])))->x = 0;
+		((SDL_Rect*)(*(env_tab[i])))->y = 0;
+	}
 	// if the case has not error
 	env->lightbulb[0] = IMG_LoadTexture(ren, LIGHTBULB_WHITE);
 	if (!env->lightbulb[0])
@@ -603,9 +613,9 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 
 /* **************************************************************** */
 
-void clean_destroy(SDL_Texture** tab[], uint sizePerArray, uint size_tab) {
+void clean_destroy(SDL_Texture** tab[], uint* sizePerArray, uint size_tab) {
 	for (uint i = 0; i < size_tab; i++) {
-		for (uint j = 0; j < sizePerArray; j++) {
+		for (uint j = 0; j < sizePerArray[i]; j++) {
 			SDL_DestroyTexture(tab[i][j]);
 		}
 		free(tab[i]);
@@ -619,22 +629,23 @@ void freeall(SDL_Rect* tab[], uint size_tab) {
 }
 
 void clean(Env* env) {
+	SIZE_ARRAY;
 	game_delete(env->g);
-	// destroy all array of array
-	SDL_Texture** env_tab[] = {env->zero,      env->one,       env->two,          env->three,      env->four,
-	                           env->lightbulb, env->text_redo, env->text_restart, env->text_solve, env->text_undo};
-
-	clean_destroy(env_tab, 2, sizeof(env_tab) / sizeof(env_tab[0]));
-
+	// destroy all array of texture
+	SDL_Texture** env_tab[] = {env->zero,      env->one,       env->two,        env->three,     env->four,     env->text_restart,
+	                           env->text_undo, env->text_redo, env->text_solve, env->text_save, env->lightbulb};
+	clean_destroy(env_tab, sizeof_array, sizeof(env_tab) / sizeof(env_tab[0]));
 	SDL_Rect* free_tab[] = {env->rec_game, env->rec_redo, env->rec_restart, env->rec_solve, env->rec_undo};
-
 	freeall(free_tab, sizeof(free_tab) / sizeof(free_tab[0]));
-
-	for (uint i = 0; i < 3; i++) {
+	for (uint i = 0; i < NB_MUSIC_PER_ARRAY; i++) {
 		Mix_FreeMusic(env->lb_music[i]);
+		Mix_FreeMusic(env->mark_music[i]);
+		Mix_FreeMusic(env->err_music[i]);
 	}
-	free(env->lb_music);
 	Mix_FreeMusic(env->win_music);
+	free(env->lb_music);
+	free(env->mark_music);
+	free(env->err_music);
 	free(env);
 }
 
