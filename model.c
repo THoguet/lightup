@@ -85,15 +85,16 @@ struct Env_t {
 	SDL_Texture** four;
 	SDL_Texture** lightbulb;     // array of the two lightbulb images first white second red
 	SDL_Texture** text_restart;  // up fist then down
-	SDL_Texture** text_undo;
+	SDL_Texture** text_undo;     // array of two texture one white and one black
 	SDL_Texture** text_redo;
 	SDL_Texture** text_solve;
-	SDL_Texture** text_save;
+	SDL_Texture** text_save;  // this one have three textures one white, one black and one green
 	bool pressed_restart;
 	bool pressed_undo;
 	bool pressed_redo;
 	bool pressed_solve;
 	bool pressed_save;
+	bool pressed_savED;
 	SDL_Rect* rec_game;  // rectangle of the grid
 	SDL_Rect* rec_redo;  // rectangle of each buttons
 	SDL_Rect* rec_undo;
@@ -172,6 +173,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->pressed_redo = false;
 	env->pressed_solve = false;
 	env->pressed_save = false;
+	env->pressed_savED = false;
 	PRINT("%s", "To win the game, you must satisfy the following conditions:\n\n");
 	PRINT("%s",
 	      "-All non-black squares are lit.\n-No light is lit by another light.\n-Each numbered black square must be orthogonally adjacent to exactly the given "
@@ -185,16 +187,20 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	} else {
 		usage(argv);
 	}
-	void** env_tab[] = {(void**)&(env->zero),       (void**)&(env->one),         (void**)&(env->two),       (void**)&(env->three),
-	                    (void**)&(env->four),       (void**)&(env->lightbulb),   (void**)&(env->text_redo), (void**)&(env->text_restart),
-	                    (void**)&(env->text_solve), (void**)&(env->text_undo),   (void**)&(env->text_save), (void**)&(env->rec_game),
-	                    (void**)&(env->rec_redo),   (void**)&(env->rec_restart), (void**)&(env->rec_solve), (void**)&(env->rec_undo),
+	uint sizeof_array[] = {2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 1, 1, 1, 1, 1, 1};  // size of each element to allocate
+	uint cpt = 0;
+	void** env_tab[] = {(void**)&(env->zero),       (void**)&(env->one),          (void**)&(env->two),       (void**)&(env->three),
+	                    (void**)&(env->four),       (void**)&(env->text_restart), (void**)&(env->text_undo), (void**)&(env->text_redo),
+	                    (void**)&(env->text_solve), (void**)&(env->text_save),    (void**)&(env->lightbulb), (void**)&(env->rec_game),
+	                    (void**)&(env->rec_redo),   (void**)&(env->rec_restart),  (void**)&(env->rec_solve), (void**)&(env->rec_undo),
 	                    (void**)&(env->rec_save)};
-	unsigned long sizeof_env_tab[] = {sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2,
-	                                  sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2,
-	                                  sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Texture*) * 2, sizeof(SDL_Rect),
-	                                  sizeof(SDL_Rect),         sizeof(SDL_Rect),         sizeof(SDL_Rect),         sizeof(SDL_Rect),
-	                                  sizeof(SDL_Rect)};
+	unsigned long sizeof_env_tab[] = {
+	    sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++],
+	    sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++],
+	    sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++],
+	    sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Rect) * sizeof_array[cpt++],
+	    sizeof(SDL_Rect) * sizeof_array[cpt++],     sizeof(SDL_Rect) * sizeof_array[cpt++],     sizeof(SDL_Rect) * sizeof_array[cpt++],
+	    sizeof(SDL_Rect) * sizeof_array[cpt++],     sizeof(SDL_Rect) * sizeof_array[cpt++]};
 	init_malloc(env_tab, sizeof_env_tab, sizeof(env_tab) / sizeof(env_tab[0]));
 	// if the case has not error
 	env->lightbulb[0] = IMG_LoadTexture(ren, LIGHTBULB_WHITE);
@@ -222,22 +228,20 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 #endif
 
 	/*Creation of the differents textures and place them in env*/
-	SDL_Color color_w = {255, 255, 255, 255};  // color of 0 in black wall with error
-	SDL_Color color_r = {255, 50, 50, 255};    /* blue color in RGBA */
-	SDL_Color color_b = {0, 0, 0, 255};        /* black color in RGBA*/
+	SDL_Color color_w = {255, 255, 255, SDL_ALPHA_OPAQUE};  // color of 0 in black wall with error
+	SDL_Color color_r = {255, 50, 50, SDL_ALPHA_OPAQUE};    /* blue color in RGBA */
+	SDL_Color color_g = {0, 150, 0, SDL_ALPHA_OPAQUE};      /* green color in RGBA */
+	SDL_Color color_b = {0, 0, 0, SDL_ALPHA_OPAQUE};        /* black color in RGBA*/
 
 	char* tab_texts_double[] = {"0", "1", "2", "3", "4", "Restart", "Undo", "Redo", "Solve", "Save"};
-
+	SDL_Color color_of_texts[] = {color_w, color_r, color_w, color_r, color_w, color_r, color_w, color_r, color_w, color_r, color_w,
+	                              color_b, color_w, color_b, color_w, color_b, color_w, color_b, color_w, color_b, color_g};
 	SDL_Texture** tab_textures_double[] = {env->zero,         env->one,       env->two,       env->three,      env->four,
 	                                       env->text_restart, env->text_undo, env->text_redo, env->text_solve, env->text_save};
-
-	SDL_Color color_tab[] = {color_w, color_r};
+	cpt = 0;
 	for (uint i = 0; i < sizeof(tab_textures_double) / sizeof(tab_textures_double[0]); i++) {
-		if (i > 4) {
-			color_tab[1] = color_b;
-		}
-		for (int j = 0; j < 2; j++) {
-			tab_textures_double[i][j] = render_blended_text(ren, color_tab[j], tab_texts_double[i]);
+		for (uint j = 0; j < sizeof_array[i]; j++) {
+			tab_textures_double[i][j] = render_blended_text(ren, color_of_texts[cpt++], tab_texts_double[i]);
 		}
 	}
 	return env;
@@ -392,7 +396,7 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	SDL_RenderCopy(ren, env->text_solve[env->pressed_solve ? 1 : 0], NULL, &buttons);
 	buttons.x += buttons.w + (w / NB_BUTTONS - w / (NB_BUTTONS + 1));
 	*(env->rec_save) = buttons;
-	SDL_RenderCopy(ren, env->text_save[env->pressed_save ? 1 : 0], NULL, &buttons);
+	SDL_RenderCopy(ren, env->text_save[env->pressed_savED ? 2 : env->pressed_save ? 1 : 0], NULL, &buttons);
 	// render cases
 	for (uint i = 0; i < game_nb_rows(env->g); i++) {
 		for (uint j = 0; j < game_nb_cols(env->g); j++) {
@@ -600,6 +604,7 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 			(*nb_coups)++;
 		} else if (SDL_PointInRect(&mouse, env->rec_save)) {
 			game_save(env->g, "save.txt");
+			update_pressed(env, false, false, false, false, false, true);
 		} else if (SDL_PointInRect(&mouse, env->rec_game)) {
 			uint i = (((float)mouse.y - (float)env->rec_game->y) / (float)env->rec_game->h * game_nb_rows(env->g)) -
 			         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7*/;
