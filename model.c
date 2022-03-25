@@ -146,7 +146,7 @@ SDL_Texture* render_blended_text(SDL_Renderer* ren, SDL_Color color, char* text)
 /*		Fonction for allocating automaticly		*/
 void init_malloc(void** tab[], unsigned long* sizeof_tab, uint size_tab) {
 	for (uint i = 0; i < size_tab; i++) {
-		*(tab[i]) = malloc(sizeof_tab[i]);		//malloc with the corressponding size 
+		*(tab[i]) = malloc(sizeof_tab[i]);  // malloc with the corressponding size
 		if (*(tab[i]) == NULL)
 			ERROR("%s", "Not enough memory.\n");
 	}
@@ -494,31 +494,31 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 		return true;
 	}
 	/*Tests of the differents types of inputs for interact with the game*/
-	if (e->type == SDL_KEYDOWN) {										//differents shortcuts for differents types of actions
+	if (e->type == SDL_KEYDOWN) {  // differents shortcuts for differents types of actions
 		const Uint8* state = SDL_GetKeyboardState(NULL);
-		if (state[SDL_SCANCODE_F11]) {									//F11 forr toggle fullscreen (pretty obvious)
+		if (state[SDL_SCANCODE_F11]) {  // F11 forr toggle fullscreen (pretty obvious)
 			ToggleFullscreen(win);
-		} else if (state[SDL_SCANCODE_Z]) {								//Z for undo a move only if you have done at least 1 move before
+		} else if (state[SDL_SCANCODE_Z]) {  // Z for undo a move only if you have done at least 1 move before
 			if ((*nb_coups) > 0) {
 				game_undo(env->g);
 				(*nb_undo)++;
 				(*nb_coups)--;
 			}
-		} else if (state[SDL_SCANCODE_Y]) {								//Y for redo a move can only be used if u heve done one or many undo before
+		} else if (state[SDL_SCANCODE_Y]) {  // Y for redo a move can only be used if u heve done one or many undo before
 			if ((*nb_undo) > 0) {
 				game_redo(env->g);
 				(*nb_undo)--;
 				(*nb_coups)++;
 			}
-		} else if (state[SDL_SCANCODE_S]) {								//S for solving the game immediatly 
+		} else if (state[SDL_SCANCODE_S]) {  // S for solving the game immediatly
 			game_solve(env->g);
 			(*nb_undo) = 0;
 			(*nb_coups)++;
-		} else if (state[SDL_SCANCODE_R] || state[SDL_SCANCODE_F5]) {	//R or F5 for restart the game
+		} else if (state[SDL_SCANCODE_R] || state[SDL_SCANCODE_F5]) {  // R or F5 for restart the game
 			game_restart(env->g);
 			(*nb_undo) = 0;
 			(*nb_coups) = 0;
-		} else if (state[SDL_SCANCODE_W]) {								//W for save the game in the save.txt file
+		} else if (state[SDL_SCANCODE_W]) {  // W for save the game in the save.txt file
 			game_save(env->g, "save.txt");
 		}
 	}
