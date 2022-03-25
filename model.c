@@ -18,6 +18,10 @@
 /*	names of assets fichier*/
 #define LIGHTBULB_WHITE "lightbulb_white.png"
 #define LIGHTBULB_RED "lightbulb_red.png"
+#define MUTED "muted.png"
+#define MUTED_PRESSED "muted_pressed.png"
+#define NOTMUTED "notmuted.png"
+#define NOTMUTED_PRESSED "notmuted_pressed.png"
 #define LB1 "lb1.mp3"
 #define LB2 "lb2.mp3"
 #define LB3 "lb3.mp3"
@@ -32,10 +36,10 @@
 
 #define NB_MUSIC 10
 #define NB_MUSIC_PER_ARRAY 3
-#define NB_BUTTONS 5
+#define NB_BUTTONS 6
 #define FONTSIZE 200
 // size of each array (except musics) to allocate
-#define SIZE_ARRAY uint sizeof_array[] = {2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 1, 1, 1, 1, 1, 1}
+#define SIZE_ARRAY uint sizeof_array[] = {2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 4, 1, 1, 1, 1, 1, 1, 1}
 
 #ifdef __ANDROID__
 static void copy_asset(char* src, char* dst) {
@@ -96,6 +100,7 @@ struct Env_t {
 	SDL_Texture** text_redo;     // Same
 	SDL_Texture** text_solve;    // Same
 	SDL_Texture** text_save;     // This one have three textures one white, one black and one green
+	SDL_Texture** mute;          // array of four texture first one is notmuted the second notmuted_pressed the third muted and the fourth muted_pressed
 
 	bool pressed_restart;
 	bool pressed_undo;
@@ -104,6 +109,8 @@ struct Env_t {
 	bool pressed_save;
 	bool pressed_savED;
 	bool win;
+	bool muted;
+	bool pressed_mute;
 
 	SDL_Rect* rec_game;     // rectangle of the grid
 	SDL_Rect* rec_redo;     // rectangle of each buttons
@@ -111,6 +118,7 @@ struct Env_t {
 	SDL_Rect* rec_restart;  // ^^
 	SDL_Rect* rec_solve;    // ^^
 	SDL_Rect* rec_save;     // ^^
+	SDL_Rect* rec_mute;     // ^^
 
 	Mix_Music** lb_music;    // array of three musics for each action
 	Mix_Music** err_music;   // Same
@@ -187,6 +195,8 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->pressed_solve = false;
 	env->pressed_save = false;
 	env->pressed_savED = false;
+	env->pressed_mute = false;
+	env->muted = false;
 	PRINT("%s", "To win the game, you must satisfy the following conditions:\n\n");
 	PRINT("%s",
 	      "-All non-black squares are lit.\n-No light is lit by another light.\n-Each numbered black square must be orthogonally adjacent to exactly the given "
@@ -202,19 +212,20 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	}
 	SIZE_ARRAY;
 	uint cpt = 0;
-	uint index_rec = 11;
-	void** env_tab[] = {(void**)&(env->zero),       (void**)&(env->one),          (void**)&(env->two),       (void**)&(env->three),
-	                    (void**)&(env->four),       (void**)&(env->text_restart), (void**)&(env->text_undo), (void**)&(env->text_redo),
-	                    (void**)&(env->text_solve), (void**)&(env->text_save),    (void**)&(env->lightbulb), (void**)&(env->rec_game),
-	                    (void**)&(env->rec_redo),   (void**)&(env->rec_restart),  (void**)&(env->rec_solve), (void**)&(env->rec_undo),
-	                    (void**)&(env->rec_save)};
+	uint index_rec = 12;
+	void** env_tab[] = {(void**)&(env->zero),       (void**)&(env->one),          (void**)&(env->two),         (void**)&(env->three),
+	                    (void**)&(env->four),       (void**)&(env->text_restart), (void**)&(env->text_undo),   (void**)&(env->text_redo),
+	                    (void**)&(env->text_solve), (void**)&(env->text_save),    (void**)&(env->lightbulb),   (void**)&(env->mute),
+	                    (void**)&(env->rec_game),   (void**)&(env->rec_redo),     (void**)&(env->rec_restart), (void**)&(env->rec_solve),
+	                    (void**)&(env->rec_undo),   (void**)&(env->rec_save),     (void**)&(env->rec_mute)};
 	unsigned long sizeof_env_tab[] = {
 	    sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++],
 	    sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++],
 	    sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++],
-	    sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Rect) * sizeof_array[cpt++],
+	    sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++],
 	    sizeof(SDL_Rect) * sizeof_array[cpt++],     sizeof(SDL_Rect) * sizeof_array[cpt++],     sizeof(SDL_Rect) * sizeof_array[cpt++],
-	    sizeof(SDL_Rect) * sizeof_array[cpt++],     sizeof(SDL_Rect) * sizeof_array[cpt++]};
+	    sizeof(SDL_Rect) * sizeof_array[cpt++],     sizeof(SDL_Rect) * sizeof_array[cpt++],     sizeof(SDL_Rect) * sizeof_array[cpt++],
+	    sizeof(SDL_Rect) * sizeof_array[cpt++]};
 	init_malloc(env_tab, sizeof_env_tab, sizeof(env_tab) / sizeof(env_tab[0]));
 	for (uint i = index_rec; i < sizeof(env_tab) / sizeof(env_tab[0]); i++) {
 		((SDL_Rect*)(*(env_tab[i])))->h = 0;
@@ -230,6 +241,18 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->lightbulb[1] = IMG_LoadTexture(ren, LIGHTBULB_RED);
 	if (!env->lightbulb[1])
 		ERROR("IMG_LoadTexture: %s\n", LIGHTBULB_RED);
+	env->mute[0] = IMG_LoadTexture(ren, NOTMUTED);
+	if (!env->mute[0])
+		ERROR("IMG_LoadTexture: %s\n", NOTMUTED);
+	env->mute[1] = IMG_LoadTexture(ren, NOTMUTED_PRESSED);
+	if (!env->mute[1])
+		ERROR("IMG_LoadTexture: %s\n", NOTMUTED_PRESSED);
+	env->mute[2] = IMG_LoadTexture(ren, MUTED);
+	if (!env->mute[2])
+		ERROR("IMG_LoadTexture: %s\n", MUTED);
+	env->mute[3] = IMG_LoadTexture(ren, MUTED_PRESSED);
+	if (!env->mute[3])
+		ERROR("IMG_LoadTexture: %s\n", MUTED_PRESSED);
 	init_musics(music_to_load, paths, NB_MUSIC, 3);
 	env->lb_music_cpt = 0;
 	env->err_music_cpt = 0;
@@ -238,7 +261,6 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->win_music = Mix_LoadMUS(WIN);
 	if (env->win_music == NULL)
 		ERROR("Cannot load music %s\n", WIN);
-
 	env->win = false;
 
 #ifdef __ANDROID__
@@ -264,6 +286,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 			tab_textures_double[i][j] = render_blended_text(ren, color_of_texts[cpt++], tab_texts_double[i]);
 		}
 	}
+	Mix_VolumeMusic(128);
 	return env;
 }
 
@@ -398,7 +421,7 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	env->rec_game->w = size_rec * game_nb_cols(env->g);
 	// buttons
 	SDL_Rect buttons;
-	buttons.w = w / (NB_BUTTONS + 1);
+	buttons.w = w / (NB_BUTTONS + 0.5);
 	buttons.h = h / 10 / 1.5;  // 1.5 => used to keep margin around buttons
 	buttons.y = (h / 10 - buttons.h) / 2 + marge_h;
 	buttons.x = (w / NB_BUTTONS - w / (NB_BUTTONS + 1)) / 2 + marge_w;
@@ -416,6 +439,10 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	buttons.x += buttons.w + (w / NB_BUTTONS - w / (NB_BUTTONS + 1));
 	*(env->rec_save) = buttons;
 	SDL_RenderCopy(ren, env->text_save[env->pressed_savED ? 2 : env->pressed_save ? 1 : 0], NULL, &buttons);
+	buttons.x += buttons.w + (w / NB_BUTTONS - w / (NB_BUTTONS + 1));
+	buttons.w = buttons.h;
+	*(env->rec_mute) = buttons;
+	SDL_RenderCopy(ren, env->mute[(env->muted ? env->pressed_mute ? 3 : 2 : env->pressed_mute ? 1 : 0)], NULL, &buttons);
 	// render cases
 	for (uint i = 0; i < game_nb_rows(env->g); i++) {
 		for (uint j = 0; j < game_nb_cols(env->g); j++) {
@@ -480,13 +507,14 @@ void play_mark(uint i, uint j, Env* env) {
 	}
 }
 
-void update_pressed(Env* env, bool undo, bool redo, bool restart, bool solve, bool save, bool savED) {
+void update_pressed(Env* env, bool undo, bool redo, bool restart, bool solve, bool save, bool savED, bool mute) {
 	env->pressed_undo = undo;
 	env->pressed_redo = redo;
 	env->pressed_restart = restart;
 	env->pressed_solve = solve;
 	env->pressed_save = save;
 	env->pressed_savED = savED;
+	env->pressed_mute = mute;
 }
 
 bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb_coups, int* nb_undo) {
@@ -505,32 +533,36 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 				game_undo(env->g);
 				(*nb_undo)++;
 				(*nb_coups)--;
-				update_pressed(env, true, false, false, false, false, false);
+				update_pressed(env, true, false, false, false, false, false, false);
 			}
 		} else if (state[SDL_SCANCODE_Y]) {  // Y to redo a move can only if you have done at least 1 undo before
 			if ((*nb_undo) > 0) {
 				game_redo(env->g);
 				(*nb_undo)--;
 				(*nb_coups)++;
-				update_pressed(env, false, true, false, false, false, false);
+				update_pressed(env, false, true, false, false, false, false, false);
 			}
 		} else if (state[SDL_SCANCODE_S]) {  // S to solving the game immediately
 			game_solve(env->g);
 			(*nb_undo) = 0;
 			(*nb_coups)++;
-			update_pressed(env, false, false, false, true, false, false);
+			update_pressed(env, false, false, false, true, false, false, false);
 		} else if (state[SDL_SCANCODE_R] || state[SDL_SCANCODE_F5]) {  // R or F5 to restart the game
 			game_restart(env->g);
 			(*nb_undo) = 0;
 			(*nb_coups) = 0;
-			update_pressed(env, false, false, true, false, false, false);
+			update_pressed(env, false, false, true, false, false, false, false);
 		} else if (state[SDL_SCANCODE_Z]) {  // (Z becuase sdl2 is in QWERTY) W to save the game in the file save.txt
 			game_save(env->g, "save.txt");
-			update_pressed(env, false, false, false, false, false, true);
+			update_pressed(env, false, false, false, false, false, true, false);
+		} else if (state[SDL_SCANCODE_SEMICOLON]) {  // M (in azerty setup) to mute
+			env->muted = env->muted ? 0 : 1;
+			Mix_VolumeMusic(env->muted ? 0 : 128);
+			update_pressed(env, false, false, false, false, false, false, true);
 		} else if (state[SDL_SCANCODE_ESCAPE])
 			return true;
 	} else if (e->type == SDL_KEYUP) {
-		update_pressed(env, false, false, false, false, false, false);
+		update_pressed(env, false, false, false, false, false, false, false);
 	}
 	if (game_is_over(env->g) && !env->win) {
 		Mix_PlayMusic(env->win_music, 1);
@@ -547,25 +579,25 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 			mouse.y = e->tfinger.y;
 		}
 		if (SDL_PointInRect(&mouse, env->rec_restart)) {
-			update_pressed(env, false, false, true, false, false, false);
+			update_pressed(env, false, false, true, false, false, false, false);
 		} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
 			if ((*nb_coups) > 0)
-				update_pressed(env, true, false, false, false, false, false);
+				update_pressed(env, true, false, false, false, false, false, false);
 			else
-				update_pressed(env, false, false, false, false, false, false);
+				update_pressed(env, false, false, false, false, false, false, false);
 		} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
 			if ((*nb_undo) > 0)
-				update_pressed(env, false, true, false, false, false, false);
+				update_pressed(env, false, true, false, false, false, false, false);
 			else
-				update_pressed(env, false, false, false, false, false, false);
-
+				update_pressed(env, false, false, false, false, false, false, false);
 		} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
-			update_pressed(env, false, false, false, true, false, false);
-
+			update_pressed(env, false, false, false, true, false, false, false);
 		} else if (SDL_PointInRect(&mouse, env->rec_save)) {
-			update_pressed(env, false, false, false, false, true, false);
+			update_pressed(env, false, false, false, false, true, false, false);
+		} else if (SDL_PointInRect(&mouse, env->rec_mute)) {
+			update_pressed(env, false, false, false, false, false, false, true);
 		} else {
-			update_pressed(env, false, false, false, false, false, false);
+			update_pressed(env, false, false, false, false, false, false, false);
 		}
 
 #ifdef _ANDROID_
@@ -605,9 +637,12 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 			game_solve(env->g);
 			(*nb_undo) = 0;
 			(*nb_coups)++;
+		} else if (SDL_PointInRect(&mouse, env->rec_mute)) {
+			env->muted = env->muted ? 0 : 1;
+			Mix_VolumeMusic(env->muted ? 0 : 128);
 		} else if (SDL_PointInRect(&mouse, env->rec_save)) {
 			game_save(env->g, "save.txt");
-			update_pressed(env, false, false, false, false, false, true);
+			update_pressed(env, false, false, false, false, false, true, false);
 		} else if (SDL_PointInRect(&mouse, env->rec_game)) {
 			uint i = (((float)mouse.y - (float)env->rec_game->y) / (float)env->rec_game->h * game_nb_rows(env->g)) -
 			         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7 (in case of a game 7x7)*/;

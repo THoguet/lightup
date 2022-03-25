@@ -40,6 +40,8 @@ int main(int argc, char* argv[]) {
 	bool quit = false;
 	SDL_Event prec_e;
 	int nb_coups = 0, nb_undo = 0;
+	render(win, ren, env);  // first frame
+	SDL_RenderPresent(ren);
 	while (!quit) {
 		/* manage events */
 		while (SDL_PollEvent(&e)) {
