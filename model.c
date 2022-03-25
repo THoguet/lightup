@@ -85,15 +85,16 @@ struct Env_t {
 	SDL_Texture** four;
 	SDL_Texture** lightbulb;     // array of the two lightbulb images first white second red
 	SDL_Texture** text_restart;  // up fist then down
-	SDL_Texture** text_undo;
+	SDL_Texture** text_undo;     // array of two texture one white and one black
 	SDL_Texture** text_redo;
 	SDL_Texture** text_solve;
-	SDL_Texture** text_save;
+	SDL_Texture** text_save;  // this one have three textures one white, one black and one green
 	bool pressed_restart;
 	bool pressed_undo;
 	bool pressed_redo;
 	bool pressed_solve;
 	bool pressed_save;
+	bool pressed_savED;
 	SDL_Rect* rec_game;  // rectangle of the grid
 	SDL_Rect* rec_redo;  // rectangle of each buttons
 	SDL_Rect* rec_undo;
@@ -172,6 +173,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->pressed_redo = false;
 	env->pressed_solve = false;
 	env->pressed_save = false;
+	env->pressed_savED = false;
 	PRINT("%s", "To win the game, you must satisfy the following conditions:\n\n");
 	PRINT("%s",
 	      "-All non-black squares are lit.\n-No light is lit by another light.\n-Each numbered black square must be orthogonally adjacent to exactly the given "
@@ -455,12 +457,13 @@ void play_mark(uint i, uint j, Env* env) {
 	}
 }
 
-void update_pressed(Env* env, bool undo, bool redo, bool restart, bool solve, bool save) {
+void update_pressed(Env* env, bool undo, bool redo, bool restart, bool solve, bool save, bool savED) {
 	env->pressed_undo = undo;
 	env->pressed_redo = redo;
 	env->pressed_restart = restart;
 	env->pressed_solve = solve;
 	env->pressed_save = save;
+	env->pressed_savED = savED;
 }
 
 bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb_coups, int* nb_undo) {
@@ -512,25 +515,25 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 			mouse.y = e->tfinger.y;
 		}
 		if (SDL_PointInRect(&mouse, env->rec_restart)) {
-			update_pressed(env, false, false, true, false, false);
+			update_pressed(env, false, false, true, false, false, false);
 		} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
 			if ((*nb_coups) > 0)
-				update_pressed(env, true, false, false, false, false);
+				update_pressed(env, true, false, false, false, false, false);
 			else
-				update_pressed(env, false, false, false, false, false);
+				update_pressed(env, false, false, false, false, false, false);
 		} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
 			if ((*nb_undo) > 0)
-				update_pressed(env, false, true, false, false, false);
+				update_pressed(env, false, true, false, false, false, false);
 			else
-				update_pressed(env, false, false, false, false, false);
+				update_pressed(env, false, false, false, false, false, false);
 
 		} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
-			update_pressed(env, false, false, false, true, false);
+			update_pressed(env, false, false, false, true, false, false);
 
 		} else if (SDL_PointInRect(&mouse, env->rec_save)) {
-			update_pressed(env, false, false, false, false, true);
+			update_pressed(env, false, false, false, false, true, false);
 		} else {
-			update_pressed(env, false, false, false, false, false);
+			update_pressed(env, false, false, false, false, false, false);
 		}
 #ifdef _ANDROID_
 		if (SDL_PointInRect(&mouse, env->rec_game)) {
@@ -571,6 +574,7 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 			(*nb_coups)++;
 		} else if (SDL_PointInRect(&mouse, env->rec_save)) {
 			game_save(env->g, "save.txt");
+			update_pressed(env, false, false, false, false, false, true);
 		} else if (SDL_PointInRect(&mouse, env->rec_game)) {
 			uint i = (((float)mouse.y - (float)env->rec_game->y) / (float)env->rec_game->h * game_nb_rows(env->g)) -
 			         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7*/;
