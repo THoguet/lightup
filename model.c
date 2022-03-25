@@ -439,15 +439,17 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 /* **************************************************************** */
 
 void play_Music(Env* env, bool lightbulb, bool error, bool mark) {
-	if (error && game_has_error_general_intero(env->g)) {
-		Mix_PlayMusic(env->err_music[env->err_music_cpt % 3], 0);
-		env->err_music_cpt++;
-	} else if (lightbulb) {
-		Mix_PlayMusic(env->lb_music[env->lb_music_cpt % 3], 0);
-		env->lb_music_cpt++;
-	} else if (mark) {
-		Mix_PlayMusic(env->mark_music[env->mark_music_cpt % 3], 0);
-		env->mark_music_cpt++;
+	if (!game_is_over(env->g)) {
+		if (error && game_has_error_general_intero(env->g)) {
+			Mix_PlayMusic(env->err_music[env->err_music_cpt % 3], 0);
+			env->err_music_cpt++;
+		} else if (lightbulb) {
+			Mix_PlayMusic(env->lb_music[env->lb_music_cpt % 3], 0);
+			env->lb_music_cpt++;
+		} else if (mark) {
+			Mix_PlayMusic(env->mark_music[env->mark_music_cpt % 3], 0);
+			env->mark_music_cpt++;
+		}
 	}
 }
 
@@ -525,7 +527,8 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 		} else if (state[SDL_SCANCODE_Z]) {  // (Z becuase sdl2 is in QWERTY) W to save the game in the file save.txt
 			game_save(env->g, "save.txt");
 			update_pressed(env, false, false, false, false, false, true);
-		}
+		} else if (state[SDL_SCANCODE_ESCAPE])
+			return true;
 	} else if (e->type == SDL_KEYUP) {
 		update_pressed(env, false, false, false, false, false, false);
 	}
