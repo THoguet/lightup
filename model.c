@@ -459,6 +459,15 @@ void play_mark(uint i, uint j, Env* env) {
 	}
 }
 
+void update_pressed(Env* env, bool undo, bool redo, bool restart, bool solve, bool save, bool savED) {
+	env->pressed_undo = undo;
+	env->pressed_redo = redo;
+	env->pressed_restart = restart;
+	env->pressed_solve = solve;
+	env->pressed_save = save;
+	env->pressed_savED = savED;
+}
+
 bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb_coups, int* nb_undo) {
 	int w, h;
 	SDL_GetWindowSize(win, &w, &h);
@@ -507,64 +516,28 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 			mouse.x = e->tfinger.x;
 			mouse.y = e->tfinger.y;
 		}
-		bool list_buttons[] = {env->pressed_restart, env->pressed_undo, env->pressed_redo, env->pressed_solve, env->pressed_save};
-		SDL_Rect* list_rect_button[] = {env->rec_restart, env->rec_undo, env->rec_redo, env->rec_solve, env->rec_save};
-		/*		   0				 1				2				3				4		*/
+		if (SDL_PointInRect(&mouse, env->rec_restart)) {
+			update_pressed(env, false, false, true, false, false, false);
+		} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
+			if ((*nb_coups) > 0)
+				update_pressed(env, true, false, false, false, false, false);
+			else
+				update_pressed(env, false, false, false, false, false, false);
+		} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
+			if ((*nb_undo) > 0)
+				update_pressed(env, false, true, false, false, false, false);
+			else
+				update_pressed(env, false, false, false, false, false, false);
 
-		/**********************************************************************************************************************************/
+		} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
+			update_pressed(env, false, false, false, true, false, false);
 
-		for (int i = 0; i < 5; i++) {
-			if (SDL_PointInRect(&mouse, list_rect_button[i])) {
-				switch (i) {
-					case 1:
-						if ((*nb_coups) > 0) {
-							list_buttons[i] = true;
-						} else {
-							list_buttons[i] = false;
-						}
-						break;
-					case 2:
-						if ((*nb_undo) > 0) {
-							list_buttons[i] = true;
-						} else {
-							list_buttons[i] = false;
-						}
-						break;
-					default:
-						list_buttons[i] = true;
-						break;
-				}
-			} else {
-				list_buttons[i] = false;
-			}
+		} else if (SDL_PointInRect(&mouse, env->rec_save)) {
+			update_pressed(env, false, false, false, false, true, false);
+		} else {
+			update_pressed(env, false, false, false, false, false, false);
 		}
 
-/*		for(int i = 0; i < 5; i ++){
-		    if (SDL_PointInRect(&mouse, list_rect_button[i])) {
-		        if(list_rect_button[i] == env->rec_undo){
-		                if ((*nb_coups) > 0){
-		                    list_button[i] = true;
-		                }else{
-		                    list_button[i] = false;
-		                }
-		                break;
-		        }else if(list_rect_button[i] == env->rec_redo){
-		                if ((*nb_undo) > 0){
-		                    list_button[i] = true;
-		                }else{
-		                    list_button[i] = false;
-		                }
-		                break;
-		        }else{
-		            list_button[i] = true;
-		            break;
-		        }
-		    }else{
-		        list_button[i] = false;
-		    }
-		}*/
-
-/**********************************************************************************************************************************/
 #ifdef _ANDROID_
 		if (SDL_PointInRect(&mouse, env->rec_game)) {
 			if (e->type != prec_e->type) {
