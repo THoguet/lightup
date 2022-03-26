@@ -9,18 +9,22 @@
 
 ## lightup-07c
 
-Projet Techno
+Règles du jeu:
 
-:warning: **LE PREMIER QUI COMMIT DU CODE QUI COMPILE PAS JE L'ATTRAPE** :warning:
+- Toutes les cases (qui ne sont pas des murs) doivent être illuminées.
+- Une lumière ne doit pas être illuminé par une autre lumière.
+- Les murs avec un chiffre doivent avoir exactement le chiffre indiqué de lumière(s) autour d'eux.
+- Les murs sans chiffre peuvent avoir autant de lumière que désiré (0 compris).
 
 FONCTIONNEMENT INTERFACE GRAPHIQUE:
+Pour mettre une lumière il suffit de faire un clique gauche sur la case voulu, pour une marque c'est un clique droit. Pour enlever une lumière ou une marque d'une case il faut recliquer dessus avec le clique précédement utilisé. De plus nous avons mis des boutons en haut de l'interface sur lesquels vous pouvez cliquer pour exécuter les instructions UNDO, REDO, RESTART, SOLVE, SAVE et MUTE.
+Mais vous pouvez également exécuter ces instructions avec le clavier en tapant sur les raccourcis suivants (clavier AZERTY):
 
-nous avons choisi tout simplement de créer des boutons, dans la partie supérieure de la fenêtre, sur lesquels vous pourrez cliquer pour exécuter les instructions UNDO, REDO, RESTART, SOLVE et SAVE.
-Mais vous pouvez également jouer avec le clavier en tapant sur les raccourcis suivants:
--r ou F5 pour restart
--z pour undo
--y pour redo
--w pour save
--s pour solve
--F11 pour Fullscreen
--ESC pour quit
+- r ou F5 pour restart
+- z pour undo
+- y pour redo
+- w pour save la partie dans son état actuel dans le fichier save.txt
+- s pour solve la partie (si c'est possible)
+- m pour désactiver / activer le son
+- F11 pour activer / désactiver le Fullscreen
+- ESC pour quitter le jeu
