@@ -501,13 +501,13 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	for (uint i = 0; i < game_nb_rows(env->g); i++) {
 		for (uint j = 0; j < game_nb_cols(env->g); j++) {
 			if (game_is_lightbulb(env->g, i, j))
-				render_lightbulb(ren, &rec, env->lightbulb[game_has_error(env->g, i, j) ? 1 : 0], env->win, (i == env->i && j == env->j));
+				render_lightbulb(ren, &rec, env->lightbulb[game_has_error(env->g, i, j) ? 1 : 0], env->win, ((int)i == env->i && (int)j == env->j));
 			else if (game_is_black(env->g, i, j))
 				render_wall(ren, env, &rec, game_get_black_number(env->g, i, j), game_has_error(env->g, i, j));
 			else if (game_is_blank(env->g, i, j))
-				render_blank(ren, &rec, game_is_lighted(env->g, i, j), env->win, (i == env->i && j == env->j));
+				render_blank(ren, &rec, game_is_lighted(env->g, i, j), env->win, ((int)i == env->i && (int)j == env->j));
 			else if (game_is_marked(env->g, i, j))
-				render_mark(ren, &rec, game_is_lighted(env->g, i, j), env->win, (i == env->i && j == env->j));
+				render_mark(ren, &rec, game_is_lighted(env->g, i, j), env->win, ((int)i == env->i && (int)j == env->j));
 			rec.x += size_rec;
 		}
 		rec.x = rec_x;
