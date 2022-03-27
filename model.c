@@ -128,6 +128,9 @@ struct Env_t {
 	uint lb_music_cpt;    // used to altern musics
 	uint err_music_cpt;   // ^^
 	uint mark_music_cpt;  // ^^
+
+	int i;
+	int j;
 };
 
 /* **************************************************************** */
@@ -284,6 +287,9 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->lb_music_cpt = 0;
 	env->err_music_cpt = 0;
 	env->mark_music_cpt = 0;
+
+	env->i = -1;
+	env->j = -1;
 	// Music win
 	env->win_music = Mix_LoadMUS(WIN);
 	if (env->win_music == NULL)
@@ -336,11 +342,13 @@ void render_border_square(SDL_Renderer* ren, SDL_Rect* rec) {
 	SDL_RenderDrawRect(ren, rec);
 }
 
-void render_blank(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory) {
+void render_blank(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory, bool selected) {
 	if (victory)
 		SDL_SetRenderDrawColor(ren, 0, 150, 0, SDL_ALPHA_OPAQUE);  // green
 	else if (lighted)
-		SDL_SetRenderDrawColor(ren, 255, 255, 0, SDL_ALPHA_OPAQUE);  // yellow
+		SDL_SetRenderDrawColor(ren, 255 - (selected ? 55 : 0), 255 - (selected ? 55 : 0), 0, SDL_ALPHA_OPAQUE);  // yellow
+	else if (selected)
+		SDL_SetRenderDrawColor(ren, 200, 200, 200, SDL_ALPHA_OPAQUE);  // light gray
 	else
 		SDL_SetRenderDrawColor(ren, 255, 255, 255, SDL_ALPHA_OPAQUE);  // white
 	SDL_RenderFillRect(ren, rec);
@@ -391,12 +399,12 @@ void render_wall(SDL_Renderer* ren, Env* env, SDL_Rect* rec, int nb, bool error)
 	}
 }
 
-void render_lightbulb(SDL_Renderer* ren, SDL_Rect* rec, SDL_Texture* lightbulb_texture, bool victory) {
+void render_lightbulb(SDL_Renderer* ren, SDL_Rect* rec, SDL_Texture* lightbulb_texture, bool victory, bool selected) {
 	SDL_Rect lightbulb;
 	if (victory)
 		SDL_SetRenderDrawColor(ren, 0, 150, 0, SDL_ALPHA_OPAQUE);
 	else
-		SDL_SetRenderDrawColor(ren, 255, 255, 0, SDL_ALPHA_OPAQUE);
+		SDL_SetRenderDrawColor(ren, 255 - (selected ? 55 : 0), 255 - (selected ? 55 : 0), 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderFillRect(ren, rec);
 	lightbulb.h = rec->h - rec->h / 4;
 	lightbulb.w = rec->w - rec->w / 4;
@@ -407,11 +415,13 @@ void render_lightbulb(SDL_Renderer* ren, SDL_Rect* rec, SDL_Texture* lightbulb_t
 		render_border_square(ren, rec);
 }
 
-void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory) {
+void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory, bool selected) {
 	if (victory)
 		SDL_SetRenderDrawColor(ren, 0, 150, 0, SDL_ALPHA_OPAQUE);  // green
 	else if (lighted)
-		SDL_SetRenderDrawColor(ren, 255, 255, 0, SDL_ALPHA_OPAQUE);  // yellow
+		SDL_SetRenderDrawColor(ren, 255 - (selected ? 55 : 0), 255 - (selected ? 55 : 0), 0, SDL_ALPHA_OPAQUE);  // yellow
+	else if (selected)
+		SDL_SetRenderDrawColor(ren, 200, 200, 200, SDL_ALPHA_OPAQUE);  // light gray
 	else
 		SDL_SetRenderDrawColor(ren, 255, 255, 255, SDL_ALPHA_OPAQUE);  // white
 	SDL_RenderFillRect(ren, rec);
@@ -491,13 +501,13 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	for (uint i = 0; i < game_nb_rows(env->g); i++) {
 		for (uint j = 0; j < game_nb_cols(env->g); j++) {
 			if (game_is_lightbulb(env->g, i, j))
-				render_lightbulb(ren, &rec, env->lightbulb[game_has_error(env->g, i, j) ? 1 : 0], env->win);
+				render_lightbulb(ren, &rec, env->lightbulb[game_has_error(env->g, i, j) ? 1 : 0], env->win, (i == env->i && j == env->j));
 			else if (game_is_black(env->g, i, j))
 				render_wall(ren, env, &rec, game_get_black_number(env->g, i, j), game_has_error(env->g, i, j));
 			else if (game_is_blank(env->g, i, j))
-				render_blank(ren, &rec, game_is_lighted(env->g, i, j), env->win);
+				render_blank(ren, &rec, game_is_lighted(env->g, i, j), env->win, (i == env->i && j == env->j));
 			else if (game_is_marked(env->g, i, j))
-				render_mark(ren, &rec, game_is_lighted(env->g, i, j), env->win);
+				render_mark(ren, &rec, game_is_lighted(env->g, i, j), env->win, (i == env->i && j == env->j));
 			rec.x += size_rec;
 		}
 		rec.x = rec_x;
@@ -666,6 +676,13 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 		} else {
 			update_pressed(env, NULL);
 		}
+		if (SDL_PointInRect(&mouse, env->rec_game)) {
+			env->i = (((float)mouse.y - (float)env->rec_game->y) / (float)env->rec_game->h * game_nb_rows(env->g)) - 0.00001;
+			env->j = (((float)mouse.x - (float)env->rec_game->x) / (float)env->rec_game->w * game_nb_cols(env->g)) - 0.00001;
+		} else {
+			env->i = -1;
+			env->j = -1;
+		}
 #ifdef _ANDROID_
 		// WIP
 		if (SDL_PointInRect(&mouse, env->rec_game)) {
@@ -720,23 +737,27 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 		else if (SDL_PointInRect(&mouse, env->rec_game)) {
 			// convert mouse coordinate in game coordinate
 			// 0.00001 used to avoid if clicked exacly on the bottom right corner to result 7 instead of 6 (in case of a 7x7 game)
-			uint i = (((float)mouse.y - (float)env->rec_game->y) / (float)env->rec_game->h * game_nb_rows(env->g)) - 0.00001;
-			uint j = (((float)mouse.x - (float)env->rec_game->x) / (float)env->rec_game->w * game_nb_cols(env->g)) - 0.00001;
+			env->i = (((float)mouse.y - (float)env->rec_game->y) / (float)env->rec_game->h * game_nb_rows(env->g)) - 0.00001;
+			env->j = (((float)mouse.x - (float)env->rec_game->x) / (float)env->rec_game->w * game_nb_cols(env->g)) - 0.00001;
 			if (e->type == SDL_MOUSEBUTTONDOWN && e->button.button == SDL_BUTTON_LEFT) {  // only execute when type == SDL_MOUSEBUTTONDOWN
-				play_light(i, j, env);
+				play_light(env->i, env->j, env);
 			} else if (e->type == SDL_MOUSEBUTTONDOWN && e->button.button == SDL_BUTTON_RIGHT) {
-				play_mark(i, j, env);
+				play_mark(env->i, env->j, env);
 			}
 			// for android
 			if (e->type == SDL_FINGERUP && (e->tfinger.timestamp - prec_e->tfinger.timestamp) < 300) {  // only execute when type == SDL_FINGERUP
-				play_light(i, j, env);
+				play_light(env->i, env->j, env);
 			} else if (e->type == SDL_FINGERUP) {
-				play_mark(i, j, env);
+				play_mark(env->i, env->j, env);
 			}
 			(*nb_undo) = 0;
 			(*nb_coups)++;
+		} else {
+			env->i = -1;
+			env->j = -1;
 		}
 	}
+
 	return false;
 }
 
