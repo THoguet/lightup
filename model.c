@@ -38,7 +38,7 @@
 #define NB_MUSIC_PER_ARRAY 3
 #define NB_BUTTONS 6
 #define FONTSIZE 200
-// size of each array (except musics) to allocate
+// size of each array (except musics) to allocate (same order as in env)
 #define SIZE_ARRAY uint sizeof_array[] = {2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 4, 1, 1, 1, 1, 1, 1, 1}
 
 #ifdef __ANDROID__
@@ -76,7 +76,7 @@ int int_min_intero(int a, int b) { /*interopérabilité*/
 	return b;
 }
 
-bool game_has_error_general_intero(cgame g) {
+bool game_has_error_general_intero(cgame g) {  // interoperabilité
 	for (uint i = 0; i < game_nb_rows(g); i++) {
 		for (uint j = 0; j < game_nb_cols(g); j++) {
 			if (game_has_error(g, i, j))
@@ -94,13 +94,13 @@ struct Env_t {
 	SDL_Texture** two;           // Same
 	SDL_Texture** three;         // Same
 	SDL_Texture** four;          // Same
-	SDL_Texture** lightbulb;     // array of the two lightbulb images first white second red
 	SDL_Texture** text_restart;  // array of two textures one when the button is up (the first one) and one when the button is down (the second one)
 	SDL_Texture** text_undo;     // array of two texture one white (the first one) and one black (the second one)
 	SDL_Texture** text_redo;     // Same
 	SDL_Texture** text_solve;    // Same
 	SDL_Texture** text_save;     // This one have three textures one white, one black and one green
 	SDL_Texture** mute;          // array of four texture first one is notmuted the second notmuted_pressed the third muted and the fourth muted_pressed
+	SDL_Texture** lightbulb;     // array of the two lightbulb images first white second red
 
 	bool pressed_restart;
 	bool pressed_undo;
@@ -163,8 +163,10 @@ void init_malloc(void** tab[], unsigned long* sizeof_tab, uint size_tab) {
 
 void init_musics(Mix_Music**** music_to_load, char** path_to_musics, uint nb_music, uint nb_music_per_array) {
 	for (uint i = 0; i < nb_music / nb_music_per_array; i++) {
+		// allocate the array for the musics
 		*(music_to_load[i]) = malloc(sizeof(Mix_Music*) * nb_music_per_array);
 		for (uint j = 0; j < nb_music_per_array; j++) {
+			// allocate the musics in the array
 			(*(music_to_load[i]))[j] = Mix_LoadMUS(path_to_musics[i * nb_music_per_array + j]);
 			if ((*(music_to_load[i]))[j] == NULL)
 				ERROR("Cannot load music %s\n", path_to_musics[i * nb_music_per_array + j]);
@@ -270,14 +272,24 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 #endif
 
 	/*Creation of the differents textures and place them in env*/
-	SDL_Color color_w = {255, 255, 255, SDL_ALPHA_OPAQUE};  // color of 0 in black wall with error
-	SDL_Color color_r = {255, 50, 50, SDL_ALPHA_OPAQUE};    /* blue color in RGBA */
-	SDL_Color color_g = {0, 150, 0, SDL_ALPHA_OPAQUE};      /* green color in RGBA */
-	SDL_Color color_b = {0, 0, 0, SDL_ALPHA_OPAQUE};        /* black color in RGBA*/
+	SDL_Color color_white = {255, 255, 255, SDL_ALPHA_OPAQUE};  // color of 0 in black wall with error
+	SDL_Color color_red = {255, 50, 50, SDL_ALPHA_OPAQUE};      /* blue color in RGBA */
+	SDL_Color color_green = {0, 150, 0, SDL_ALPHA_OPAQUE};      /* green color in RGBA */
+	SDL_Color color_black = {0, 0, 0, SDL_ALPHA_OPAQUE};        /* black color in RGBA*/
 
 	char* tab_texts_double[] = {"0", "1", "2", "3", "4", "Restart", "Undo", "Redo", "Solve", "Save"};
-	SDL_Color color_of_texts[] = {color_w, color_r, color_w, color_r, color_w, color_r, color_w, color_r, color_w, color_r, color_w,
-	                              color_b, color_w, color_b, color_w, color_b, color_w, color_b, color_w, color_b, color_g};
+	SDL_Color color_of_texts[] = {
+	    color_white, color_red,                // color for the 0
+	    color_white, color_red,                // color for the 1
+	    color_white, color_red,                // color for the 2
+	    color_white, color_red,                // color for the 3
+	    color_white, color_red,                // color for the 4
+	    color_white, color_black,              // color for the Restart
+	    color_white, color_black,              // color for the Undo
+	    color_white, color_black,              // color for the Redo
+	    color_white, color_black,              // color for the solve
+	    color_white, color_black, color_green  // color for the save
+	};
 	SDL_Texture** tab_textures_double[] = {env->zero,         env->one,       env->two,       env->three,      env->four,
 	                                       env->text_restart, env->text_undo, env->text_redo, env->text_solve, env->text_save};
 	cpt = 0;
@@ -286,11 +298,17 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 			tab_textures_double[i][j] = render_blended_text(ren, color_of_texts[cpt++], tab_texts_double[i]);
 		}
 	}
-	Mix_VolumeMusic(128);
+	Mix_VolumeMusic(MIX_MAX_VOLUME);
 	return env;
 }
 
 /* **************************************************************** */
+
+void render_border_square(SDL_Renderer* ren, SDL_Rect* rec) {
+	SDL_SetRenderDrawColor(ren, 127, 127, 127, SDL_ALPHA_OPAQUE);  // gray
+	// render the border of the square
+	SDL_RenderDrawRect(ren, rec);
+}
 
 void render_blank(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory) {
 	if (victory)
@@ -300,9 +318,8 @@ void render_blank(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory) 
 	else
 		SDL_SetRenderDrawColor(ren, 255, 255, 255, SDL_ALPHA_OPAQUE);  // white
 	SDL_RenderFillRect(ren, rec);
-
-	SDL_SetRenderDrawColor(ren, 127, 127, 127, SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawRect(ren, rec);
+	if (!victory)
+		render_border_square(ren, rec);
 }
 
 void render_wall(SDL_Renderer* ren, Env* env, SDL_Rect* rec, int nb, bool error) {
@@ -311,7 +328,6 @@ void render_wall(SDL_Renderer* ren, Env* env, SDL_Rect* rec, int nb, bool error)
 	SDL_RenderFillRect(ren, rec);
 	switch (nb) {
 		case 0:
-			SDL_QueryTexture(env->zero[error ? 1 : 0], NULL, NULL, &number.w, &number.h);
 			number.x = rec->x + rec->w / 4;
 			number.y = rec->y + rec->h / 4;
 			number.w = rec->w / 2;
@@ -319,7 +335,6 @@ void render_wall(SDL_Renderer* ren, Env* env, SDL_Rect* rec, int nb, bool error)
 			SDL_RenderCopy(ren, env->zero[error ? 1 : 0], NULL, &number);
 			break;
 		case 1:
-			SDL_QueryTexture(env->one[error ? 1 : 0], NULL, NULL, &number.w, &number.h);
 			number.x = rec->x + rec->w / 4;
 			number.y = rec->y + rec->h / 4;
 			number.w = rec->w / 2;
@@ -327,7 +342,6 @@ void render_wall(SDL_Renderer* ren, Env* env, SDL_Rect* rec, int nb, bool error)
 			SDL_RenderCopy(ren, env->one[error ? 1 : 0], NULL, &number);
 			break;
 		case 2:
-			SDL_QueryTexture(env->two[error ? 1 : 0], NULL, NULL, &number.w, &number.h);
 			number.x = rec->x + rec->w / 4;
 			number.y = rec->y + rec->h / 4;
 			number.w = rec->w / 2;
@@ -335,7 +349,6 @@ void render_wall(SDL_Renderer* ren, Env* env, SDL_Rect* rec, int nb, bool error)
 			SDL_RenderCopy(ren, env->two[error ? 1 : 0], NULL, &number);
 			break;
 		case 3:
-			SDL_QueryTexture(env->three[error ? 1 : 0], NULL, NULL, &number.w, &number.h);
 			number.x = rec->x + rec->w / 4;
 			number.y = rec->y + rec->h / 4;
 			number.w = rec->w / 2;
@@ -343,7 +356,6 @@ void render_wall(SDL_Renderer* ren, Env* env, SDL_Rect* rec, int nb, bool error)
 			SDL_RenderCopy(ren, env->three[error ? 1 : 0], NULL, &number);
 			break;
 		case 4:
-			SDL_QueryTexture(env->four[error ? 1 : 0], NULL, NULL, &number.w, &number.h);
 			number.x = rec->x + rec->w / 4;
 			number.y = rec->y + rec->h / 4;
 			number.w = rec->w / 2;
@@ -360,13 +372,13 @@ void render_lightbulb(SDL_Renderer* ren, SDL_Rect* rec, SDL_Texture* lightbulb_t
 	else
 		SDL_SetRenderDrawColor(ren, 255, 255, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderFillRect(ren, rec);
-	SDL_SetRenderDrawColor(ren, 127, 127, 127, SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawRect(ren, rec);
 	lightbulb.h = rec->h - rec->h / 4;
 	lightbulb.w = rec->w - rec->w / 4;
 	lightbulb.x = rec->x + rec->w / 2 - lightbulb.w / 2;
 	lightbulb.y = rec->y + rec->h / 2 - lightbulb.h / 2;
 	SDL_RenderCopy(ren, lightbulb_texture, NULL, &lightbulb);
+	if (!victory)
+		render_border_square(ren, rec);
 }
 
 void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory) {
@@ -377,8 +389,6 @@ void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory) {
 	else
 		SDL_SetRenderDrawColor(ren, 255, 255, 255, SDL_ALPHA_OPAQUE);  // white
 	SDL_RenderFillRect(ren, rec);
-	SDL_SetRenderDrawColor(ren, 127, 127, 127, SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawRect(ren, rec);
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	SDL_Rect mark;
 	mark.h = rec->h / 4;
@@ -386,6 +396,8 @@ void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory) {
 	mark.x = rec->x + rec->w / 2 - mark.w / 2;
 	mark.y = rec->y + rec->h / 2 - mark.h / 2;
 	SDL_RenderFillRect(ren, &mark);
+	if (!victory)
+		render_border_square(ren, rec);
 }
 
 void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
@@ -421,25 +433,27 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	env->rec_game->w = size_rec * game_nb_cols(env->g);
 	// buttons
 	SDL_Rect buttons;
-	buttons.w = w / (NB_BUTTONS + 0.5);
-	buttons.h = h / 10 / 1.5;  // 1.5 => used to keep margin around buttons
+	int margin_between_buttons = (w / NB_BUTTONS - w / (NB_BUTTONS + 1));
+	buttons.w = w / (NB_BUTTONS + 0.5);  // 0.5 used to keep space between buttons
+	buttons.h = h / 10 / 1.5;            // 1.5 => used to keep margin around buttons
 	buttons.y = (h / 10 - buttons.h) / 2 + marge_h;
-	buttons.x = (w / NB_BUTTONS - w / (NB_BUTTONS + 1)) / 2 + marge_w;
+	buttons.x = margin_between_buttons + marge_w;
+	// env->rec_* used in process
 	*(env->rec_undo) = buttons;
 	SDL_RenderCopy(ren, env->text_undo[env->pressed_undo ? 1 : 0], NULL, &buttons);
-	buttons.x += buttons.w + (w / NB_BUTTONS - w / (NB_BUTTONS + 1));
+	buttons.x += buttons.w + margin_between_buttons;
 	*(env->rec_redo) = buttons;
 	SDL_RenderCopy(ren, env->text_redo[env->pressed_redo ? 1 : 0], NULL, &buttons);
-	buttons.x += buttons.w + (w / NB_BUTTONS - w / (NB_BUTTONS + 1));
+	buttons.x += buttons.w + margin_between_buttons;
 	*(env->rec_restart) = buttons;
 	SDL_RenderCopy(ren, env->text_restart[env->pressed_restart ? 1 : 0], NULL, &buttons);
-	buttons.x += buttons.w + (w / NB_BUTTONS - w / (NB_BUTTONS + 1));
+	buttons.x += buttons.w + margin_between_buttons;
 	*(env->rec_solve) = buttons;
 	SDL_RenderCopy(ren, env->text_solve[env->pressed_solve ? 1 : 0], NULL, &buttons);
-	buttons.x += buttons.w + (w / NB_BUTTONS - w / (NB_BUTTONS + 1));
+	buttons.x += buttons.w + margin_between_buttons;
 	*(env->rec_save) = buttons;
 	SDL_RenderCopy(ren, env->text_save[env->pressed_savED ? 2 : env->pressed_save ? 1 : 0], NULL, &buttons);
-	buttons.x += buttons.w + (w / NB_BUTTONS - w / (NB_BUTTONS + 1));
+	buttons.x += buttons.w + margin_between_buttons;
 	buttons.w = buttons.h;
 	*(env->rec_mute) = buttons;
 	SDL_RenderCopy(ren, env->mute[(env->muted ? env->pressed_mute ? 3 : 2 : env->pressed_mute ? 1 : 0)], NULL, &buttons);
@@ -464,7 +478,9 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 }
 
 /* **************************************************************** */
-
+/**
+ * @brief play only one music depend of parms (error priors others)
+ */
 void play_Music(Env* env, bool lightbulb, bool error, bool mark) {
 	if (!game_is_over(env->g)) {
 		if (error && game_has_error_general_intero(env->g)) {
