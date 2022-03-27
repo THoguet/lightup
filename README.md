@@ -10,8 +10,8 @@
 ## Dépendances
 
 ```bash
-apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev # for Linux Debian/Ubuntu
-brew install sdl2 sdl2_image sdl2_ttf                     # for MacOS
+apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev # for Linux Debian/Ubuntu
+brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer                            # for MacOS
 ```
 
 ## Compilation
