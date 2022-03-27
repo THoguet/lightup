@@ -426,7 +426,7 @@ void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory) {
 		render_border_square(ren, rec);
 }
 
-void render_button(SDL_Renderer* ren, Env* env, int w, int margin_between_buttons, SDL_Rect buttons) {
+void render_button(SDL_Renderer* ren, Env* env, int margin_between_buttons, SDL_Rect buttons) {
 	// env->rec_* used in process
 	*(env->rec_undo) = buttons;
 	SDL_RenderCopy(ren, env->text_undo[env->pressed_undo ? 1 : 0], NULL, &buttons);
@@ -486,7 +486,7 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	buttons.h = h / 10 / 1.5;            // 1.5 => used to keep margin around buttons
 	buttons.y = (h / 10 - buttons.h) / 2 + marge_h;
 	buttons.x = margin_between_buttons + marge_w;
-	render_button(ren, env, w, margin_between_buttons, buttons);
+	render_button(ren, env, margin_between_buttons, buttons);
 	// render cases
 	for (uint i = 0; i < game_nb_rows(env->g); i++) {
 		for (uint j = 0; j < game_nb_cols(env->g); j++) {
