@@ -29,7 +29,7 @@ message(STATUS "SDL2 all libraries: ${SDL2_ALL_LIBS}")
 
 #positionne la variable
 set(CMAKE_C_FLAGS "-std=c99 -Wall")
-set(CMAKE_C_FLAGS_DEBUG "-g --coverage  -pthread -Wextra -Wunused-parameter -Wpedantic -Werror")    # use CMake option: -DCMAKE_BUILD_TYPE=DEBUG
+set(CMAKE_C_FLAGS_DEBUG "-g --coverage -pthread -Wextra -Wunused-parameter -Wpedantic -Werror")    # use CMake option: -DCMAKE_BUILD_TYPE=DEBUG
 set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")   # use CMake option: -DCMAKE_BUILD_TYPE=RELEASE
 
 ######################### COPY IMGAES #########################
