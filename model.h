@@ -38,7 +38,7 @@ typedef struct Env_t Env;
 #define APP_NAME "Lightup !"
 #define SCREEN_WIDTH 600
 #define SCREEN_HEIGHT 600
-#define DELAY 100
+#define DELAY 10
 
 /* **************************************************************** */
 
