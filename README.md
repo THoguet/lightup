@@ -67,8 +67,8 @@ Pour mettre une lumière il suffit de faire un clique gauche sur la case voulu, 
 Mais vous pouvez également exécuter ces instructions avec le clavier en tapant sur les raccourcis suivants (clavier AZERTY):
 
 - r / F5 => Réinitialise la partie.
-- z => Annule le coup (undo).
-- y => Annule l'annulation du coup (redo).
+- z => Annule le dernier coup (undo).
+- y => Annule l'annulation du dernier coup (redo).
 - w => Sauvegarde votre partie dans le fichier save.txt.
 - s => Résous la partie (si c'est possible).
 - m => Désactive / active le son.
