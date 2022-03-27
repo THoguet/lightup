@@ -41,11 +41,11 @@ mkdir build ; cd build ; cmake .. ; make
 
 ### Raccourcis
 
-- h => Affiche cette aide.
+- h => Affiche l'aide.
 - r => Réinitialise la partie.
-- q => Quitter la partie (abandon).
-- z => Annule le coup (undo).
-- y => Annule l'annulation du coup (redo).
+- q => Quitte la partie (abandon).
+- z => Annule le dernier coup (undo).
+- y => Annule l'annulation du dernier coup (redo).
 - l \<i> \<j> => pose une lumière aux coordonnées i j (i vertical, j horizontal).
 - m \<i> \<j> => pose une marque aux coordonnées i j (i vertical, j horizontal).
 - b \<i> \<j> => enleve ce qu'il y a dans la case aux coordonnées i j (i vertical, j horizontal).
@@ -71,6 +71,6 @@ Mais vous pouvez également exécuter ces instructions avec le clavier en tapant
 - y => Annule l'annulation du coup (redo).
 - w => Sauvegarde votre partie dans le fichier save.txt.
 - s => Résous la partie (si c'est possible).
-- m => Désactiver / activer le son.
-- F11 => Activer / désactiver le Fullscreen.
-- ESC => Quitter la partie (abandon).
+- m => Désactive / active le son.
+- F11 => Active / désactive le Fullscreen.
+- ESC => Quitte la partie (abandon).
