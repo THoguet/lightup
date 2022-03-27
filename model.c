@@ -3,8 +3,8 @@
 #include "model.h"
 #include <SDL.h>
 #include <SDL_image.h>  // required to load transparent texture from PNG
-#include <SDL_mixer.h>
-#include <SDL_ttf.h>  // required to use TTF fonts
+#include <SDL_mixer.h>  // required to play musics
+#include <SDL_ttf.h>    // required to use TTF fonts
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +15,7 @@
 
 /* **************************************************************** */
 
-/*	names of assets fichier*/
+// paths of file
 #define LIGHTBULB_WHITE "lightbulb_white.png"
 #define LIGHTBULB_RED "lightbulb_red.png"
 #define MUTED "muted.png"
@@ -69,14 +69,14 @@ static void copy_asset(char* src, char* dst) {
 
 /* **************************************************************** */
 
-/*		Fonction Minimum		*/
-int int_min_intero(int a, int b) { /*interopérabilité*/
+// Fonction Minimum
+int int_min_intero(int a, int b) {  // interopérabilité
 	if (a < b)
 		return a;
 	return b;
 }
 
-bool game_has_error_general_intero(cgame g) {  // interoperabilité
+bool game_has_error_general_intero(cgame g) {  // interopérabilité
 	for (uint i = 0; i < game_nb_rows(g); i++) {
 		for (uint j = 0; j < game_nb_cols(g); j++) {
 			if (game_has_error(g, i, j))
@@ -87,7 +87,7 @@ bool game_has_error_general_intero(cgame g) {  // interoperabilité
 }
 
 struct Env_t {
-	game g;
+	game g;  // the game
 
 	SDL_Texture** zero;          // array of two texture one white and one red for each number (red color = r:255 g:50 b:50)
 	SDL_Texture** one;           // Same
@@ -102,16 +102,6 @@ struct Env_t {
 	SDL_Texture** mute;          // array of four texture first one is notmuted the second notmuted_pressed the third muted and the fourth muted_pressed
 	SDL_Texture** lightbulb;     // array of the two lightbulb images first white second red
 
-	bool pressed_restart;
-	bool pressed_undo;
-	bool pressed_redo;
-	bool pressed_solve;
-	bool pressed_save;
-	bool pressed_savED;
-	bool win;
-	bool muted;
-	bool pressed_mute;
-
 	SDL_Rect* rec_game;     // rectangle of the grid
 	SDL_Rect* rec_redo;     // rectangle of each buttons
 	SDL_Rect* rec_undo;     // ^^
@@ -125,9 +115,19 @@ struct Env_t {
 	Mix_Music** mark_music;  // Same
 	Mix_Music* win_music;    // Only one music when wining
 
-	uint lb_music_cpt;
-	uint err_music_cpt;
-	uint mark_music_cpt;
+	bool pressed_restart;  // used to update color of the button when the mouse is overing it
+	bool pressed_undo;     // ^^
+	bool pressed_redo;     // ^^
+	bool pressed_solve;    // ^^
+	bool pressed_save;     // ^^
+	bool pressed_savED;    // ^^
+	bool pressed_mute;     // ^^
+	bool muted;            // when the sound is mute or not
+	bool win;              // used to avoid music being played multiple times
+
+	uint lb_music_cpt;    // used to altern musics
+	uint err_music_cpt;   // ^^
+	uint mark_music_cpt;  // ^^
 };
 
 /* **************************************************************** */
@@ -137,9 +137,9 @@ void usage(char* argv[]) {
 	exit(EXIT_FAILURE);
 }
 
-/*	Fonction to return the texture of the given path	*/
+// Fonction to return the texture of the given path
 SDL_Texture* render_blended_text(SDL_Renderer* ren, SDL_Color color, char* text) {
-	TTF_Font* font = TTF_OpenFont(FONT, FONTSIZE);  // TO EDIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (ANDROID)
+	TTF_Font* font = TTF_OpenFont(FONT, FONTSIZE);  // TO EDIT for android
 	if (!font)
 		ERROR("TTF_OpenFont: %s\n", FONT);
 	TTF_SetFontStyle(font, TTF_STYLE_BOLD);
@@ -148,28 +148,41 @@ SDL_Texture* render_blended_text(SDL_Renderer* ren, SDL_Color color, char* text)
 	SDL_Texture* tmp = SDL_CreateTextureFromSurface(ren, surf);
 	SDL_FreeSurface(surf);
 	TTF_CloseFont(font);
-
 	return tmp;
 }
 
-/*		Fonction to allocate each array of env		*/
-void init_malloc(void** tab[], unsigned long* sizeof_tab, uint size_tab) {
+/**
+ * @brief  Fonction to allocate each array of env
+ *
+ * @param tab array of pointer where you want to malloc
+ * @param size_to_allocate the size to allocate
+ * @param size_tab how many array to allocate
+ */
+void init_malloc(void** tab[], unsigned long size_to_allocate[], uint size_tab) {
 	for (uint i = 0; i < size_tab; i++) {
-		*(tab[i]) = malloc(sizeof_tab[i]);  // malloc with the corressponding size
+		*(tab[i]) = malloc(size_to_allocate[i]);  // malloc with the corressponding size
 		if (*(tab[i]) == NULL)
 			ERROR("%s", "Not enough memory.\n");
 	}
 }
 
-void init_musics(Mix_Music**** music_to_load, char** path_to_musics, uint nb_music, uint nb_music_per_array) {
-	for (uint i = 0; i < nb_music / nb_music_per_array; i++) {
+/**
+ * @brief Alloc each array of music + the music it self
+ *
+ * @param music_to_load array of pointer where you want to allocate an array of (Mix_Music*)
+ * @param path_to_musics array of path for each music to allocate
+ * @param nb_music total number of music to allocate
+ * @param nb_music_per_array number of music per array (all array have the same amount of music)
+ */
+void init_musics(Mix_Music*** music_to_load[], char* path_to_musics[], uint nb_music, uint nb_music_per_array) {
+	for (uint index_music_to_load = 0; index_music_to_load < nb_music / nb_music_per_array; index_music_to_load++) {
 		// allocate the array for the musics
-		*(music_to_load[i]) = malloc(sizeof(Mix_Music*) * nb_music_per_array);
-		for (uint j = 0; j < nb_music_per_array; j++) {
+		*(music_to_load[index_music_to_load]) = malloc(sizeof(Mix_Music*) * nb_music_per_array);
+		for (uint i = 0; i < nb_music_per_array; i++) {
 			// allocate the musics in the array
-			(*(music_to_load[i]))[j] = Mix_LoadMUS(path_to_musics[i * nb_music_per_array + j]);
-			if ((*(music_to_load[i]))[j] == NULL)
-				ERROR("Cannot load music %s\n", path_to_musics[i * nb_music_per_array + j]);
+			(*(music_to_load[index_music_to_load]))[i] = Mix_LoadMUS(path_to_musics[index_music_to_load * nb_music_per_array + i]);
+			if ((*(music_to_load[index_music_to_load]))[i] == NULL)
+				ERROR("Cannot load music %s\n", path_to_musics[index_music_to_load * nb_music_per_array + i]);
 		}
 	}
 }
@@ -178,6 +191,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	Env* env = malloc(sizeof(struct Env_t));
 	Mix_Music*** music_to_load[] = {&(env->lb_music), &(env->err_music), &(env->mark_music)};
 #ifdef __ANDROID__
+	// WIP
 	char* path_to_get[NB_MUSIC] = {LB1, LB2, LB3, ERR1, ERR2, ERR3, MARK1, MARK2, MARK3, WIN};
 	char* paths[NB_MUSIC];
 	const char* dir = SDL_AndroidGetInternalStoragePath();
@@ -189,8 +203,9 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 		strcpy(paths[i], new_path);
 	}
 #else
-	char* paths[NB_MUSIC] = {LB1, LB2, LB3, ERR1, ERR2, ERR3, MARK1, MARK2, MARK3, WIN};
+	char* path_musics[NB_MUSIC] = {LB1, LB2, LB3, ERR1, ERR2, ERR3, MARK1, MARK2, MARK3, WIN};
 #endif
+	// init bool
 	env->pressed_restart = false;
 	env->pressed_undo = false;
 	env->pressed_redo = false;
@@ -199,6 +214,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->pressed_savED = false;
 	env->pressed_mute = false;
 	env->muted = false;
+
 	PRINT("%s", "To win the game, you must satisfy the following conditions:\n\n");
 	PRINT("%s",
 	      "-All non-black squares are lit.\n-No light is lit by another light.\n-Each numbered black square must be orthogonally adjacent to exactly the given "
@@ -214,12 +230,14 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	}
 	SIZE_ARRAY;
 	uint cpt = 0;
-	uint index_rec = 12;
+	uint index_rec = 12;  // where the first rec is
+	// array of each array (except musics) of env
 	void** env_tab[] = {(void**)&(env->zero),       (void**)&(env->one),          (void**)&(env->two),         (void**)&(env->three),
 	                    (void**)&(env->four),       (void**)&(env->text_restart), (void**)&(env->text_undo),   (void**)&(env->text_redo),
 	                    (void**)&(env->text_solve), (void**)&(env->text_save),    (void**)&(env->lightbulb),   (void**)&(env->mute),
 	                    (void**)&(env->rec_game),   (void**)&(env->rec_redo),     (void**)&(env->rec_restart), (void**)&(env->rec_solve),
 	                    (void**)&(env->rec_undo),   (void**)&(env->rec_save),     (void**)&(env->rec_mute)};
+	// size of each array
 	unsigned long sizeof_env_tab[] = {
 	    sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++],
 	    sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++],
@@ -229,33 +247,40 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	    sizeof(SDL_Rect) * sizeof_array[cpt++],     sizeof(SDL_Rect) * sizeof_array[cpt++],     sizeof(SDL_Rect) * sizeof_array[cpt++],
 	    sizeof(SDL_Rect) * sizeof_array[cpt++]};
 	init_malloc(env_tab, sizeof_env_tab, sizeof(env_tab) / sizeof(env_tab[0]));
+	// init all rect
 	for (uint i = index_rec; i < sizeof(env_tab) / sizeof(env_tab[0]); i++) {
 		((SDL_Rect*)(*(env_tab[i])))->h = 0;
 		((SDL_Rect*)(*(env_tab[i])))->w = 0;
 		((SDL_Rect*)(*(env_tab[i])))->x = 0;
 		((SDL_Rect*)(*(env_tab[i])))->y = 0;
 	}
-	// the normal lightbulb
+	// load the normal lightbulb
 	env->lightbulb[0] = IMG_LoadTexture(ren, LIGHTBULB_WHITE);
 	if (!env->lightbulb[0])
 		ERROR("IMG_LoadTexture: %s\n", LIGHTBULB_WHITE);
-	// the error one
+	// load the error one
 	env->lightbulb[1] = IMG_LoadTexture(ren, LIGHTBULB_RED);
 	if (!env->lightbulb[1])
 		ERROR("IMG_LoadTexture: %s\n", LIGHTBULB_RED);
+	// load the normal notmuted image
 	env->mute[0] = IMG_LoadTexture(ren, NOTMUTED);
 	if (!env->mute[0])
 		ERROR("IMG_LoadTexture: %s\n", NOTMUTED);
+	// load the pressed one
 	env->mute[1] = IMG_LoadTexture(ren, NOTMUTED_PRESSED);
 	if (!env->mute[1])
 		ERROR("IMG_LoadTexture: %s\n", NOTMUTED_PRESSED);
+	// load the normal muted image
 	env->mute[2] = IMG_LoadTexture(ren, MUTED);
 	if (!env->mute[2])
 		ERROR("IMG_LoadTexture: %s\n", MUTED);
+	// load the pressed one
 	env->mute[3] = IMG_LoadTexture(ren, MUTED_PRESSED);
 	if (!env->mute[3])
 		ERROR("IMG_LoadTexture: %s\n", MUTED_PRESSED);
-	init_musics(music_to_load, paths, NB_MUSIC, 3);
+	// load the musics
+	init_musics(music_to_load, path_musics, NB_MUSIC, 3);
+	// init value
 	env->lb_music_cpt = 0;
 	env->err_music_cpt = 0;
 	env->mark_music_cpt = 0;
@@ -266,6 +291,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->win = false;
 
 #ifdef __ANDROID__
+	// WIP
 	for (uint i = 0; i < NB_MUSIC; i++) {
 		free(paths[i]);
 	}
@@ -400,44 +426,7 @@ void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory) {
 		render_border_square(ren, rec);
 }
 
-void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
-	int win_w, win_h, h, w;
-	SDL_GetWindowSize(win, &win_w, &win_h);
-
-	if (win_h > win_w) {  // used to keep the ratio of the buttons
-		h = win_w;
-		w = win_w;
-	} else {
-		h = win_h;
-		w = win_h;
-	}
-
-	int marge_h = (win_h - h) / 2;
-	int marge_w = (win_w - w) / 2;
-
-	h = h - h / 10;
-	// set background color
-	SDL_SetRenderDrawColor(ren, 24, 26, 27, SDL_ALPHA_OPAQUE);
-	SDL_RenderClear(ren);
-	SDL_Rect rec;
-	int size_rec = int_min_intero(w / game_nb_cols(env->g), h / game_nb_rows(env->g));
-	rec.h = size_rec;
-	rec.w = size_rec;
-	int rec_x = w / 2 - size_rec * game_nb_cols(env->g) / 2 + marge_w;
-	int rec_y = h / 2 - size_rec * game_nb_rows(env->g) / 2 + h / 10 + marge_h;
-	rec.x = rec_x;
-	rec.y = rec_y;
-	env->rec_game->x = rec.x;
-	env->rec_game->y = rec.y;
-	env->rec_game->h = size_rec * game_nb_rows(env->g);
-	env->rec_game->w = size_rec * game_nb_cols(env->g);
-	// buttons
-	SDL_Rect buttons;
-	int margin_between_buttons = (w / NB_BUTTONS - w / (NB_BUTTONS + 1));
-	buttons.w = w / (NB_BUTTONS + 0.5);  // 0.5 used to keep space between buttons
-	buttons.h = h / 10 / 1.5;            // 1.5 => used to keep margin around buttons
-	buttons.y = (h / 10 - buttons.h) / 2 + marge_h;
-	buttons.x = margin_between_buttons + marge_w;
+void render_button(SDL_Renderer* ren, Env* env, int w, int margin_between_buttons, SDL_Rect buttons) {
 	// env->rec_* used in process
 	*(env->rec_undo) = buttons;
 	SDL_RenderCopy(ren, env->text_undo[env->pressed_undo ? 1 : 0], NULL, &buttons);
@@ -457,6 +446,47 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	buttons.w = buttons.h;
 	*(env->rec_mute) = buttons;
 	SDL_RenderCopy(ren, env->mute[(env->muted ? env->pressed_mute ? 3 : 2 : env->pressed_mute ? 1 : 0)], NULL, &buttons);
+}
+
+void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
+	int win_w, win_h, h, w;
+	SDL_GetWindowSize(win, &win_w, &win_h);
+
+	if (win_h > win_w) {  // used to keep the ratio of the buttons
+		h = win_w;
+		w = win_w;
+	} else {
+		h = win_h;
+		w = win_h;
+	}
+
+	int marge_h = (win_h - h) / 2;  // used to keep button close to the game
+	int marge_w = (win_w - w) / 2;
+
+	h = h - h / 10;  // used by the buttons
+	// set background color
+	SDL_SetRenderDrawColor(ren, 24, 26, 27, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(ren);
+	SDL_Rect rec;
+	int size_rec = int_min_intero(w / game_nb_cols(env->g), h / game_nb_rows(env->g));
+	rec.h = size_rec;
+	rec.w = size_rec;
+	int rec_x = w / 2 - size_rec * game_nb_cols(env->g) / 2 + marge_w;
+	int rec_y = h / 2 - size_rec * game_nb_rows(env->g) / 2 + h / 10 + marge_h;
+	rec.x = rec_x;
+	rec.y = rec_y;
+	env->rec_game->x = rec.x;
+	env->rec_game->y = rec.y;
+	env->rec_game->h = size_rec * game_nb_rows(env->g);
+	env->rec_game->w = size_rec * game_nb_cols(env->g);
+	// init vars for render_buttons
+	SDL_Rect buttons;
+	int margin_between_buttons = (w / NB_BUTTONS - w / (NB_BUTTONS + 1));
+	buttons.w = w / (NB_BUTTONS + 0.5);  // 0.5 used to keep space between buttons
+	buttons.h = h / 10 / 1.5;            // 1.5 => used to keep margin around buttons
+	buttons.y = (h / 10 - buttons.h) / 2 + marge_h;
+	buttons.x = margin_between_buttons + marge_w;
+	render_button(ren, env, w, margin_between_buttons, buttons);
 	// render cases
 	for (uint i = 0; i < game_nb_rows(env->g); i++) {
 		for (uint j = 0; j < game_nb_cols(env->g); j++) {
@@ -523,68 +553,89 @@ void play_mark(uint i, uint j, Env* env) {
 	}
 }
 
-void update_pressed(Env* env, bool undo, bool redo, bool restart, bool solve, bool save, bool savED, bool mute) {
-	env->pressed_undo = undo;
-	env->pressed_redo = redo;
-	env->pressed_restart = restart;
-	env->pressed_solve = solve;
-	env->pressed_save = save;
-	env->pressed_savED = savED;
-	env->pressed_mute = mute;
+/**
+ * @brief used to update status of the button (only one can be pressed at a time)
+ *
+ * @param env
+ * @param to_change the button to set pressed
+ */
+void update_pressed(Env* env, bool* to_change) {
+	env->pressed_undo = &(env->pressed_undo) == to_change;
+	env->pressed_redo = &(env->pressed_redo) == to_change;
+	env->pressed_restart = &(env->pressed_restart) == to_change;
+	env->pressed_solve = &(env->pressed_solve) == to_change;
+	env->pressed_save = &(env->pressed_save) == to_change;
+	env->pressed_savED = &(env->pressed_savED) == to_change;
+	env->pressed_mute = &(env->pressed_mute) == to_change;
 }
-
+/**
+ * @param nb_coups used to avoid undo button able to be pressed when mouse over
+ * @param nb_undo used to avoid redo button able to be pressed when mouse over
+ */
 bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb_coups, int* nb_undo) {
 	int w, h;
 	SDL_GetWindowSize(win, &w, &h);
-	if (e->type == SDL_QUIT) {
+	if (e->type == SDL_QUIT)
 		return true;
-	}
-	// Tests of the differents types of inputs to interact with the game
-	if (e->type == SDL_KEYDOWN) {  // differents shortcuts for differents types of actions
-		const Uint8* state = SDL_GetKeyboardState(NULL);
-		if (state[SDL_SCANCODE_F11]) {  // F11 to toggle fullscreen (pretty obvious)
-			ToggleFullscreen(win);
-		} else if (state[SDL_SCANCODE_W]) {  // (W becuase sdl2 is in QWERTY) Z to undo a move only if you have done at least 1 move before
-			if ((*nb_coups) > 0) {
-				game_undo(env->g);
-				(*nb_undo)++;
-				(*nb_coups)--;
-				update_pressed(env, true, false, false, false, false, false, false);
-			}
-		} else if (state[SDL_SCANCODE_Y]) {  // Y to redo a move can only if you have done at least 1 undo before
-			if ((*nb_undo) > 0) {
-				game_redo(env->g);
-				(*nb_undo)--;
-				(*nb_coups)++;
-				update_pressed(env, false, true, false, false, false, false, false);
-			}
-		} else if (state[SDL_SCANCODE_S]) {  // S to solving the game immediately
-			game_solve(env->g);
-			(*nb_undo) = 0;
-			(*nb_coups)++;
-			update_pressed(env, false, false, false, true, false, false, false);
-		} else if (state[SDL_SCANCODE_R] || state[SDL_SCANCODE_F5]) {  // R or F5 to restart the game
-			game_restart(env->g);
-			(*nb_undo) = 0;
-			(*nb_coups) = 0;
-			update_pressed(env, false, false, true, false, false, false, false);
-		} else if (state[SDL_SCANCODE_Z]) {  // (Z becuase sdl2 is in QWERTY) W to save the game in the file save.txt
-			game_save(env->g, "save.txt");
-			update_pressed(env, false, false, false, false, false, true, false);
-		} else if (state[SDL_SCANCODE_SEMICOLON]) {  // M (in azerty setup) to mute
-			env->muted = env->muted ? 0 : 1;
-			Mix_VolumeMusic(env->muted ? 0 : 128);
-			update_pressed(env, false, false, false, false, false, false, true);
-		} else if (state[SDL_SCANCODE_ESCAPE])
-			return true;
-	} else if (e->type == SDL_KEYUP) {
-		update_pressed(env, false, false, false, false, false, false, false);
-	}
+	// test if game is over (env->win used to play win music only once)
 	if (game_is_over(env->g) && !env->win) {
 		Mix_PlayMusic(env->win_music, 1);
 		env->win = true;
 	} else if (env->win && !game_is_over(env->g)) {
 		env->win = false;
+	}
+	// Tests of the differents types of inputs to interact with the game
+	if (e->type == SDL_KEYDOWN) {  // differents shortcuts for differents types of actions
+		switch (e->key.keysym.sym) {
+			case SDLK_F11:  // F11 to toggle fullscreen (pretty obvious)
+				ToggleFullscreen(win);
+				break;
+
+			case SDLK_z:  // Z to undo a move only if you have done at least 1 move before
+				if ((*nb_coups) > 0) {
+					game_undo(env->g);
+					(*nb_undo)++;
+					(*nb_coups)--;
+					update_pressed(env, &(env->pressed_undo));
+				}
+				break;
+			case SDLK_y:  // Y to redo a move can only if you have done at least 1 undo before
+				if ((*nb_undo) > 0) {
+					game_redo(env->g);
+					(*nb_undo)--;
+					(*nb_coups)++;
+					update_pressed(env, &(env->pressed_redo));
+				}
+				break;
+			case SDLK_s:  // S to solving the game immediately
+				game_solve(env->g);
+				(*nb_undo) = 0;
+				(*nb_coups) = 0;
+				update_pressed(env, &(env->pressed_solve));
+				break;
+			case SDLK_F5:
+			case SDLK_r:  // R or F5 to restart the game
+				game_restart(env->g);
+				(*nb_undo) = 0;
+				(*nb_coups) = 0;
+				update_pressed(env, &(env->pressed_restart));
+				break;
+			case SDLK_w:  //  W to save the game in the file save.txt
+				game_save(env->g, "save.txt");
+				update_pressed(env, &(env->pressed_savED));
+				break;
+			case SDLK_m:  // M to mute
+				env->muted = !env->muted;
+				Mix_VolumeMusic(env->muted ? 0 : 128);
+				update_pressed(env, &(env->pressed_mute));
+				break;
+			case SDLK_ESCAPE:
+				return true;
+			default:
+				break;
+		}
+	} else if (e->type == SDL_KEYUP) {
+		update_pressed(env, NULL);
 	}
 	if (e->type == SDL_MOUSEMOTION || e->type == SDL_FINGERDOWN) {
 		SDL_Point mouse;
@@ -595,28 +646,28 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 			mouse.y = e->tfinger.y;
 		}
 		if (SDL_PointInRect(&mouse, env->rec_restart)) {
-			update_pressed(env, false, false, true, false, false, false, false);
+			update_pressed(env, &(env->pressed_restart));
 		} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
 			if ((*nb_coups) > 0)
-				update_pressed(env, true, false, false, false, false, false, false);
+				update_pressed(env, &(env->pressed_undo));
 			else
-				update_pressed(env, false, false, false, false, false, false, false);
+				update_pressed(env, NULL);
 		} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
 			if ((*nb_undo) > 0)
-				update_pressed(env, false, true, false, false, false, false, false);
+				update_pressed(env, &(env->pressed_redo));
 			else
-				update_pressed(env, false, false, false, false, false, false, false);
+				update_pressed(env, NULL);
 		} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
-			update_pressed(env, false, false, false, true, false, false, false);
+			update_pressed(env, &(env->pressed_solve));
 		} else if (SDL_PointInRect(&mouse, env->rec_save)) {
-			update_pressed(env, false, false, false, false, true, false, false);
+			update_pressed(env, &(env->pressed_save));
 		} else if (SDL_PointInRect(&mouse, env->rec_mute)) {
-			update_pressed(env, false, false, false, false, false, false, true);
+			update_pressed(env, &(env->pressed_mute));
 		} else {
-			update_pressed(env, false, false, false, false, false, false, false);
+			update_pressed(env, NULL);
 		}
-
 #ifdef _ANDROID_
+		// WIP
 		if (SDL_PointInRect(&mouse, env->rec_game)) {
 			if (e->type != prec_e->type) {
 				prec_e->type = e->type;
@@ -629,21 +680,26 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 		if (e->type == SDL_MOUSEBUTTONDOWN) {
 			SDL_GetMouseState(&mouse.x, &mouse.y);
 		} else {
+			// used for android
 			mouse.x = e->tfinger.x;
 			mouse.y = e->tfinger.y;
 		}
-
+		// test if the user clicked on a button
 		if (SDL_PointInRect(&mouse, env->rec_restart)) {
 			game_restart(env->g);
 			(*nb_undo) = 0;
 			(*nb_coups) = 0;
 		} else if (SDL_PointInRect(&mouse, env->rec_undo)) {
+			if (*nb_coups == 1)
+				update_pressed(env, NULL);
 			if ((*nb_coups) > 0) {
 				game_undo(env->g);
 				(*nb_undo)++;
 				(*nb_coups)--;
 			}
 		} else if (SDL_PointInRect(&mouse, env->rec_redo)) {
+			if (*nb_undo == 1)
+				update_pressed(env, NULL);
 			if ((*nb_undo) > 0) {
 				game_redo(env->g);
 				(*nb_undo)--;
@@ -652,25 +708,26 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 		} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
 			game_solve(env->g);
 			(*nb_undo) = 0;
-			(*nb_coups)++;
+			(*nb_coups) = 0;
 		} else if (SDL_PointInRect(&mouse, env->rec_mute)) {
 			env->muted = env->muted ? 0 : 1;
 			Mix_VolumeMusic(env->muted ? 0 : 128);
 		} else if (SDL_PointInRect(&mouse, env->rec_save)) {
 			game_save(env->g, "save.txt");
-			update_pressed(env, false, false, false, false, false, true, false);
-		} else if (SDL_PointInRect(&mouse, env->rec_game)) {
-			uint i = (((float)mouse.y - (float)env->rec_game->y) / (float)env->rec_game->h * game_nb_rows(env->g)) -
-			         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7 (in case of a game 7x7)*/;
-			uint j = (((float)mouse.x - (float)env->rec_game->x) / (float)env->rec_game->w * game_nb_cols(env->g)) -
-			         0.00001 /*to avoid if clicked exacly on the bottom right corner to result a 7 (in case of a game 7x7)*/;
-
+			update_pressed(env, &(env->pressed_savED));
+		}
+		// if the user didn't press a button test if he pressed in the game
+		else if (SDL_PointInRect(&mouse, env->rec_game)) {
+			// convert mouse coordinate in game coordinate
+			// 0.00001 used to avoid if clicked exacly on the bottom right corner to result 7 instead of 6 (in case of a 7x7 game)
+			uint i = (((float)mouse.y - (float)env->rec_game->y) / (float)env->rec_game->h * game_nb_rows(env->g)) - 0.00001;
+			uint j = (((float)mouse.x - (float)env->rec_game->x) / (float)env->rec_game->w * game_nb_cols(env->g)) - 0.00001;
 			if (e->type == SDL_MOUSEBUTTONDOWN && e->button.button == SDL_BUTTON_LEFT) {  // only execute when type == SDL_MOUSEBUTTONDOWN
 				play_light(i, j, env);
 			} else if (e->type == SDL_MOUSEBUTTONDOWN && e->button.button == SDL_BUTTON_RIGHT) {
 				play_mark(i, j, env);
 			}
-
+			// for android
 			if (e->type == SDL_FINGERUP && (e->tfinger.timestamp - prec_e->tfinger.timestamp) < 300) {  // only execute when type == SDL_FINGERUP
 				play_light(i, j, env);
 			} else if (e->type == SDL_FINGERUP) {
