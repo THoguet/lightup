@@ -64,7 +64,7 @@ mkdir build ; cd build ; cmake .. ; make
 ### Raccourcis
 
 Pour mettre une lumière il suffit de faire un clique gauche sur la case voulu, pour une marque c'est un clique droit. Pour enlever une lumière ou une marque d'une case il faut recliquer dessus avec le clique précédement utilisé. De plus nous avons mis des boutons en haut de l'interface sur lesquels vous pouvez cliquer pour exécuter les instructions UNDO, REDO, RESTART, SOLVE, SAVE et MUTE.
-Mais vous pouvez également exécuter ces instructions avec le clavier en tapant sur les raccourcis suivants (clavier AZERTY):
+Mais vous pouvez également exécuter ces instructions avec le clavier en tapant sur les raccourcis suivants:
 
 - r / F5 => Réinitialise la partie.
 - z => Annule le dernier coup (undo).
