@@ -639,6 +639,34 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 				Mix_VolumeMusic(env->muted ? 0 : 128);
 				update_pressed(env, &(env->pressed_mute));
 				break;
+			case SDLK_LEFT:
+				env->j--;
+				break;
+			case SDLK_RIGHT:
+				env->j++;
+				break;
+			case SDLK_DOWN:
+				env->i++;
+				break;
+			case SDLK_UP:
+				env->i--;
+				break;
+			case SDLK_RETURN:
+				if (game_check_move(env->g, env->i, env->j, S_LIGHTBULB))
+					switch (game_get_state(env->g, env->i, env->j)) {
+						case S_BLANK:
+							play_light(env->i, env->j, env);
+							break;
+						case S_LIGHTBULB:
+							play_mark(env->i, env->j, env);
+							break;
+						case S_MARK:
+							play_mark(env->i, env->j, env);
+							break;
+						default:
+							break;
+					}
+				break;
 			case SDLK_ESCAPE:
 				return true;
 			default:
@@ -679,10 +707,10 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 		if (SDL_PointInRect(&mouse, env->rec_game)) {
 			env->i = (((float)mouse.y - (float)env->rec_game->y) / (float)env->rec_game->h * game_nb_rows(env->g)) - 0.00001;
 			env->j = (((float)mouse.x - (float)env->rec_game->x) / (float)env->rec_game->w * game_nb_cols(env->g)) - 0.00001;
-		} else {
-			env->i = -1;
-			env->j = -1;
-		}
+		}  // else {
+		   // 	env->i = -1;
+		   // 	env->j = -1;
+		   // }
 #ifdef _ANDROID_
 		// WIP
 		if (SDL_PointInRect(&mouse, env->rec_game)) {
@@ -752,10 +780,10 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 			}
 			(*nb_undo) = 0;
 			(*nb_coups)++;
-		} else {
-			env->i = -1;
-			env->j = -1;
-		}
+		}  // else {
+		   // 	env->i = -1;
+		   // 	env->j = -1;
+		   // }
 	}
 
 	return false;
