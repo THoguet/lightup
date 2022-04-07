@@ -224,7 +224,8 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	      "number of lights.\n-Non-numbered black squares may have any number of lights adjacent to them.\n");
 	if (argc == 1) {
 		// Create new game
-		env->g = game_default();
+		srand(time(NULL));  // initialize radom seed with current time
+		env->g = game_random(7, 7, false, 10, false);
 	} else if (argc == 2) {
 		char* gameFile = argv[1];
 		env->g = game_load(gameFile);
