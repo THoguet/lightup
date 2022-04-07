@@ -2,7 +2,7 @@
 
 #include <SDL.h>
 #include <SDL_image.h>  // required to load transparent texture from PNG
-#include <SDL_mixer.h>
+// #include <SDL_mixer.h>
 #include <SDL_ttf.h>  // required to use TTF fonts
 #include <stdbool.h>
 #include <stdio.h>
@@ -18,8 +18,8 @@ int main(int argc, char* argv[]) {
 		ERROR("Error: IMG_Init PNG (%s)", SDL_GetError());
 	if (TTF_Init() != 0)
 		ERROR("Error: TTF_Init (%s)", SDL_GetError());
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 2048) < 0)
-		ERROR("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+	// if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 2048) < 0)
+	// 	ERROR("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 
 	/* create window and renderer */
 	SDL_Window* win =

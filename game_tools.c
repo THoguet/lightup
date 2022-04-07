@@ -530,8 +530,8 @@ static uint nb_neigh_lightbulbs(cgame g, uint i, uint j) {
 	assert(g);
 	int nb_rows = game_nb_rows(g);
 	int nb_cols = game_nb_cols(g);
-	assert(i < nb_rows);
-	assert(j < nb_cols);
+	assert(i < (uint)nb_rows);
+	assert(j < (uint)nb_cols);
 
 	int i_up = i - 1;
 	int i_down = i + 1;
