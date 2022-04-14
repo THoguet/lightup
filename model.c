@@ -3,8 +3,7 @@
 #include "model.h"
 #include <SDL.h>
 #include <SDL_image.h>  // required to load transparent texture from PNG
-// #include <SDL_mixer.h>  // required to play musics
-#include <SDL_ttf.h>  // required to use TTF fonts
+#include <SDL_ttf.h>    // required to use TTF fonts
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,18 +22,7 @@
 #define MUTED_PRESSED "muted_pressed.png"
 #define NOTMUTED "notmuted.png"
 #define NOTMUTED_PRESSED "notmuted_pressed.png"
-// #define LB1 "lb1.mp3"
-// #define LB2 "lb2.mp3"
-// #define LB3 "lb3.mp3"
-// #define ERR1 "error1.mp3"
-// #define ERR2 "error2.mp3"
-// #define ERR3 "error3.mp3"
-// #define MARK1 "mark1.wav"
-// #define MARK2 "mark2.wav"
-// #define MARK3 "mark3.wav"
-// #define WIN "win.mp3"
 #define FONT "Roboto-Regular.ttf"
-
 #define NB_MUSIC 10
 #define NB_MUSIC_PER_ARRAY 3
 #define NB_BUTTONS 6
@@ -110,25 +98,15 @@ struct Env_t {
 	SDL_Rect* rec_solve;    // ^^
 	SDL_Rect* rec_save;     // ^^
 	SDL_Rect* rec_mute;     // ^^
-
-	// Mix_Music** lb_music;    // array of three musics for each action
-	// Mix_Music** err_music;   // Same
-	// Mix_Music** mark_music;  // Same
-	// Mix_Music* win_music;    // Only one music when wining
-
-	bool pressed_restart;  // used to update color of the button when the mouse is overing it
-	bool pressed_undo;     // ^^
-	bool pressed_redo;     // ^^
-	bool pressed_solve;    // ^^
-	bool pressed_save;     // ^^
-	bool pressed_savED;    // ^^
-	bool pressed_mute;     // ^^
-	bool muted;            // when the sound is mute or not
-	bool win;              // used to avoid music being played multiple times
-
-	// uint lb_music_cpt;    // used to altern musics
-	// uint err_music_cpt;   // ^^
-	// uint mark_music_cpt;  // ^^
+	bool pressed_restart;   // used to update color of the button when the mouse is overing it
+	bool pressed_undo;      // ^^
+	bool pressed_redo;      // ^^
+	bool pressed_solve;     // ^^
+	bool pressed_save;      // ^^
+	bool pressed_savED;     // ^^
+	bool pressed_mute;      // ^^
+	bool muted;             // when the sound is mute or not
+	bool win;               // used to avoid music being played multiple times
 
 	int i;
 	int j;
@@ -170,45 +148,8 @@ void init_malloc(void** tab[], unsigned long size_to_allocate[], uint size_tab) 
 	}
 }
 
-/**
- * @brief Alloc each array of music + the music it self
- *
- * @param music_to_load array of pointer where you want to allocate an array of (Mix_Music*)
- * @param path_to_musics array of path for each music to allocate
- * @param nb_music total number of music to allocate
- * @param nb_music_per_array number of music per array (all array have the same amount of music)
- */
-// void init_musics(Mix_Music*** music_to_load[], char* path_to_musics[], uint nb_music, uint nb_music_per_array) {
-// 	for (uint index_music_to_load = 0; index_music_to_load < nb_music / nb_music_per_array; index_music_to_load++) {
-// 		// allocate the array for the musics
-// 		*(music_to_load[index_music_to_load]) = malloc(sizeof(Mix_Music*) * nb_music_per_array);
-// 		for (uint i = 0; i < nb_music_per_array; i++) {
-// 			// allocate the musics in the array
-// 			(*(music_to_load[index_music_to_load]))[i] = Mix_LoadMUS(path_to_musics[index_music_to_load * nb_music_per_array + i]);
-// 			if ((*(music_to_load[index_music_to_load]))[i] == NULL)
-// 				ERROR("Cannot load music %s\n", path_to_musics[index_music_to_load * nb_music_per_array + i]);
-// 		}
-// 	}
-// }
-
 Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	Env* env = malloc(sizeof(struct Env_t));
-	// Mix_Music*** music_to_load[] = {&(env->lb_music), &(env->err_music), &(env->mark_music)};
-#ifdef __ANDROID__
-	// WIP
-	// char* path_to_get[NB_MUSIC] = {LB1, LB2, LB3, ERR1, ERR2, ERR3, MARK1, MARK2, MARK3, WIN};
-	// char* paths[NB_MUSIC];
-	// const char* dir = SDL_AndroidGetInternalStoragePath();
-	// char new_path[1024];
-	// for (uint i = 0; i < NB_MUSIC; i++) {
-	// 	paths[i] = malloc(sizeof(char) * 1024);
-	// 	sprintf(new_path, "%s/%s", dir, path_to_get[i]);
-	// 	copy_asset(path_to_get[i], new_path);
-	// 	strcpy(paths[i], new_path);
-	// }
-#else
-	// char* path_musics[NB_MUSIC] = {LB1, LB2, LB3, ERR1, ERR2, ERR3, MARK1, MARK2, MARK3, WIN};
-#endif
 	// init bool
 	env->pressed_restart = false;
 	env->pressed_undo = false;
@@ -283,27 +224,10 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->mute[3] = IMG_LoadTexture(ren, MUTED_PRESSED);
 	if (!env->mute[3])
 		ERROR("IMG_LoadTexture: %s\n", MUTED_PRESSED);
-	// load the musics
-	// init_musics(music_to_load, path_musics, NB_MUSIC, 3);
-	// // init value
-	// env->lb_music_cpt = 0;
-	// env->err_music_cpt = 0;
-	// env->mark_music_cpt = 0;
 
 	env->i = -1;
 	env->j = -1;
-	// Music win
-	// env->win_music = Mix_LoadMUS(WIN);
-	// if (env->win_music == NULL)
-	// 	ERROR("Cannot load music %s\n", WIN);
 	env->win = false;
-
-#ifdef __ANDROID__
-	// WIP
-	// for (uint i = 0; i < NB_MUSIC; i++) {
-	// 	free(paths[i]);
-	// }
-#endif
 
 	/*Creation of the differents textures and place them in env*/
 	SDL_Color color_white = {255, 255, 255, SDL_ALPHA_OPAQUE};  // color of 0 in black wall with error
@@ -332,7 +256,6 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 			tab_textures_double[i][j] = render_blended_text(ren, color_of_texts[cpt++], tab_texts_double[i]);
 		}
 	}
-	// Mix_VolumeMusic(MIX_MAX_VOLUME);
 	return env;
 }
 
@@ -519,25 +442,6 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 		env->win = true;
 }
 
-/* **************************************************************** */
-/**
- * @brief play only one music depend of parms (error priors others)
- */
-// void play_Music(Env* env, bool lightbulb, bool error, bool mark) {
-// 	if (!game_is_over(env->g)) {
-// 		if (error && game_has_error_general_intero(env->g)) {
-// 			Mix_PlayMusic(env->err_music[env->err_music_cpt % 3], 0);
-// 			env->err_music_cpt++;
-// 		} else if (lightbulb) {
-// 			Mix_PlayMusic(env->lb_music[env->lb_music_cpt % 3], 0);
-// 			env->lb_music_cpt++;
-// 		} else if (mark) {
-// 			Mix_PlayMusic(env->mark_music[env->mark_music_cpt % 3], 0);
-// 			env->mark_music_cpt++;
-// 		}
-// 	}
-// }
-
 void ToggleFullscreen(SDL_Window* Window) {
 	Uint32 FullscreenFlag = SDL_WINDOW_FULLSCREEN;
 	bool IsFullscreen = SDL_GetWindowFlags(Window) & FullscreenFlag;
@@ -548,20 +452,16 @@ void ToggleFullscreen(SDL_Window* Window) {
 void play_light(uint i, uint j, Env* env) {
 	if (game_is_blank(env->g, i, j) || game_is_marked(env->g, i, j)) {
 		game_play_move(env->g, i, j, S_LIGHTBULB);
-		// play_Music(env, true, true, false);
 	} else if (game_is_lightbulb(env->g, i, j)) {
 		game_play_move(env->g, i, j, S_BLANK);
-		// play_Music(env, true, true, false);
 	}
 }
 
 void play_mark(uint i, uint j, Env* env) {
 	if (game_is_blank(env->g, i, j) || game_is_lightbulb(env->g, i, j)) {
 		game_play_move(env->g, i, j, S_MARK);
-		// play_Music(env, false, true, true);
 	} else if (game_is_marked(env->g, i, j)) {
 		game_play_move(env->g, i, j, S_BLANK);
-		// play_Music(env, false, true, true);
 	}
 }
 
@@ -638,7 +538,6 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 				break;
 			case SDLK_m:  // M to mute
 				env->muted = !env->muted;
-				// Mix_VolumeMusic(env->muted ? 0 : 128);
 				update_pressed(env, &(env->pressed_mute));
 				break;
 			case SDLK_LEFT:
@@ -758,7 +657,6 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 			(*nb_coups) = 0;
 		} else if (SDL_PointInRect(&mouse, env->rec_mute)) {
 			env->muted = env->muted ? 0 : 1;
-			// Mix_VolumeMusic(env->muted ? 0 : 128);
 		} else if (SDL_PointInRect(&mouse, env->rec_save)) {
 			game_save(env->g, "save.txt");
 			update_pressed(env, &(env->pressed_savED));
@@ -819,17 +717,6 @@ void clean(Env* env) {
 	// free everything that is not array of texture
 	SDL_Rect* free_tab[] = {env->rec_game, env->rec_redo, env->rec_restart, env->rec_solve, env->rec_undo};
 	freeall(free_tab, sizeof(free_tab) / sizeof(free_tab[0]));
-	// free every musics
-	// for (uint i = 0; i < NB_MUSIC_PER_ARRAY; i++) {
-	// 	Mix_FreeMusic(env->lb_music[i]);
-	// 	Mix_FreeMusic(env->mark_music[i]);
-	// 	Mix_FreeMusic(env->err_music[i]);
-	// }
-	// Mix_FreeMusic(env->win_music);
-	// free the array
-	// free(env->lb_music);
-	// free(env->mark_music);
-	// free(env->err_music);
 	free(env);
 }
 
