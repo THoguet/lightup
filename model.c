@@ -15,6 +15,10 @@
 
 /* **************************************************************** */
 
+// TAILLE MAX ET TAILLE MIN POUR LE GAME
+#define TAILLE_MAX 10
+#define TAILLE_MIN 3
+
 // paths of file
 #define LIGHTBULB_WHITE "lightbulb_white.png"
 #define LIGHTBULB_RED "lightbulb_red.png"
@@ -164,10 +168,13 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	PRINT("%s",
 	      "-All non-black squares are lit.\n-No light is lit by another light.\n-Each numbered black square must be orthogonally adjacent to exactly the given "
 	      "number of lights.\n-Non-numbered black squares may have any number of lights adjacent to them.\n");
+	srand(time(NULL));  // initialize radom seed with current time
+	int random1 = (rand() % (TAILLE_MAX - TAILLE_MIN + 1)) + TAILLE_MIN;
+	int random2 = (rand() % (TAILLE_MAX - TAILLE_MIN + 1)) + TAILLE_MIN;
 	if (argc == 1) {
 		// Create new game
-		srand(time(NULL));  // initialize radom seed with current time
-		env->g = game_random(7, 7, false, 10, false);
+
+		env->g = game_random(random1, random2, false, 10, false);
 	} else if (argc == 2) {
 		char* gameFile = argv[1];
 		env->g = game_load(gameFile);
@@ -675,7 +682,7 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 			// for android
 			if (e->type == SDL_FINGERUP && (e->tfinger.timestamp - prec_e->tfinger.timestamp) < 300) {  // only execute when type == SDL_FINGERUP
 				play_light(env->i, env->j, env);
-			} else if (e->type == SDL_FINGERUP) {
+			 else if (e->type == SDL_FINGERUP || (e->tfinger.timestamp - prec_e->tfinger.timestamp) > 300) {
 				play_mark(env->i, env->j, env);
 			}
 			(*nb_undo) = 0;
