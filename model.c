@@ -680,9 +680,9 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 				play_mark(env->i, env->j, env);
 			}
 			// for android
-			if (e->type == SDL_FINGERUP && (e->tfinger.timestamp - prec_e->tfinger.timestamp) < 300) {  // only execute when type == SDL_FINGERUP
+			if (e->type == SDL_FINGERUP && (e->tfinger.timestamp - prec_e->tfinger.timestamp) > 300) {  // only execute when type == SDL_FINGERUP
 				play_light(env->i, env->j, env);
-			 else if (e->type == SDL_FINGERUP || (e->tfinger.timestamp - prec_e->tfinger.timestamp) > 300) {
+			} else if (e->type == SDL_FINGERUP || (e->tfinger.timestamp - prec_e->tfinger.timestamp) < 300) {
 				play_mark(env->i, env->j, env);
 			}
 			(*nb_undo) = 0;
