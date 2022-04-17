@@ -18,7 +18,6 @@
 // TAILLE MAX ET TAILLE MIN POUR LE GAME
 #define TAILLE_MAX 10
 #define TAILLE_MIN 3
-
 // paths of file
 #define LIGHTBULB_WHITE "lightbulb_white.png"
 #define LIGHTBULB_RED "lightbulb_red.png"
@@ -27,7 +26,11 @@
 #define FONT "Roboto-Regular.ttf"
 #define NB_MUSIC 10
 #define NB_MUSIC_PER_ARRAY 3
+#ifndef __ANDROID__
 #define NB_BUTTONS 6
+#else
+#define NB_BUTTONS 5
+#endif
 #define FONTSIZE 200
 // size of each array (except musics) to allocate (same order as in env)
 #define SIZE_ARRAY uint sizeof_array[] = {2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 2, 1, 1, 1, 1, 1, 1, 1}
@@ -89,25 +92,31 @@ struct Env_t {
 	SDL_Texture** text_undo;     // array of two texture one white (the first one) and one black (the second one)
 	SDL_Texture** text_redo;     // Same
 	SDL_Texture** text_solve;    // Same
-	SDL_Texture** text_save;     // This one have three textures one white, one black and one green
-	SDL_Texture** new_game;      // array of four texture first one is new_game the second new_game_pressed
-	SDL_Texture** lightbulb;     // array of the two lightbulb images first white second red
+#ifndef __ANDROID__
+	SDL_Texture** text_save;  // This one have three textures one white, one black and one green
+#endif
+	SDL_Texture** new_game;   // array of four texture first one is new_game the second new_game_pressed
+	SDL_Texture** lightbulb;  // array of the two lightbulb images first white second red
 
-	SDL_Rect* rec_game;      // rectangle of the grid
-	SDL_Rect* rec_redo;      // rectangle of each buttons
-	SDL_Rect* rec_undo;      // ^^
-	SDL_Rect* rec_restart;   // ^^
-	SDL_Rect* rec_solve;     // ^^
-	SDL_Rect* rec_save;      // ^^
+	SDL_Rect* rec_game;     // rectangle of the grid
+	SDL_Rect* rec_redo;     // rectangle of each buttons
+	SDL_Rect* rec_undo;     // ^^
+	SDL_Rect* rec_restart;  // ^^
+	SDL_Rect* rec_solve;    // ^^
+#ifndef __ANDROID__
+	SDL_Rect* rec_save;  // ^^
+#endif
 	SDL_Rect* rec_new_game;  // ^^
 	bool pressed_restart;    // used to update color of the button when the mouse is overing it
 	bool pressed_undo;       // ^^
 	bool pressed_redo;       // ^^
 	bool pressed_solve;      // ^^
-	bool pressed_save;       // ^^
-	bool pressed_savED;      // ^^
-	bool pressed_new_game;   // ^^
-	bool win;                // used to avoid music being played multiple times
+#ifndef __ANDROID__
+	bool pressed_save;   // ^^
+	bool pressed_savED;  // ^^
+#endif
+	bool pressed_new_game;  // ^^
+	bool win;               // used to avoid music being played multiple times
 
 	int i;
 	int j;
@@ -156,8 +165,10 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->pressed_undo = false;
 	env->pressed_redo = false;
 	env->pressed_solve = false;
+#ifndef __ANDROID__
 	env->pressed_save = false;
 	env->pressed_savED = false;
+#endif
 	env->pressed_new_game = false;
 
 	PRINT("%s", "To win the game, you must satisfy the following conditions:\n\n");
@@ -179,12 +190,20 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	SIZE_ARRAY;
 	uint cpt = 0;
 	uint index_rec = 12;  // where the first rec is
-	// array of each array (except musics) of env
+// array of each array (except musics) of env
+#ifndef __ANDROID__
 	void** env_tab[] = {(void**)&(env->zero),       (void**)&(env->one),          (void**)&(env->two),         (void**)&(env->three),
 	                    (void**)&(env->four),       (void**)&(env->text_restart), (void**)&(env->text_undo),   (void**)&(env->text_redo),
 	                    (void**)&(env->text_solve), (void**)&(env->text_save),    (void**)&(env->lightbulb),   (void**)&(env->new_game),
 	                    (void**)&(env->rec_game),   (void**)&(env->rec_redo),     (void**)&(env->rec_restart), (void**)&(env->rec_solve),
 	                    (void**)&(env->rec_undo),   (void**)&(env->rec_save),     (void**)&(env->rec_new_game)};
+#else
+	void** env_tab[] = {(void**)&(env->zero),        (void**)&(env->one),          (void**)&(env->two),       (void**)&(env->three),
+	                    (void**)&(env->four),        (void**)&(env->text_restart), (void**)&(env->text_undo), (void**)&(env->text_redo),
+	                    (void**)&(env->text_solve),  (void**)&(env->lightbulb),    (void**)&(env->new_game),  (void**)&(env->rec_game),
+	                    (void**)&(env->rec_redo),    (void**)&(env->rec_restart),  (void**)&(env->rec_solve), (void**)&(env->rec_undo),
+	                    (void**)&(env->rec_new_game)};
+#endif
 	// size of each array
 	unsigned long sizeof_env_tab[] = {
 	    sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++], sizeof(SDL_Texture*) * sizeof_array[cpt++],
@@ -241,8 +260,13 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	    color_white, color_black,              // color for the solve
 	    color_white, color_black, color_green  // color for the save
 	};
+#ifndef __ANDROID__
 	SDL_Texture** tab_textures_double[] = {env->zero,         env->one,       env->two,       env->three,      env->four,
 	                                       env->text_restart, env->text_undo, env->text_redo, env->text_solve, env->text_save};
+#else
+	SDL_Texture** tab_textures_double[] = {env->zero,         env->one,       env->two,       env->three,     env->four,
+	                                       env->text_restart, env->text_undo, env->text_redo, env->text_solve};
+#endif
 	cpt = 0;
 	for (uint i = 0; i < sizeof(tab_textures_double) / sizeof(tab_textures_double[0]); i++) {
 		for (uint j = 0; j < sizeof_array[i]; j++) {
@@ -367,9 +391,11 @@ void render_button(SDL_Renderer* ren, Env* env, int margin_between_buttons, SDL_
 	buttons.x += buttons.w + margin_between_buttons;
 	*(env->rec_solve) = buttons;
 	SDL_RenderCopy(ren, env->text_solve[env->pressed_solve ? 1 : 0], NULL, &buttons);
+#ifndef __ANDROID__
 	buttons.x += buttons.w + margin_between_buttons;
 	*(env->rec_save) = buttons;
 	SDL_RenderCopy(ren, env->text_save[env->pressed_savED ? 2 : env->pressed_save ? 1 : 0], NULL, &buttons);
+#endif
 	buttons.x += buttons.w + margin_between_buttons;
 	buttons.w = buttons.h;
 	*(env->rec_new_game) = buttons;
@@ -469,8 +495,10 @@ void update_pressed(Env* env, bool* to_change) {
 	env->pressed_redo = &(env->pressed_redo) == to_change;
 	env->pressed_restart = &(env->pressed_restart) == to_change;
 	env->pressed_solve = &(env->pressed_solve) == to_change;
+#ifndef __ANDROID__
 	env->pressed_save = &(env->pressed_save) == to_change;
 	env->pressed_savED = &(env->pressed_savED) == to_change;
+#endif
 	env->pressed_new_game = &(env->pressed_new_game) == to_change;
 }
 /**
@@ -527,7 +555,9 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 				break;
 			case SDLK_w:  //  W to save the game in the file save.txt
 				game_save(env->g, "save.txt");
+#ifndef __ANDROID__
 				update_pressed(env, &(env->pressed_savED));
+#endif
 				break;
 			case SDLK_LEFT:
 				env->j--;
@@ -587,8 +617,10 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 				update_pressed(env, NULL);
 		} else if (SDL_PointInRect(&mouse, env->rec_solve)) {
 			update_pressed(env, &(env->pressed_solve));
+#ifndef __ANDROID__
 		} else if (SDL_PointInRect(&mouse, env->rec_save)) {
 			update_pressed(env, &(env->pressed_save));
+#endif
 		} else if (SDL_PointInRect(&mouse, env->rec_new_game)) {
 			update_pressed(env, &(env->pressed_new_game));
 		} else {
@@ -651,10 +683,13 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 			env->g = game_random(random1, random2, false, 10, false);
 			*nb_coups = 0;
 			*nb_undo = 0;
-		} else if (SDL_PointInRect(&mouse, env->rec_save)) {
+		}
+#ifndef __ANDROID__
+		else if (SDL_PointInRect(&mouse, env->rec_save)) {
 			game_save(env->g, "save.txt");
 			update_pressed(env, &(env->pressed_savED));
 		}
+#endif
 		// if the user didn't press a button test if he pressed in the game
 		else if (SDL_PointInRect(&mouse, env->rec_game)) {
 			// convert mouse coordinate in game coordinate
@@ -703,9 +738,14 @@ void freeall(SDL_Rect* tab[], uint size_tab) {
 void clean(Env* env) {
 	SIZE_ARRAY;
 	game_delete(env->g);
-	// array with all the array of textures
+// array with all the array of textures
+#ifndef __ANDROID__
 	SDL_Texture** ArrayOfTextures_tab[] = {env->zero,      env->one,       env->two,        env->three,     env->four,     env->text_restart,
 	                                       env->text_undo, env->text_redo, env->text_solve, env->text_save, env->lightbulb};
+#else
+	SDL_Texture** ArrayOfTextures_tab[] = {env->zero,         env->one,       env->two,       env->three,      env->four,
+	                                       env->text_restart, env->text_undo, env->text_redo, env->text_solve, env->lightbulb};
+#endif
 	// destroy all array of texture and free it
 	clean_destroy(ArrayOfTextures_tab, sizeof_array, sizeof(ArrayOfTextures_tab) / sizeof(ArrayOfTextures_tab[0]));
 	// free everything that is not array of texture
