@@ -35,6 +35,35 @@
 // size of each array (except musics) to allocate (same order as in env)
 #define SIZE_ARRAY uint sizeof_array[] = {2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 2, 1, 1, 1, 1, 1, 1, 1}
 
+// colors
+#define YELLOW_R 255
+#define YELLOW_G 255
+#define YELLOW_B 55
+#define ORANGE_R 255
+#define ORANGE_G 190
+#define ORANGE_B 55
+#define GRAY_R 127
+#define GRAY_G 127
+#define GRAY_B 127
+#define LIGHT_GRAY_R 200
+#define LIGHT_GRAY_G 200
+#define LIGHT_GRAY_B 200
+#define RED_R 255
+#define RED_G 50
+#define RED_B 50
+#define GREEN_R 55
+#define GREEN_G 150
+#define GREEN_B 55
+#define WHITE_R 255
+#define WHITE_G 255
+#define WHITE_B 255
+#define BLACK_R 0
+#define BLACK_G 0
+#define BLACK_B 0
+#define BACKG_R 24
+#define BACKG_G 26
+#define BACKG_B 27
+
 #ifdef __ANDROID__
 static void copy_asset(char* src, char* dst) {
 	SDL_RWops* file = SDL_RWFromFile(src, "r");
@@ -143,6 +172,15 @@ SDL_Texture* render_blended_text(SDL_Renderer* ren, SDL_Color color, char* text)
 	return tmp;
 }
 
+game new_game_random(void) {
+	int nb_rows = (rand() % (TAILLE_MAX - TAILLE_MIN + 1)) + TAILLE_MIN;
+	int nb_cols = (rand() % (TAILLE_MAX - TAILLE_MIN + 1)) + TAILLE_MIN;
+	int nb_walls = rand() % ((nb_cols * nb_rows) - (nb_cols * nb_rows) / 5);
+	if (nb_walls < (nb_cols * nb_rows) / 5)
+		nb_walls = (nb_cols * nb_rows) / 5;
+	return game_random(nb_rows, nb_cols, rand() % 2 ? true : false, nb_walls, false);
+}
+
 /**
  * @brief  Fonction to allocate each array of env
  *
@@ -178,9 +216,7 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	srand(time(NULL));  // initialize radom seed with current time
 	if (argc == 1) {
 		// Create new game
-		int random1 = (rand() % (TAILLE_MAX - TAILLE_MIN + 1)) + TAILLE_MIN;
-		int random2 = (rand() % (TAILLE_MAX - TAILLE_MIN + 1)) + TAILLE_MIN;
-		env->g = game_random(random1, random2, false, 10, false);
+		env->g = new_game_random();
 	} else if (argc == 2) {
 		char* gameFile = argv[1];
 		env->g = game_load(gameFile);
@@ -242,10 +278,10 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 	env->win = false;
 
 	/*Creation of the differents textures and place them in env*/
-	SDL_Color color_white = {255, 255, 255, SDL_ALPHA_OPAQUE};  // color of 0 in black wall with error
-	SDL_Color color_red = {255, 50, 50, SDL_ALPHA_OPAQUE};      /* blue color in RGBA */
-	SDL_Color color_green = {0, 150, 0, SDL_ALPHA_OPAQUE};      /* green color in RGBA */
-	SDL_Color color_black = {0, 0, 0, SDL_ALPHA_OPAQUE};        /* black color in RGBA*/
+	SDL_Color color_white = {WHITE_R, WHITE_G, WHITE_B, SDL_ALPHA_OPAQUE};  // color of 0 in black wall with error
+	SDL_Color color_red = {RED_R, RED_G, RED_B, SDL_ALPHA_OPAQUE};          /* blue color in RGBA */
+	SDL_Color color_green = {GREEN_R, GREEN_G, GREEN_B, SDL_ALPHA_OPAQUE};  /* green color in RGBA */
+	SDL_Color color_black = {BLACK_R, BLACK_G, BLACK_B, SDL_ALPHA_OPAQUE};  /* black color in RGBA*/
 
 	char* tab_texts_double[] = {"0", "1", "2", "3", "4", "Restart", "Undo", "Redo", "Solve", "Save"};
 	SDL_Color color_of_texts[] = {
@@ -279,20 +315,36 @@ Env* init(SDL_Renderer* ren, int argc, char* argv[]) {
 /* **************************************************************** */
 
 void render_border_square(SDL_Renderer* ren, SDL_Rect* rec) {
-	SDL_SetRenderDrawColor(ren, 127, 127, 127, SDL_ALPHA_OPAQUE);  // gray
+	SDL_SetRenderDrawColor(ren, GRAY_R, GRAY_G, GRAY_B, SDL_ALPHA_OPAQUE);  // gray
 	// render the border of the square
 	SDL_RenderDrawRect(ren, rec);
 }
 
-void render_blank(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory, bool selected) {
-	if (victory)
-		SDL_SetRenderDrawColor(ren, 0, 150, 0, SDL_ALPHA_OPAQUE);  // green
-	else if (lighted)
-		SDL_SetRenderDrawColor(ren, 255 - (selected ? 55 : 0), 255 - (selected ? 55 : 0), 0, SDL_ALPHA_OPAQUE);  // yellow
-	else if (selected)
-		SDL_SetRenderDrawColor(ren, 200, 200, 200, SDL_ALPHA_OPAQUE);  // light gray
-	else
-		SDL_SetRenderDrawColor(ren, 255, 255, 255, SDL_ALPHA_OPAQUE);  // white
+void render_blank(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory, bool selected, bool wrap) {
+	SDL_Color backg;
+	if (victory) {
+		backg.r = GREEN_R;
+		backg.g = GREEN_G;
+		backg.b = GREEN_B;
+	} else if (lighted && !wrap) {
+		backg.r = YELLOW_R;
+		backg.g = YELLOW_G;
+		backg.b = YELLOW_B;
+	} else if (lighted && wrap) {
+		backg.r = ORANGE_R;
+		backg.g = ORANGE_G;
+		backg.b = ORANGE_B;
+	} else {
+		backg.r = WHITE_R;
+		backg.g = WHITE_G;
+		backg.b = WHITE_B;
+	}
+	if (selected) {
+		backg.r -= 55;
+		backg.g -= 55;
+		backg.b -= 55;
+	}
+	SDL_SetRenderDrawColor(ren, backg.r, backg.g, backg.b, SDL_ALPHA_OPAQUE);
 	SDL_RenderFillRect(ren, rec);
 	if (!victory)
 		render_border_square(ren, rec);
@@ -300,7 +352,7 @@ void render_blank(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory, 
 
 void render_wall(SDL_Renderer* ren, Env* env, SDL_Rect* rec, int nb, bool error) {
 	SDL_Rect number;
-	SDL_SetRenderDrawColor(ren, 0, 0, 0, SDL_ALPHA_OPAQUE);
+	SDL_SetRenderDrawColor(ren, BLACK_R, BLACK_G, BLACK_B, SDL_ALPHA_OPAQUE);
 	SDL_RenderFillRect(ren, rec);
 	switch (nb) {
 		case 0:
@@ -341,12 +393,24 @@ void render_wall(SDL_Renderer* ren, Env* env, SDL_Rect* rec, int nb, bool error)
 	}
 }
 
-void render_lightbulb(SDL_Renderer* ren, SDL_Rect* rec, SDL_Texture* lightbulb_texture, bool victory, bool selected) {
+void render_lightbulb(SDL_Renderer* ren, SDL_Rect* rec, SDL_Texture* lightbulb_texture, bool victory, bool selected, bool wrap) {
 	SDL_Rect lightbulb;
-	if (victory)
-		SDL_SetRenderDrawColor(ren, 0, 150, 0, SDL_ALPHA_OPAQUE);
-	else
-		SDL_SetRenderDrawColor(ren, 255 - (selected ? 55 : 0), 255 - (selected ? 55 : 0), 0, SDL_ALPHA_OPAQUE);
+	SDL_Color backg = {YELLOW_R, YELLOW_G, YELLOW_B, SDL_ALPHA_OPAQUE};
+	if (victory) {
+		backg.r = GREEN_R;
+		backg.g = GREEN_G;
+		backg.b = GREEN_B;
+	} else if (wrap) {
+		backg.r = ORANGE_R;
+		backg.g = ORANGE_G;
+		backg.b = ORANGE_B;
+	}
+	if (selected) {
+		backg.r -= 55;
+		backg.g -= 55;
+		backg.b -= 55;
+	}
+	SDL_SetRenderDrawColor(ren, backg.r, backg.g, backg.b, backg.a);  // yellow or blue if warped + lower the values if selected
 	SDL_RenderFillRect(ren, rec);
 	lightbulb.h = rec->h - rec->h / 4;
 	lightbulb.w = rec->w - rec->w / 4;
@@ -357,17 +421,33 @@ void render_lightbulb(SDL_Renderer* ren, SDL_Rect* rec, SDL_Texture* lightbulb_t
 		render_border_square(ren, rec);
 }
 
-void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory, bool selected) {
-	if (victory)
-		SDL_SetRenderDrawColor(ren, 0, 150, 0, SDL_ALPHA_OPAQUE);  // green
-	else if (lighted)
-		SDL_SetRenderDrawColor(ren, 255 - (selected ? 55 : 0), 255 - (selected ? 55 : 0), 0, SDL_ALPHA_OPAQUE);  // yellow
-	else if (selected)
-		SDL_SetRenderDrawColor(ren, 200, 200, 200, SDL_ALPHA_OPAQUE);  // light gray
-	else
-		SDL_SetRenderDrawColor(ren, 255, 255, 255, SDL_ALPHA_OPAQUE);  // white
+void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory, bool selected, bool wrap) {
+	SDL_Color backg;
+	if (victory) {
+		backg.r = GREEN_R;
+		backg.g = GREEN_G;
+		backg.b = GREEN_B;
+	} else if (lighted && !wrap) {
+		backg.r = YELLOW_R;
+		backg.g = YELLOW_G;
+		backg.b = YELLOW_B;
+	} else if (lighted && wrap) {
+		backg.r = ORANGE_R;
+		backg.g = ORANGE_G;
+		backg.b = ORANGE_B;
+	} else {
+		backg.r = WHITE_R;
+		backg.g = WHITE_G;
+		backg.b = WHITE_B;
+	}
+	if (selected) {
+		backg.r -= 55;
+		backg.g -= 55;
+		backg.b -= 55;
+	}
+	SDL_SetRenderDrawColor(ren, backg.r, backg.g, backg.b, SDL_ALPHA_OPAQUE);  // white
 	SDL_RenderFillRect(ren, rec);
-	SDL_SetRenderDrawColor(ren, 0, 0, 0, SDL_ALPHA_OPAQUE);
+	SDL_SetRenderDrawColor(ren, BLACK_R, BLACK_G, BLACK_B, SDL_ALPHA_OPAQUE);
 	SDL_Rect mark;
 	mark.h = rec->h / 4;
 	mark.w = rec->w / 4;
@@ -419,7 +499,7 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 
 	h = h - h / 10;  // used by the buttons
 	// set background color
-	SDL_SetRenderDrawColor(ren, 24, 26, 27, SDL_ALPHA_OPAQUE);
+	SDL_SetRenderDrawColor(ren, BACKG_R, BACKG_G, BACKG_B, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(ren);
 	SDL_Rect rec;
 	int size_rec = int_min_intero(w / game_nb_cols(env->g), h / game_nb_rows(env->g));
@@ -445,13 +525,14 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env* env) {
 	for (uint i = 0; i < game_nb_rows(env->g); i++) {
 		for (uint j = 0; j < game_nb_cols(env->g); j++) {
 			if (game_is_lightbulb(env->g, i, j))
-				render_lightbulb(ren, &rec, env->lightbulb[game_has_error(env->g, i, j) ? 1 : 0], env->win, ((int)i == env->i && (int)j == env->j));
+				render_lightbulb(ren, &rec, env->lightbulb[game_has_error(env->g, i, j) ? 1 : 0], env->win, ((int)i == env->i && (int)j == env->j),
+				                 game_is_wrapping(env->g));
 			else if (game_is_black(env->g, i, j))
 				render_wall(ren, env, &rec, game_get_black_number(env->g, i, j), game_has_error(env->g, i, j));
 			else if (game_is_blank(env->g, i, j))
-				render_blank(ren, &rec, game_is_lighted(env->g, i, j), env->win, ((int)i == env->i && (int)j == env->j));
+				render_blank(ren, &rec, game_is_lighted(env->g, i, j), env->win, ((int)i == env->i && (int)j == env->j), game_is_wrapping(env->g));
 			else if (game_is_marked(env->g, i, j))
-				render_mark(ren, &rec, game_is_lighted(env->g, i, j), env->win, ((int)i == env->i && (int)j == env->j));
+				render_mark(ren, &rec, game_is_lighted(env->g, i, j), env->win, ((int)i == env->i && (int)j == env->j), game_is_wrapping(env->g));
 			rec.x += size_rec;
 		}
 		rec.x = rec_x;
@@ -678,9 +759,7 @@ bool process(SDL_Window* win, Env* env, SDL_Event* e, SDL_Event* prec_e, int* nb
 			(*nb_coups) = 0;
 		} else if (SDL_PointInRect(&mouse, env->rec_new_game)) {
 			game_delete(env->g);
-			int random1 = (rand() % (TAILLE_MAX - TAILLE_MIN + 1)) + TAILLE_MIN;
-			int random2 = (rand() % (TAILLE_MAX - TAILLE_MIN + 1)) + TAILLE_MIN;
-			env->g = game_random(random1, random2, false, 10, false);
+			env->g = new_game_random();
 			*nb_coups = 0;
 			*nb_undo = 0;
 		}
