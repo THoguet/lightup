@@ -10,10 +10,10 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "src/game.h"
-#include "src/game_aux.h"
-#include "src/game_ext.h"
-#include "src/game_tools.h"
+#include "./src/game.h"
+#include "./src/game_aux.h"
+#include "./src/game_ext.h"
+#include "./src/game_tools.h"
 
 /* ******************** Game V1 & V2 API ******************** */
 
