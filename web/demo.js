@@ -26,7 +26,7 @@ function printGame(g) {
         }
         text += "\n";
     }
-
+    
     // put this text in <div> element with ID 'result'
     var elm = document.getElementById('result');
     elm.innerHTML = text;
