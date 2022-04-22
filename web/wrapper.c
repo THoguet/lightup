@@ -73,23 +73,23 @@ bool has_error(cgame g, uint i, uint j) { return game_has_error(g, i, j); }
 
 /* ******************** Game Tools API ******************** */
 
-// EMSCRIPTEN_KEEPALIVE
-// bool solve(game g) { return game_solve(g); }
+EMSCRIPTEN_KEEPALIVE
+bool solve(game g) { return game_solve(g); }
 
-// EMSCRIPTEN_KEEPALIVE
-// uint nb_solutions(cgame g) { return game_nb_solutions(g); }
+EMSCRIPTEN_KEEPALIVE
+uint nb_solutions(cgame g) { return game_nb_solutions(g); }
 
-// EMSCRIPTEN_KEEPALIVE
-// void undo(game g) { game_undo(g); }
+EMSCRIPTEN_KEEPALIVE
+void undo(game g) { game_undo(g); }
 
-// EMSCRIPTEN_KEEPALIVE
-// void redo(game g) { game_redo(g); }
+EMSCRIPTEN_KEEPALIVE
+void redo(game g) { game_redo(g); }
 
-// EMSCRIPTEN_KEEPALIVE
-// game new_random(uint nb_rows, uint nb_cols, bool wrapping, uint nb_walls, bool with_solution)
-// {
-//   srand(time(NULL)); // radom seed
-//   return game_random(nb_rows, nb_cols, wrapping, nb_walls, with_solution);
-// }
+EMSCRIPTEN_KEEPALIVE
+game new_random(uint nb_rows, uint nb_cols, bool wrapping, uint nb_walls, bool with_solution)
+{
+  srand(time(NULL));// radom seed
+  return game_random(nb_rows, nb_cols, wrapping, nb_walls, with_solution);
+}
 
 // EOF
