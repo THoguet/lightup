@@ -1,0 +1,10 @@
+.flexbox {
+	display: flex;
+	justify-content: center;
+}
+
+#mycanvas {
+	/* width: 80vmin;
+	height: 80vmin; */
+	border: 1px solid rgb(0, 0, 0);
+}

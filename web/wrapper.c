@@ -28,6 +28,11 @@ void delete (game g) {
 }
 
 EMSCRIPTEN_KEEPALIVE
+bool is_wrapping(game g) {
+	return game_is_wrapping(g);
+}
+
+EMSCRIPTEN_KEEPALIVE
 square get_square(cgame g, uint i, uint j) {
 	return game_get_square(g, i, j);
 }
@@ -131,7 +136,7 @@ void redo(game g) {
 
 EMSCRIPTEN_KEEPALIVE
 game new_random(uint nb_rows, uint nb_cols, bool wrapping, uint nb_walls, bool with_solution) {
-	srand(time(NULL));  // radom seed
+	srand(time(NULL));  // random seed
 	return game_random(nb_rows, nb_cols, wrapping, nb_walls, with_solution);
 }
 
