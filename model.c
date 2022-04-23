@@ -395,25 +395,11 @@ void render_wall(SDL_Renderer* ren, Env* env, SDL_Rect* rec, int nb, bool error)
 
 void render_lightbulb(SDL_Renderer* ren, SDL_Rect* rec, SDL_Texture* lightbulb_texture, bool victory, bool selected, bool wrap) {
 	SDL_Rect lightbulb;
-	SDL_Color backg = {YELLOW_R, YELLOW_G, YELLOW_B, SDL_ALPHA_OPAQUE};
-	if (victory) {
-		backg.r = GREEN_R;
-		backg.g = GREEN_G;
-		backg.b = GREEN_B;
-	} else if (wrap) {
-		backg.r = ORANGE_R;
-		backg.g = ORANGE_G;
-		backg.b = ORANGE_B;
-	}
-	if (selected) {
-		backg.r -= 55;
-		backg.g -= 55;
-		backg.b -= 55;
-	}
-	SDL_SetRenderDrawColor(ren, backg.r, backg.g, backg.b, backg.a);  // yellow or blue if warped + lower the values if selected
-	SDL_RenderFillRect(ren, rec);
+	render_blank(ren, rec, true, victory, selected, wrap);
 	lightbulb.h = rec->h * 0.8;
 	lightbulb.w = rec->w * 0.8;
+	lightbulb.h = rec->h - rec->h / 4;
+	lightbulb.w = rec->w - rec->w / 4;
 	lightbulb.x = rec->x + rec->w / 2 - lightbulb.w / 2;
 	lightbulb.y = rec->y + rec->h / 2 - lightbulb.h / 2;
 	SDL_RenderCopy(ren, lightbulb_texture, NULL, &lightbulb);
@@ -422,31 +408,7 @@ void render_lightbulb(SDL_Renderer* ren, SDL_Rect* rec, SDL_Texture* lightbulb_t
 }
 
 void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory, bool selected, bool wrap) {
-	SDL_Color backg;
-	if (victory) {
-		backg.r = GREEN_R;
-		backg.g = GREEN_G;
-		backg.b = GREEN_B;
-	} else if (lighted && !wrap) {
-		backg.r = YELLOW_R;
-		backg.g = YELLOW_G;
-		backg.b = YELLOW_B;
-	} else if (lighted && wrap) {
-		backg.r = ORANGE_R;
-		backg.g = ORANGE_G;
-		backg.b = ORANGE_B;
-	} else {
-		backg.r = WHITE_R;
-		backg.g = WHITE_G;
-		backg.b = WHITE_B;
-	}
-	if (selected) {
-		backg.r -= 55;
-		backg.g -= 55;
-		backg.b -= 55;
-	}
-	SDL_SetRenderDrawColor(ren, backg.r, backg.g, backg.b, SDL_ALPHA_OPAQUE);  // white
-	SDL_RenderFillRect(ren, rec);
+	render_blank(ren, rec, lighted, victory, selected, wrap);
 	SDL_SetRenderDrawColor(ren, BLACK_R, BLACK_G, BLACK_B, SDL_ALPHA_OPAQUE);
 	SDL_Rect mark;
 	mark.h = rec->h * 0.2;
