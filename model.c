@@ -49,8 +49,8 @@
 #define LIGHT_GRAY_G 200
 #define LIGHT_GRAY_B 200
 #define RED_R 255
-#define RED_G 50
-#define RED_B 50
+#define RED_G 55
+#define RED_B 55
 #define GREEN_R 55
 #define GREEN_G 150
 #define GREEN_B 55
