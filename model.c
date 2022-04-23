@@ -358,36 +358,36 @@ void render_wall(SDL_Renderer* ren, Env* env, SDL_Rect* rec, int nb, bool error)
 		case 0:
 			number.x = rec->x + rec->w / 4;
 			number.y = rec->y + rec->h / 4;
-			number.w = rec->w / 2;
-			number.h = rec->h / 2;
+			number.w = rec->w * 0.5;
+			number.h = rec->h * 0.5;
 			SDL_RenderCopy(ren, env->zero[error ? 1 : 0], NULL, &number);
 			break;
 		case 1:
 			number.x = rec->x + rec->w / 4;
 			number.y = rec->y + rec->h / 4;
-			number.w = rec->w / 2;
-			number.h = rec->h / 2;
+			number.w = rec->w * 0.5;
+			number.h = rec->h * 0.5;
 			SDL_RenderCopy(ren, env->one[error ? 1 : 0], NULL, &number);
 			break;
 		case 2:
 			number.x = rec->x + rec->w / 4;
 			number.y = rec->y + rec->h / 4;
-			number.w = rec->w / 2;
-			number.h = rec->h / 2;
+			number.w = rec->w * 0.5;
+			number.h = rec->h * 0.5;
 			SDL_RenderCopy(ren, env->two[error ? 1 : 0], NULL, &number);
 			break;
 		case 3:
 			number.x = rec->x + rec->w / 4;
 			number.y = rec->y + rec->h / 4;
-			number.w = rec->w / 2;
-			number.h = rec->h / 2;
+			number.w = rec->w * 0.5;
+			number.h = rec->h * 0.5;
 			SDL_RenderCopy(ren, env->three[error ? 1 : 0], NULL, &number);
 			break;
 		case 4:
 			number.x = rec->x + rec->w / 4;
 			number.y = rec->y + rec->h / 4;
-			number.w = rec->w / 2;
-			number.h = rec->h / 2;
+			number.w = rec->w * 0.5;
+			number.h = rec->h * 0.5;
 			SDL_RenderCopy(ren, env->four[error ? 1 : 0], NULL, &number);
 			break;
 	}
@@ -412,8 +412,8 @@ void render_lightbulb(SDL_Renderer* ren, SDL_Rect* rec, SDL_Texture* lightbulb_t
 	}
 	SDL_SetRenderDrawColor(ren, backg.r, backg.g, backg.b, backg.a);  // yellow or blue if warped + lower the values if selected
 	SDL_RenderFillRect(ren, rec);
-	lightbulb.h = rec->h - rec->h / 4;
-	lightbulb.w = rec->w - rec->w / 4;
+	lightbulb.h = rec->h * 0.8;
+	lightbulb.w = rec->w * 0.8;
 	lightbulb.x = rec->x + rec->w / 2 - lightbulb.w / 2;
 	lightbulb.y = rec->y + rec->h / 2 - lightbulb.h / 2;
 	SDL_RenderCopy(ren, lightbulb_texture, NULL, &lightbulb);
@@ -449,8 +449,8 @@ void render_mark(SDL_Renderer* ren, SDL_Rect* rec, bool lighted, bool victory, b
 	SDL_RenderFillRect(ren, rec);
 	SDL_SetRenderDrawColor(ren, BLACK_R, BLACK_G, BLACK_B, SDL_ALPHA_OPAQUE);
 	SDL_Rect mark;
-	mark.h = rec->h / 4;
-	mark.w = rec->w / 4;
+	mark.h = rec->h * 0.2;
+	mark.w = rec->w * 0.2;
 	mark.x = rec->x + rec->w / 2 - mark.w / 2;
 	mark.y = rec->y + rec->h / 2 - mark.h / 2;
 	SDL_RenderFillRect(ren, &mark);
