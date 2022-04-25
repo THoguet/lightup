@@ -88,6 +88,8 @@ function newGame() {
     Module._delete(g);
     initGame();
     printGame(g);
+    let button = document.getElementById("toEdit");
+    button.setAttribute("value", "Nb Sol");
 }
 
 function nbsol() {
