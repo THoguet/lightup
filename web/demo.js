@@ -90,6 +90,11 @@ function newGame() {
     printGame(g);
 }
 
+function nbsol() {
+    let button = document.getElementById("toEdit");
+    button.setAttribute("value", Module._nb_solutions(g));
+}
+
 function drawBlank(ctx, x, y, win, wrap, lighted, size, hover) {
     ctx.beginPath();
     let colour = [0, 0, 0];
