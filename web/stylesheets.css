@@ -10,9 +10,12 @@ body {
 	flex-direction: column;
 	justify-content: flex-start;
 	row-gap: 3%;
+	background-color: rgb(19, 21, 22);
 }
 
-p {
+p,
+h1 {
+	color: white;
 	max-width: 80%;
 }
 
