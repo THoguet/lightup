@@ -1,0 +1,79 @@
+html,
+body {
+	margin: 0;
+	display: flex;
+	height: 100%;
+	max-height: 100%;
+	overflow: hidden;
+	width: 100%;
+	align-items: center;
+	flex-direction: column;
+	justify-content: flex-start;
+	row-gap: 3%;
+}
+
+p {
+	max-width: 80%;
+}
+
+#game {
+	width: 90%;
+	max-height: 90%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+	flex-grow: 1;
+}
+
+#game canvas {
+	padding: auto;
+}
+
+#buttons {
+	margin-bottom: 10px;
+	width: 90%;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+}
+
+#menu {
+	width: 100%;
+	margin-bottom: 10px;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	justify-content: space-evenly;
+}
+
+.button {
+	display: inline-block;
+	padding: 15px;
+	margin-right: 5px;
+	height: 50px;
+	min-width: 100px;
+	background: #348AA7;
+	border: none;
+	outline: none;
+	color: white;
+	font-family: inherit;
+	font-weight: 400;
+	font-size: 20px;
+	border-radius: 3px;
+	box-shadow: 0 5px 0px #348aa7;
+	border-bottom: 2px solid #30809b;
+}
+
+.button:hover {
+	background: #2e7a94;
+	box-shadow: 0 4px 1px #2e7a94;
+	border-bottom: 2px solid #2a7088;
+	transition: all 0.1s ease-in;
+}
+
+.button:active {
+	transform: translateY(4px);
+	border-bottom-width: 2px;
+	box-shadow: none;
+}
