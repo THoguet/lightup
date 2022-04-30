@@ -48,7 +48,7 @@ game game_load(char* filename) {
 				game_set_square(g1, i, j, S_BLACK3);
 			else if (play == '4')
 				game_set_square(g1, i, j, S_BLACK4);
-			else {
+			else if (play != 'b') {
 				fprintf(stderr, "Malformed file : Unrecognized character %c.\n", play);
 				exit(EXIT_FAILURE);
 			}
