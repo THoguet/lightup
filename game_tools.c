@@ -32,9 +32,7 @@ game game_load(char* filename) {
 			char play = fgetc(f);
 			if (play == '\n')
 				play = fgetc(f);
-			if (play == 'b')
-				game_set_square(g1, i, j, S_BLANK);
-			else if (play == '*')
+			if (play == '*')
 				game_set_square(g1, i, j, S_LIGHTBULB);
 			else if (play == '-')
 				game_set_square(g1, i, j, S_MARK);

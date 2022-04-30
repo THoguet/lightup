@@ -12,6 +12,10 @@ body {
 	row-gap: 3%;
 }
 
+p {
+	max-width: 80%;
+}
+
 #game {
 	width: 90%;
 	max-height: 90%;

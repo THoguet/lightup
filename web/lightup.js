@@ -7,8 +7,18 @@ Module.onRuntimeInitialized = () => { initGame(); }
 const BLANK = 0;
 const LIGHTBULB = 1;
 const MARK = 2;
+const BLACK0 = 8;
+const BLACK1 = 9;
+const BLACK2 = 10;
+const BLACK3 = 11;
+const BLACK4 = 12;
+const BLACKU = 13;
 const MAX_SIZE = 10;
 const MIN_SIZE = 3;
+const url = location.protocol + '//' + location.host + location.pathname;
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+var game = urlParams.get('game')
 
 var canvas = document.getElementById("mycanvas");
 var ctx = canvas.getContext('2d');
@@ -17,19 +27,134 @@ var div = document.getElementById("game");
 
 var buttonsMenu = document.getElementById("buttons");
 
-var mouseI = -1;
-var mouseJ = -1;
+var mouseI = 0;
+var mouseJ = 0;
+
+var g = null;
 
 function initGame() {
-    console.log("Init game");
-    nb_rows = Math.round((Math.random() * (MAX_SIZE - MIN_SIZE + 1) + MIN_SIZE));
-    nb_cols = Math.round((Math.random() * (MAX_SIZE - MIN_SIZE + 1) + MIN_SIZE));
-    wrapping = Math.round(Math.random());
-    let nb_walls = Math.round(Math.random() * ((nb_cols * nb_rows) - (nb_cols * nb_rows) / 5));
-    if (nb_walls < (nb_cols * nb_rows) / 5)
-        nb_walls = (nb_cols * nb_rows) / 5;
-    g = Module._new_random(nb_rows, nb_cols, wrapping ? true : false, nb_walls, false);
+    if (game != null) {
+        loadGame(game);
+        game = null;
+    }
+    else {
+        console.log("Init game");
+        nb_rows = Math.round((Math.random() * (MAX_SIZE - MIN_SIZE + 1) + MIN_SIZE));
+        nb_cols = Math.round((Math.random() * (MAX_SIZE - MIN_SIZE + 1) + MIN_SIZE));
+        wrapping = Math.round(Math.random());
+        let nb_walls = Math.round(Math.random() * ((nb_cols * nb_rows) - (nb_cols * nb_rows) / 5));
+        if (nb_walls < (nb_cols * nb_rows) / 5)
+            nb_walls = (nb_cols * nb_rows) / 5;
+        g = Module._new_random(nb_rows, nb_cols, wrapping ? true : false, nb_walls, false);
+        printGame();
+    }
+}
+
+function shareLink() {
+    let link = url + "?game=";
+    link += nb_rows + '%20' + nb_cols + '%20' + wrapping;
+    link += gameToString("");
+    navigator.clipboard.writeText(link).then(function () {
+        document.getElementById("shareToEdit").setAttribute("value", "Link copied to clipboard");
+    }, function () {
+        document.getElementById("clipboardAccessDenied").setAttribute("href", link);
+        document.getElementById("clipboardAccessDenied").innerHTML = link;
+    });
+}
+
+function readFile() {
+    let input = document.createElement('input');
+    input.type = 'file';
+    input.accept = ".txt";
+    input.onchange = _ => loadFile(input);
+    input.click();
+
+}
+
+function findDim(string, start) {
+    let cpt = start;
+    while (string[cpt] != ' ') {
+        cpt++;
+    }
+    return cpt;
+}
+
+async function loadFile(file) {
+    if (file.files.length == 0)
+        return;
+    file = file.files[0];
+    let text = await file.text();
+    loadGame(text);
+}
+
+function loadGame(text) {
+    let nb_rowsCharEnd = findDim(text, 0);
+    let nb_colsCharEnd = findDim(text, nb_rowsCharEnd + 1);
+    nb_rows = parseInt(text.slice(0, nb_rowsCharEnd));
+    nb_cols = parseInt(text.slice(nb_rowsCharEnd, nb_colsCharEnd));
+    wrapping = parseInt(text[nb_colsCharEnd + 1]);
+    if (g != null)
+        Module._delete(g);
+    g = Module._new_game_empty(nb_rows, nb_cols, wrapping);
+    let cptFile = nb_colsCharEnd + 2;
+    for (let i = 0; i < nb_rows; i++) {
+        for (let j = 0; j < nb_cols; j++) {
+            if (text[cptFile] == '\n')
+                cptFile++;
+            switch (text[cptFile]) {
+                case '*':
+                    Module._set_square(g, i, j, LIGHTBULB);
+                    break;
+                case '-':
+                    Module._set_square(g, i, j, MARK);
+                    break;
+                case 'w':
+                    Module._set_square(g, i, j, BLACKU);
+                    break;
+                case '0':
+                    Module._set_square(g, i, j, BLACK0);
+                    break;
+                case '1':
+                    Module._set_square(g, i, j, BLACK1);
+                    break;
+                case '2':
+                    Module._set_square(g, i, j, BLACK2);
+                    break;
+                case '3':
+                    Module._set_square(g, i, j, BLACK3);
+                    break;
+                case '4':
+                    Module._set_square(g, i, j, BLACK4);
+                    break;
+            }
+            cptFile++;
+        }
+    }
+    Module._update_flags(g);
     printGame();
+}
+
+function gameToString(endRowChar) {
+    let ret = "";
+    let charArray = ['b', '*', '-', '?', '?', '?', '?', '?', '0', '1', '2', '3', '4', 'w'];
+    for (let i = 0; i < nb_rows; i++) {
+        for (let j = 0; j < nb_cols; j++) {
+            let sqr = Module._get_state(g, i, j);
+            ret += charArray[sqr];
+        }
+        ret += endRowChar;
+    }
+    return ret;
+}
+
+function saveGame() {
+    let fileContent = nb_rows.toString() + ' ' + nb_cols.toString() + ' ' + wrapping.toString() + '\n';
+    fileContent += gameToString("\n");
+    let bb = new Blob([fileContent], { type: 'text/plain' });
+    let a = document.createElement('a');
+    a.download = 'save.txt';
+    a.href = window.URL.createObjectURL(bb);
+    a.click();
 }
 
 function drawWall(ctx, x, y, size, nb, err) {
@@ -260,6 +385,15 @@ document.addEventListener("keydown", function (e) {
             break;
         case "n":
             newGame();
+            break;
+        case "w":
+            saveGame();
+            break
+        case "l":
+            readFile();
+            break;
+        case "k":
+            shareLink();
             break;
     }
 });

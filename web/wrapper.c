@@ -23,6 +23,21 @@ game new_default(void) {
 }
 
 EMSCRIPTEN_KEEPALIVE
+game new_game_empty(uint i, uint j, bool wrapping) {
+	return game_new_empty_ext(i, j, wrapping);
+}
+
+EMSCRIPTEN_KEEPALIVE
+void set_square(game g, uint i, uint j, square s) {
+	game_set_square(g, i, j, s);
+}
+
+EMSCRIPTEN_KEEPALIVE
+void update_flags(game g) {
+	game_update_flags(g);
+}
+
+EMSCRIPTEN_KEEPALIVE
 void delete (game g) {
 	game_delete(g);
 }
